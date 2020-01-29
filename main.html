@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Data Visualization!</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+  </head>
+  <body>
+    <svg width="960" height="500" id="mainsvg" class="svgs"></svg>
+    <script>
+      let mainsvg = d3.select('.svgs');
+
+      let maingroup = mainsvg
+      .append('g')
+      .attr('transform', `translate(${100}, ${100})`);
+
+      let circle = maingroup
+      .append('circle')
+      .attr('stroke', 'black')
+      .attr('r', '66')
+      .attr('fill', 'yellow');
+    </script>
+  </body>
+</html>

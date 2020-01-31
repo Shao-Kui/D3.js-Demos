@@ -36,11 +36,15 @@
         .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
         // Do the data join (Enter)
-        g.selectAll('rect')
+        g.selectAll('circle')
         .data(data)
         .enter() 
         .append('circle') // For scatter plot, we change rectangles to circles; 
         .attr('cy', (datum) => { return yScale(yValue(datum))})
+        .attr('cx', 0) // use xSacle to re-scale data space (domain) and return the rescaled population; 
+        .attr('r', 0)
+        .attr('fill', 'black')
+        .transition().duration(3000)
         .attr('cx', (datum) => {return xScale(xValue(datum))}) // use xSacle to re-scale data space (domain) and return the rescaled population; 
         .attr('r', 10)
         .attr('fill', 'steelblue')

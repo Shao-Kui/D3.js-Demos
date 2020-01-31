@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Scatter</title>
+    <title>ScatterNxt</title>
     <link rel="stylesheet" href="/static/css/scatter.css"> 
     <script src="/static/js/d3.min.js"></script>
   </head>
@@ -14,45 +14,56 @@
       const margin = {top: 60, right: 60, bottom: 60, left: 150};
       const innerWidth = width - margin.left - margin.right;
       const innerHeight = height - margin.top - margin.bottom;
-      const xValue = (datum) => {return datum.value};
-      const yValue = (datum) => {return datum.name};
+      const xValue = (datum) => {return datum.weight};
+      const yValue = (datum) => {return datum.horsepower};
 
       const render = function(data){
 
         // Linear Scale: Data Space -> Screen Space; 
         const xScale = d3.scaleLinear()
-        .domain([0, d3.max(data, xValue)])
+        .domain([d3.min(data, xValue), d3.max(data, xValue)])
         .range([0, innerWidth])
         .nice();
 
         // Introducing y-Scale; 
-        const yScale = d3.scalePoint() // Instead of scaleBand, we use scale point; 
-        .domain(data.map(yValue))
+        const yScale = d3.scaleLinear() // Instead of scaleBand, we use scale point; 
+        .domain(d3.extent(data, yValue)) // "extent" is equivalent to [d3.min(data, xValue), d3.max(data, xValue)]; 
         .range([0, innerHeight])
-        .padding(0.5);
+        .nice();
 
         // The reason of using group is that nothing is rendered outside svg, so margin of svg is always blank while margin of group is rendered inside svg; 
         const g = svg.append('g')
         .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
         // Do the data join (Enter)
-        g.selectAll('rect')
+        g.selectAll('circle')
         .data(data)
         .enter() 
         .append('circle') // For scatter plot, we change rectangles to circles; 
         .attr('cy', (datum) => { return yScale(yValue(datum))})
         .attr('cx', (datum) => {return xScale(xValue(datum))}) // use xSacle to re-scale data space (domain) and return the rescaled population; 
         .attr('r', 10)
-        .attr('fill', 'steelblue')
+        .attr('fill', 'red')
+        .attr('opacity', 0.4)
 
         // Adding axes; 
         const yAxis = d3.axisLeft(yScale)
-        .tickSize(-innerWidth);
+        .tickSize(-innerWidth)
+        .tickPadding(10); // .tickPadding is used to prevend intersection of ticks; 
         const xAxis = d3.axisBottom(xScale)
         .tickFormat(d3.format('.3s'))
-        .tickSize(-innerHeight);
+        .tickSize(-innerHeight)
+        .tickPadding(10);
 
         let yAxisGroup = g.append('g').call(yAxis);
+        yAxisGroup.append('text')
+        .attr('transform', `rotate(-90)`)
+        .attr('x', -innerHeight / 2)
+        .attr('y', -60)
+        .attr('fill', 'black')
+        .text('Horsepower')
+        .attr('text-anchor', 'middle') // Make label at the middle of axis. 
+        .attr('id', 'horsepower');
         yAxisGroup.selectAll('.domain').remove(); // we can select multiple tags using comma to seperate them and we can use space to signify nesting; 
         
         let xAxisGroup = g.append('g').call(xAxis)
@@ -60,22 +71,27 @@
         xAxisGroup.append('text')
         .attr('y', 50)
         .attr('x', innerWidth / 2)
-        .attr('fill', 'black').text('Value')
+        .attr('fill', 'black')
+        .text('Weight')
         .attr('id', 'population');
         xAxisGroup.selectAll('.domain').remove();
 
         // Adding a title; 
         g.append('text')
-        .text('Members in CSCG')
+        .text('Plot of Cars')
         .attr('y', -20)
         .attr('x', innerWidth / 2 - 100);
       }
 
-      d3.csv('./static/data/vma.csv')
+      d3.csv('./static/data/auto-mpg.csv')
       .then(function(data){
           data.forEach( datum => {
-            //datum.population = parseFloat(datum.population);
-            datum.value = +(datum.value);
+            datum.mpg = +(datum.mpg);
+            datum.cylinders = +(datum.cylinders);
+            datum.displacement = +(datum.displacement);
+            datum.horsepower = +(datum.horsepower);
+            datum.weight = +(datum.weight);
+            datum.acceleration = +(datum.acceleration);
           } )
           console.log(data);
           console.log(data.map(yValue))

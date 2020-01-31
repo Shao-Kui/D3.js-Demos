@@ -22,6 +22,10 @@ def baraxes():
 def scatter():
     return flask.send_from_directory('static', 'scatter.html')
 
+@app.route('/scatternxt')
+def scatternxt():
+    return flask.send_from_directory('static', 'scatternxt.html')
+
 @app.route('/static/<fname>')
 def sendfile(fname):
     return flask.send_from_directory('static', fname)

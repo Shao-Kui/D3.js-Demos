@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Render the Earth</title>
+    <link rel="stylesheet" href="/static/css/earth.css">
+    <script src="/static/js/d3.min.js"></script>
+    <script src="/static/js/topojson.js"></script>
+  </head>
+  <body>
+    <svg width="1600" height="840" id="mainsvg" class="svgs"></svg>
+    <script>
+
+    let svg = d3.select('svg');
+    const width = +svg.attr('width');
+    const height = +svg.attr('height');
+
+    // convert dataPath to svgPath; 
+    // go to https://github.com/d3/d3-geo for more different projections; 
+    //const projection = d3.geoMercator();
+    //const projection = d3.geoOrthographic();
+    //const projection = d3.geoStereographic();
+    //const projection = d3.geoEquirectangular();
+    const projection = d3.geoNaturalEarth1();
+    //const projection = d3.geoTransverseMercator();
+    const pathGenerator = d3.geoPath().projection(projection);
+    
+    let worldmeta;
+
+    d3.json('/static/data/countries-110m.json').then(
+        function(data){
+            // convert topo-json to geo-json; 
+            worldmeta = topojson.feature(data, data.objects.countries);
+
+            // this code is really important if you want to fit your geoPaths (map) in your SVG element; 
+            projection.fitSize([width, height], worldmeta);
+
+            // perform data-join; 
+            const paths = svg.selectAll('path')
+            .data(worldmeta.features)
+            .enter().append('path')
+            .attr('d', pathGenerator)
+        }
+    );
+
+  </script>
+  </body>
+</html>

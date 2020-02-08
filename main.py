@@ -26,6 +26,10 @@ def scatter():
 def scatternxt():
     return flask.send_from_directory('static', 'scatternxt.html')
 
+@app.route('/renderearth')
+def renderearth():
+    return flask.send_from_directory('static', 'renderearth.html')
+
 @app.route('/static/<fname>')
 def sendfile(fname):
     return flask.send_from_directory('static', fname)

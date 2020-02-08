@@ -30,6 +30,10 @@ def scatternxt():
 def renderearth():
     return flask.send_from_directory('static', 'renderearth.html')
 
+@app.route('/barcscginteraction')
+def barcscginteraction():
+    return flask.send_from_directory('static', 'barcscginteraction.html')
+
 @app.route('/static/<fname>')
 def sendfile(fname):
     return flask.send_from_directory('static', fname)

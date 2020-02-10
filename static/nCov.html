@@ -6,20 +6,22 @@
     <script src="/static/js/d3.min.js"></script>
   </head>
   <body>
-    <svg width="1600" height="860" id="mainsvg" class="svgs" style="background-color: #DCDCDC;"></svg>
+    <svg width="1600" height="900" id="mainsvg" class="svgs" style="background-color: #DCDCDC;"></svg>
     <script>
         // get main SVG and its attributes & setting hyper-parameters; 
         const svg = d3.select('#mainsvg');
         const width = +svg.attr('width');
         const height = +svg.attr('height');
-        const margin = {top: 60, right: 120, bottom: 80, left: 120};
+        const margin = {top: 60, right: 120, bottom: 100, left: 120};
         const innerWidth = width - margin.left - margin.right;
         const innerHeight = height - margin.top - margin.bottom;
         //const xValue = (datum) => {return dates.indexOf(datum['日期'])};
         //const yValue = (datum) => {return datum['确诊人数']};
         //const xValue = d => d['确诊人数'];
         const xValue = d => d['感染率'];
-        const yValue = d => d['diffuse_smooth'];
+        //const yValue = d => {return Math.log(d['diffuse_smooth'] + 1)};
+        //const yValue = d => {return d['diffuse_smooth']};
+        const yValue = d => {return d['newinfec']};
         const rValue = d => {return Math.sqrt(d['确诊人数']) + 6};
         let xScale, yScale;
         let maxX, maxY;
@@ -64,7 +66,7 @@
             .attr('x', -innerHeight / 2)
             .attr('y', -80)
             .attr('fill', 'black')
-            .text('扩散指数（当日确诊/上日确诊 - 1）')
+            .text('扩散指数')
             .attr('text-anchor', 'middle') // Make label at the middle of axis. 
             .attr('id', 'yaxis');
             yAxisGroup.selectAll('.domain').remove(); // we can select multiple tags using comma to seperate them and we can use space to signify nesting; 
@@ -166,7 +168,7 @@
             metapop = data;
         });
 
-        d3.csv('./static/data/hubei.csv').then(function(data){
+        d3.csv('./static/data/hubeinxt.csv').then(function(data){
             
             data = data.filter(datum => {return datum['地区'] !== '总计'});
             data.forEach(datum => {
@@ -198,7 +200,7 @@
                 sequential[alldates.indexOf(datum['日期'])].push(datum);
             });
             
-            // smoothing '扩散曲线'; 
+            // smoothing '扩散曲线' & calculate 'newinfec'; 
             let t = 0;
             for(; t < sequential.length; t++){
                 sequential[t].forEach(datum => {
@@ -216,6 +218,12 @@
                             sequential[t-2].find(x => x['地区'] === datum['地区'])['扩散曲线']
                         ) / 3.0;
                     }
+
+                    if(t == 0){
+                        datum['newinfec'] = 0;
+                    }else{
+                        datum['newinfec'] = datum['确诊人数'] - sequential[t-1].find(x => x['地区'] === datum['地区'])['确诊人数']
+                    }
                 })
             }
 
@@ -227,11 +235,11 @@
             intervalId = setInterval(function(){
                 renderupdate(sequential[c]);
                 console.log(c);
+                c = c + 1;
                 if(c > alldates.length){
                     console.log('time to close this animation');
                     clearInterval(intervalId); 
                 }
-                c++;
             }, aduration); 
         });
     </script>

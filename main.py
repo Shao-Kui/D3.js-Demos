@@ -34,6 +34,10 @@ def renderearth():
 def barcscginteraction():
     return flask.send_from_directory('static', 'barcscginteraction.html')
 
+@app.route('/nCov')
+def nCov():
+    return flask.send_from_directory('static', 'nCov.html')
+
 @app.route('/static/<fname>')
 def sendfile(fname):
     return flask.send_from_directory('static', fname)

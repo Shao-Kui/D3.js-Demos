@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Scatter</title>
+    <link rel="stylesheet" href="/static/css/scatter.css"> 
+    <script src="/static/js/d3.min.js"></script>
+  </head>
+  <body>
+    <svg width="1600" height="860" id="mainsvg" class="svgs"></svg>
+    <script>
+        // get main SVG and its attributes & setting hyper-parameters; 
+        const svg = d3.select('#mainsvg');
+        const width = +svg.attr('width');
+        const height = +svg.attr('height');
+        const margin = {top: 60, right: 60, bottom: 80, left: 150};
+        const innerWidth = width - margin.left - margin.right;
+        const innerHeight = height - margin.top - margin.bottom;
+        const xValue = (datum) => {return dates.indexOf(datum['日期'])};
+        const yValue = (datum) => {return datum['确诊人数']};
+        let dates; 
+
+        const renderinit = function(data){
+            // Linear Scale: Data Space -> Screen Space; 
+            const xScale = d3.scaleLinear()
+            .domain(d3.extent(data, xValue))
+            .range([0, innerWidth])
+            .nice();
+
+            // Introducing y-Scale; 
+            const yScale = d3.scaleLinear() // Instead of scaleBand, we use scale point; 
+            .domain(d3.extent(data, yValue).reverse()) // "extent" is equivalent to [d3.min(data, xValue), d3.max(data, xValue)]; 
+            .range([0, innerHeight])
+            .nice();
+
+            // The reason of using group is that nothing is rendered outside svg, so margin of svg is always blank while margin of group is rendered inside svg; 
+            const g = svg.append('g')
+            .attr('transform', `translate(${margin.left}, ${margin.top})`)
+            .attr('id', 'maingroup');
+
+            // Adding axes; 
+            const yAxis = d3.axisLeft(yScale)
+            .tickSize(-innerWidth)
+            .tickPadding(10); // .tickPadding is used to prevend intersection of ticks; 
+            const xAxis = d3.axisBottom(xScale)
+            .tickFormat(d3.format('.3s'))
+            .tickSize(-innerHeight)
+            .tickPadding(10);
+
+            let yAxisGroup = g.append('g').call(yAxis);
+            yAxisGroup.append('text')
+            .attr('transform', `rotate(-90)`)
+            .attr('x', -innerHeight / 2)
+            .attr('y', -80)
+            .attr('fill', 'black')
+            .text('确诊人数')
+            .attr('text-anchor', 'middle') // Make label at the middle of axis. 
+            .attr('id', 'horsepower');
+            yAxisGroup.selectAll('.domain').remove(); // we can select multiple tags using comma to seperate them and we can use space to signify nesting; 
+            
+            let xAxisGroup = g.append('g').call(xAxis)
+            .attr('transform', `translate(${0}, ${innerHeight})`);
+            xAxisGroup.append('text')
+            .attr('y', 60)
+            .attr('x', innerWidth / 2)
+            .attr('fill', 'black')
+            .text('时间')
+            .attr('id', 'population');
+            xAxisGroup.selectAll('.domain').remove();
+        };
+
+        const renderupdate = function(seq){
+            console.log(seq);
+            console.log(dates);
+        };
+
+        d3.csv('./static/data/hubei.csv').then(function(data){
+            data.forEach(datum => {
+                // pre-process the data; 
+                datum['确诊人数'] = +(datum['确诊人数']);
+                datum['治愈人数'] = +(datum['治愈人数']);
+                datum['死亡人数'] = +(datum['死亡人数']);
+            });
+
+            // remove duplicated items; 
+            alldates = Array.from(new Set(data.map( datum => datum['日期'])));
+
+            // make sure dates are listed according to real time order; 
+            alldates = alldates.sort();
+            dates = alldates;
+
+            // re-arrange the data sequentially; 
+            sequential = []; 
+            alldates.forEach(datum => {
+                sequential.push([]);
+            });
+            data.forEach(datum => {
+                sequential[alldates.indexOf(datum['日期'])].push(datum);
+            });
+
+            // initialize the chart; 
+            renderinit(data);
+
+            // set the animation interval; 
+            let c = 0; 
+            intervalId = setInterval(function(){
+                renderupdate(sequential[c]);
+                console.log(c);
+                if(c > alldates.length){
+                    clearInterval(intervalId); 
+                }
+                c++;
+            }, 1000); 
+        });
+    </script>
+  </body>
+</html>

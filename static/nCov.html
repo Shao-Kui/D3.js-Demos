@@ -15,8 +15,16 @@
         const margin = {top: 60, right: 60, bottom: 80, left: 150};
         const innerWidth = width - margin.left - margin.right;
         const innerHeight = height - margin.top - margin.bottom;
-        const xValue = (datum) => {return dates.indexOf(datum['日期'])};
-        const yValue = (datum) => {return datum['确诊人数']};
+        //const xValue = (datum) => {return dates.indexOf(datum['日期'])};
+        //const yValue = (datum) => {return datum['确诊人数']};
+        const xValue = d => d['确诊人数'];
+        const yValue = d => {
+            if(isNaN(d['扩散曲线'])){
+                return 0.0;
+            }else{
+                return d['扩散曲线'];
+            }
+        }
         let xScale, yScale;
         let maxX, maxY;
         let dates; 
@@ -59,9 +67,9 @@
             .attr('x', -innerHeight / 2)
             .attr('y', -80)
             .attr('fill', 'black')
-            .text('确诊人数')
+            .text('扩散指数（当日确诊/上日确诊 - 1）')
             .attr('text-anchor', 'middle') // Make label at the middle of axis. 
-            .attr('id', 'horsepower');
+            .attr('id', 'yaxis');
             yAxisGroup.selectAll('.domain').remove(); // we can select multiple tags using comma to seperate them and we can use space to signify nesting; 
             
             let xAxisGroup = g.append('g').call(xAxis)
@@ -70,8 +78,8 @@
             .attr('y', 60)
             .attr('x', innerWidth / 2)
             .attr('fill', 'black')
-            .text('时间')
-            .attr('id', 'population');
+            .text('累计确诊数')
+            .attr('id', 'xaxis');
             xAxisGroup.selectAll('.domain').remove();
         };
 
@@ -82,12 +90,12 @@
             .attr('cy', yScale(0))
             .attr('cx', 0) // use xSacle to re-scale data space (domain) and return the rescaled population; 
             .attr('r', 0)
-            .attr('fill', '#3fd4c5')
-            .attr('opacity', 0.4);
+            .attr('fill', 'green') // #3fd4c5
+            .attr('opacity', 0.5);
             circleupdates.merge(circleenter).transition().ease(d3.easeLinear).duration(aduration)
             .attr('cy', (datum) => { return yScale(yValue(datum)) })
             .attr('cx', (datum) => { return xScale(xValue(datum)) }) // use xSacle to re-scale data space (domain) and return the rescaled population; 
-            .attr('r', (datum) => { return Math.sqrt(yValue(datum) / 10) });
+            .attr('r', (datum) => { return Math.sqrt(xValue(datum) / 10) });
             console.log(seq);
         };
 
@@ -97,6 +105,9 @@
                 datum['确诊人数'] = +(datum['确诊人数']);
                 datum['治愈人数'] = +(datum['治愈人数']);
                 datum['死亡人数'] = +(datum['死亡人数']);
+                if(!isNaN(datum['扩散曲线'])){
+                    datum['扩散曲线'] = +(datum['扩散曲线']);
+                }
             });
 
             // remove duplicated items; 

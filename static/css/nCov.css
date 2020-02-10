@@ -3,6 +3,11 @@ text{
     font-family: sans-serif;
 }
 
+.legend_text{
+    font-size: 1em;
+    font-weight: bold;
+}
+
 .tick text{
     font-size: 1.6em;
     fill: #635F5D;

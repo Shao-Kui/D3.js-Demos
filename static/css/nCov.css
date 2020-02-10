@@ -8,6 +8,14 @@ text{
     font-weight: bold;
 }
 
+.date_text {
+    font-size: 6em;
+    color: #fafafa;
+    letter-spacing: 10;
+
+    text-shadow: 0px 1px 0px #999, 0px 2px 0px #888, 0px 3px 0px #777, 0px 4px 0px #666, 0px 5px 0px #555, 0px 6px 0px #444, 0px 7px 0px #333, 0px 8px 7px #001135;
+}
+
 .tick text{
     font-size: 1.6em;
     fill: #635F5D;

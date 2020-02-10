@@ -1,0 +1,23 @@
+text{
+    font-size: 2em;
+    font-family: sans-serif;
+}
+
+.tick text{
+    font-size: 1.6em;
+    fill: #635F5D;
+}
+
+.tick line {
+    stroke: #C0C0BB
+}
+
+#population{
+    font-size: 3em;
+    stroke: #8E8883
+}
+
+#horsepower{
+    font-size: 3em;
+    stroke: #8E8883
+}

@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>Scatter</title>
-    <link rel="stylesheet" href="/static/css/scatter.css"> 
+    <link rel="stylesheet" href="/static/css/nCov.css"> 
     <script src="/static/js/d3.min.js"></script>
   </head>
   <body>
@@ -17,20 +17,27 @@
         const innerHeight = height - margin.top - margin.bottom;
         const xValue = (datum) => {return dates.indexOf(datum['日期'])};
         const yValue = (datum) => {return datum['确诊人数']};
+        let xScale, yScale;
+        let maxX, maxY;
         let dates; 
+        let aduration = 1000;
 
         const renderinit = function(data){
             // Linear Scale: Data Space -> Screen Space; 
-            const xScale = d3.scaleLinear()
+            xScale = d3.scaleLinear()
             .domain(d3.extent(data, xValue))
             .range([0, innerWidth])
             .nice();
 
             // Introducing y-Scale; 
-            const yScale = d3.scaleLinear() // Instead of scaleBand, we use scale point; 
+            yScale = d3.scaleLinear() // Instead of scaleBand, we use scale point; 
             .domain(d3.extent(data, yValue).reverse()) // "extent" is equivalent to [d3.min(data, xValue), d3.max(data, xValue)]; 
             .range([0, innerHeight])
             .nice();
+
+            // generate maxX and maxY; 
+            maxX = xScale(d3.max(data, xValue));
+            maxY = yScale(d3.max(data, yValue));
 
             // The reason of using group is that nothing is rendered outside svg, so margin of svg is always blank while margin of group is rendered inside svg; 
             const g = svg.append('g')
@@ -69,8 +76,20 @@
         };
 
         const renderupdate = function(seq){
+            const g = d3.select('#maingroup');
+            circleupdates = g.selectAll('circle').data(seq, d => d['地区']);
+            circleenter = circleupdates.enter().append('circle')
+            .attr('cy', yScale(0))
+            .attr('cx', 0) // use xSacle to re-scale data space (domain) and return the rescaled population; 
+            .attr('r', 0)
+            .attr('fill', '#3fd4c5')
+            .attr('opacity', 0.4)
+            .attr('stroke', 'black');
+            circleupdates.merge(circleenter).transition().duration(aduration)
+            .attr('cy', (datum) => { return yScale(yValue(datum)) })
+            .attr('cx', (datum) => { return xScale(xValue(datum)) }) // use xSacle to re-scale data space (domain) and return the rescaled population; 
+            .attr('r', (datum) => { return Math.sqrt(yValue(datum) / 10) });
             console.log(seq);
-            console.log(dates);
         };
 
         d3.csv('./static/data/hubei.csv').then(function(data){
@@ -109,7 +128,7 @@
                     clearInterval(intervalId); 
                 }
                 c++;
-            }, 1000); 
+            }, aduration); 
         });
     </script>
   </body>

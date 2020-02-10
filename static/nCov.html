@@ -6,7 +6,7 @@
     <script src="/static/js/d3.min.js"></script>
   </head>
   <body>
-    <svg width="1600" height="860" id="mainsvg" class="svgs"></svg>
+    <svg width="1600" height="860" id="mainsvg" class="svgs" style="background-color: #DCDCDC;"></svg>
     <script>
         // get main SVG and its attributes & setting hyper-parameters; 
         const svg = d3.select('#mainsvg');
@@ -81,22 +81,85 @@
             .text('累计确诊数')
             .attr('id', 'xaxis');
             xAxisGroup.selectAll('.domain').remove();
+            
+            
         };
-
+        
         const renderupdate = function(seq){
+            // var color = d3.schemePaired;
+            var color = ['#008080','#FF0000','#FF7F50','#A0522D','#FF8C00','#D2B48C','#FFA500','#DAA520','#FFD700','#808000','#FFFF00','#7CFC00','#228B22','#2F4F4F','#00BFFF','#00008B','#FF00FF','#0000FF']
             const g = d3.select('#maingroup');
             circleupdates = g.selectAll('circle').data(seq, d => d['地区']);
             circleenter = circleupdates.enter().append('circle')
             .attr('cy', yScale(0))
             .attr('cx', 0) // use xSacle to re-scale data space (domain) and return the rescaled population; 
             .attr('r', 0)
-            .attr('fill', 'green') // #3fd4c5
-            .attr('opacity', 0.5);
+            .attr('stroke-width', 2)
+            .attr('stroke', '#FFF')
+            .attr('fill', function(d,i) {return color[i]}) // #3fd4c5
+            .attr('opacity', 0.9);
             circleupdates.merge(circleenter).transition().ease(d3.easeLinear).duration(aduration)
             .attr('cy', (datum) => { return yScale(yValue(datum)) })
             .attr('cx', (datum) => { return xScale(xValue(datum)) }) // use xSacle to re-scale data space (domain) and return the rescaled population; 
             .attr('r', (datum) => { return Math.sqrt(xValue(datum) / 10) });
             console.log(seq);
+
+            // draw legend
+            var legend = d3.select('#maingroup').selectAll(".legend")
+                .data(seq, d => d['地区'])
+                .enter().append("g")
+                .attr("class", "legend")
+                .attr("transform", function(d, i) { return "translate(" + (innerWidth - 100) + "," + (i * 25 + 10) + ")"; });
+			
+            // draw legend colored rectangles
+            legend.append("rect")
+            .data(seq) 
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", 30)
+            .attr("height", 20)
+            .style("fill", function (d,i) { return color[i];});
+
+			
+            // draw legend text
+            legend.append("text")
+            .data(seq) 
+            .attr('class', 'legend_text')
+            .attr("x", 40)
+            .attr("y", 9)
+            .attr("dy", ".5em")
+            .style("text-anchor", "start")
+            .text(d => d['地区']);
+
+            // console.log(seq);
+            // var color = d3.schemePaired;
+            // const g = d3.select('#maingroup');
+            // circleupdates = g.selectAll('circle').data(seq, d => d['地区']);
+            // circleenter = circleupdates.enter().append('circle')
+            // .attr('cy', yScale(0))
+            // .attr('cx', 0) // use xSacle to re-scale data space (domain) and return the rescaled population; 
+            // .attr('r', 0)
+            // .attr('fill', function(d,i) {return color[i % 10]})
+            // .attr('opacity', 0.7);
+            // circleupdates.merge(circleenter).transition().ease(d3.easeLinear).duration(aduration)
+            // .attr('cy', (datum) => { return yScale(yValue(datum)) })
+            // .attr('cx', (datum) => { return xScale(xValue(datum)) }) // use xSacle to re-scale data space (domain) and return the rescaled population; 
+            // .attr('r', (datum) => { return Math.sqrt(yValue(datum) / 10) });
+            
+            // textupdates = g.selectAll('.text_place').data(seq, d => d['地区']);
+
+            // textenter = textupdates.enter().append('text')
+            // .attr('class', 'text_place')
+            // .attr('x', 0)
+            // .attr('y', yScale(0) + 5)
+            // .text(function (d, i) {
+            //     return d['地区'];
+            // })
+            // .attr("text-anchor", "middle");
+            // textupdates.merge(textenter).transition().ease(d3.easeLinear).duration(aduration)
+            // .attr('y', (datum) => { return yScale(yValue(datum)) + 5 })
+            // .attr('x', (datum) => { return xScale(xValue(datum)) });
+
         };
 
         d3.csv('./static/data/hubei.csv').then(function(data){

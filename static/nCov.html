@@ -12,23 +12,20 @@
         const svg = d3.select('#mainsvg');
         const width = +svg.attr('width');
         const height = +svg.attr('height');
-        const margin = {top: 60, right: 60, bottom: 80, left: 150};
+        const margin = {top: 60, right: 120, bottom: 80, left: 120};
         const innerWidth = width - margin.left - margin.right;
         const innerHeight = height - margin.top - margin.bottom;
         //const xValue = (datum) => {return dates.indexOf(datum['日期'])};
         //const yValue = (datum) => {return datum['确诊人数']};
-        const xValue = d => d['确诊人数'];
-        const yValue = d => {
-            if(isNaN(d['扩散曲线'])){
-                return 0.0;
-            }else{
-                return d['扩散曲线'];
-            }
-        }
+        //const xValue = d => d['确诊人数'];
+        const xValue = d => d['感染率'];
+        const yValue = d => d['diffuse_smooth'];
+        const rValue = d => {return Math.sqrt(d['确诊人数']) + 6};
         let xScale, yScale;
         let maxX, maxY;
         let dates; 
         let aduration = 1000;
+        let metapop;
 
         const renderinit = function(data){
             // Linear Scale: Data Space -> Screen Space; 
@@ -57,7 +54,7 @@
             .tickSize(-innerWidth)
             .tickPadding(10); // .tickPadding is used to prevend intersection of ticks; 
             const xAxis = d3.axisBottom(xScale)
-            .tickFormat(d3.format('.3s'))
+            //.tickFormat(d3.format('.2s'))
             .tickSize(-innerHeight)
             .tickPadding(10);
 
@@ -78,7 +75,7 @@
             .attr('y', 60)
             .attr('x', innerWidth / 2)
             .attr('fill', 'black')
-            .text('累计确诊数')
+            .text('感染率（每万人累计确诊数）')
             .attr('id', 'xaxis');
             xAxisGroup.selectAll('.domain').remove();
         };
@@ -87,27 +84,39 @@
             const g = d3.select('#maingroup');
             circleupdates = g.selectAll('circle').data(seq, d => d['地区']);
             circleenter = circleupdates.enter().append('circle')
-            .attr('cy', yScale(0))
-            .attr('cx', 0) // use xSacle to re-scale data space (domain) and return the rescaled population; 
-            .attr('r', 0)
+            .attr('cy', (datum) => { return yScale(yValue(datum)) })
+            .attr('cx', (datum) => { return xScale(xValue(datum)) }) // use xSacle to re-scale data space (domain) and return the rescaled population; 
+            .attr('r', datum => rValue(datum))
             .attr('fill', 'green') // #3fd4c5
-            .attr('opacity', 0.5);
+            .attr('opacity', 0.4);
             circleupdates.merge(circleenter).transition().ease(d3.easeLinear).duration(aduration)
             .attr('cy', (datum) => { return yScale(yValue(datum)) })
             .attr('cx', (datum) => { return xScale(xValue(datum)) }) // use xSacle to re-scale data space (domain) and return the rescaled population; 
-            .attr('r', (datum) => { return Math.sqrt(xValue(datum) / 10) });
+            .attr('r', datum => rValue(datum));
             console.log(seq);
         };
 
+        d3.csv('./static/data/hubeipop.csv').then(data => {
+            data.forEach(datum => {
+                datum['人口（万人）'] = +(datum['人口（万人）']);
+            })
+            metapop = data;
+        });
+
         d3.csv('./static/data/hubei.csv').then(function(data){
+            
+            data = data.filter(datum => {return datum['地区'] !== '总计'});
             data.forEach(datum => {
                 // pre-process the data; 
                 datum['确诊人数'] = +(datum['确诊人数']);
                 datum['治愈人数'] = +(datum['治愈人数']);
                 datum['死亡人数'] = +(datum['死亡人数']);
-                if(!isNaN(datum['扩散曲线'])){
+                if(isNaN(datum['扩散曲线'])){
+                    datum['扩散曲线'] = 0.0;
+                }else{
                     datum['扩散曲线'] = +(datum['扩散曲线']);
                 }
+                datum['感染率'] = datum['确诊人数'] / (metapop.find(x => x['地区'] === datum['地区'])['人口（万人）']);
             });
 
             // remove duplicated items; 
@@ -125,6 +134,27 @@
             data.forEach(datum => {
                 sequential[alldates.indexOf(datum['日期'])].push(datum);
             });
+            
+            // smoothing '扩散曲线'; 
+            let t = 0;
+            for(; t < sequential.length; t++){
+                sequential[t].forEach(datum => {
+                    if(t == 0){
+                        datum['diffuse_smooth'] = datum['扩散曲线'];
+                    }else if(t == 1){
+                        datum['diffuse_smooth'] = (
+                            datum['扩散曲线'] + 
+                            sequential[t-1].find(x => x['地区'] === datum['地区'])['扩散曲线']
+                        ) / 2.0;
+                    }else{
+                        datum['diffuse_smooth'] = (
+                            datum['扩散曲线'] + 
+                            sequential[t-1].find(x => x['地区'] === datum['地区'])['扩散曲线'] + 
+                            sequential[t-2].find(x => x['地区'] === datum['地区'])['扩散曲线']
+                        ) / 3.0;
+                    }
+                })
+            }
 
             // initialize the chart; 
             renderinit(data);
@@ -135,6 +165,7 @@
                 renderupdate(sequential[c]);
                 console.log(c);
                 if(c > alldates.length){
+                    console.log('time to close this animation');
                     clearInterval(intervalId); 
                 }
                 c++;

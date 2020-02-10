@@ -83,9 +83,8 @@
             .attr('cx', 0) // use xSacle to re-scale data space (domain) and return the rescaled population; 
             .attr('r', 0)
             .attr('fill', '#3fd4c5')
-            .attr('opacity', 0.4)
-            .attr('stroke', 'black');
-            circleupdates.merge(circleenter).transition().duration(aduration)
+            .attr('opacity', 0.4);
+            circleupdates.merge(circleenter).transition().ease(d3.easeLinear).duration(aduration)
             .attr('cy', (datum) => { return yScale(yValue(datum)) })
             .attr('cx', (datum) => { return xScale(xValue(datum)) }) // use xSacle to re-scale data space (domain) and return the rescaled population; 
             .attr('r', (datum) => { return Math.sqrt(yValue(datum) / 10) });

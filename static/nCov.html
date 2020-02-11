@@ -196,6 +196,45 @@
             .attr('r', datum => rValue(datum));
             console.log(seq);
 
+            var legend_color = [
+                "#ff1c12", //武汉
+                "#EA7E53", //黄石
+                "#E69D87", //十堰
+                "#759AA0", //荆州
+                "#386F38", //宜昌
+                "#ff6131", //襄阳
+                "#DD6B66", //鄂州
+                "#EEDD78", //荆门
+                "#ffde1d", //孝感
+                "#52f3a9", //黄冈
+                "#4B8E6F", //咸宁
+                "#73A373", //恩施州
+                "#47c0d4", //随州
+                "#ff8603", //仙桃
+                "#d54873", //天门
+                "#1e9d95", //潜江
+                "#7289AB", //神农架
+            ]
+            
+            var legend_name = ["武汉市",
+                "黄石市",
+                "十堰市",
+                "荆州市",
+                "宜昌市",
+                "襄阳市",
+                "鄂州市",
+                "荆门市",
+                "孝感市",
+                "黄冈市",
+                "咸宁市",
+                "恩施州",
+                "随州市",
+                "仙桃市",
+                "天门市",
+                "潜江市",
+                "神农架",
+            ]
+
             // draw legend
             var legend = d3.select('#maingroup').selectAll(".legend")
                 .data(seq, d => d['地区'])
@@ -210,7 +249,7 @@
             .attr("y", 0)
             .attr("width", 30)
             .attr("height", 20)
-            .style("fill", function (d,i) { return color[i];});
+            .style("fill", function (d,i) { return legend_color[i];});
 
 			
             // draw legend text
@@ -222,7 +261,7 @@
             .attr("dy", ".5em")
             .attr("fill", 'white')
             .style("text-anchor", "start")
-            .text(d => d['地区']);
+            .text(function (d,i) {return legend_name[i];});
 
             // console.log(seq);
             // var color = d3.schemePaired;

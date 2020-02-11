@@ -38,6 +38,11 @@ def barcscginteraction():
 def nCov():
     return flask.send_from_directory('static', 'nCov.html')
 
+@app.route('/nCovnxt')
+def nCovnxt():
+    return flask.send_from_directory('static', 'nCovnxt.html')
+
+
 @app.route('/themeriver')
 def themeriver():
     return flask.send_from_directory('static', 'themeriver.html')

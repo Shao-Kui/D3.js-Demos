@@ -23,7 +23,8 @@
         //const yValue = d => {return d['diffuse_smooth']};
         //const yValue = d => {return Math.log(d['newinfec']+1)};
         //const rValue = d => {return Math.sqrt(d['确诊人数']) + 6};
-        let xScale, yScale;
+        const yMaxValue = 40000;
+        let xScale, yScale, nyScale;
         let maxX, maxY;
         let dates; 
         let aduration = 1000;
@@ -38,7 +39,12 @@
 
             // Introducing y-Scale; 
             yScale = d3.scaleLinear()
-            .domain([-50000, 50000]) // "extent" is equivalent to [d3.min(data, xValue), d3.max(data, xValue)]; 
+            .domain([-yMaxValue, yMaxValue]) // "extent" is equivalent to [d3.min(data, xValue), d3.max(data, xValue)]; 
+            .range([innerHeight, 0])
+            .nice();
+
+            nyScale = d3.scaleLinear()
+            .domain([yMaxValue, -yMaxValue]) // "extent" is equivalent to [d3.min(data, xValue), d3.max(data, xValue)]; 
             .range([innerHeight, 0])
             .nice();
 
@@ -50,6 +56,10 @@
             const g = svg.append('g')
             .attr('transform', `translate(${margin.left}, ${margin.top})`)
             .attr('id', 'maingroup');
+
+            svg.append('g')
+            .attr('transform', `translate(${margin.left}, ${margin.top})`)
+            .attr('id', 'hubeigroup');
 
             // Adding axes; 
             const yAxis = d3.axisLeft(yScale)
@@ -82,36 +92,51 @@
             xAxisGroup.selectAll('.domain').remove();
         };
         
-        const render = function(data, keys){
-            const area = d3.area()
-            .x((d) => xScale(xValue(d.data)))
-            .y0(d => yScale(d[0]))
-            .y1(d => yScale(d[1]));
+        const render = function(data, keys, area){
+            let g;
+            if(keys.includes('湖北')){
+                g = d3.select('#maingroup');
+            }else{
+                g = d3.select('#hubeigroup');
+            }
+            
 
             let layers = d3.stack()
             .keys(keys)
-            .offset(d3.stackOffsetSilhouette) (data);
-            console.log(layers);
-
-            const g = d3.select('#maingroup');
+            .offset(d3.stackOffsetNone) 
+            .order(d3.stackOrderDescending)(data);
+            console.log(layers);  
 
             const path = g.selectAll("path")
             .data(layers)
-            .join("path")
+            .enter().append("path")
             .attr("d", area)
             .attr("fill", () => d3.interpolateCool(Math.random()));
         };
 
+        const seqgen = function(data){
+            // re-arrange the data sequentially; 
+            sequential = []; 
+            dates.forEach(datum => {
+                sequential.push({'日期': datum});
+            });
+            data.forEach(datum => {
+                //sequential[alldates.indexOf(datum['日期'])].push(datum);
+                sequential[dates.indexOf(datum['日期'])][datum['省份']] = datum['确诊人数'];
+            });
+            return sequential
+        }
+
         d3.csv('./static/data/province.csv').then(function(data){
-            
-            data = data.filter(datum => {return datum['地区'] !== '总计'});
             data.forEach(datum => {
                 // pre-process the data; 
                 datum['确诊人数'] = +(datum['确诊人数']);
                 datum['治愈人数'] = +(datum['治愈人数']);
                 datum['死亡人数'] = +(datum['死亡人数']);
             });
-
+            data = data.filter(datum => {return datum['省份'] !== '总计'});
+            data_hubei = data.filter(datum => {return datum['省份'] === '湖北'});
+            data = data.filter(datum => {return datum['省份'] !== '湖北'});
             // remove duplicated items; 
             alldates = Array.from(new Set(data.map( datum => datum['日期'])));
 
@@ -122,24 +147,28 @@
                 return new Date(b.date) - new Date(a.date);
             });
             dates = alldates;
-
-            // re-arrange the data sequentially; 
-            sequential = []; 
-            alldates.forEach(datum => {
-                sequential.push({'日期': datum});
-            });
-            data.forEach(datum => {
-                //sequential[alldates.indexOf(datum['日期'])].push(datum);
-                sequential[alldates.indexOf(datum['日期'])][datum['省份']] = datum['确诊人数'];
-            });
+            let sequential = seqgen(data);
+            let sequential_hubei = seqgen(data_hubei);
 
             let keys = Array.from(new Set(data.map( datum => datum['省份'])));
+            let keys_hubei = Array.from(new Set(data_hubei.map( datum => datum['省份'])));
+
+            const area = d3.area()
+            .x((d) => xScale(xValue(d.data)))
+            .y0(d => yScale(d[0]))
+            .y1(d => yScale(d[1]));
+
+            const area_hubei = d3.area()
+            .x((d) => xScale(xValue(d.data)))
+            .y0(d => nyScale(d[0]))
+            .y1(d => nyScale(d[1]));
 
             // initialize the chart; 
             renderinit(data);
 
             // set the animation interval; 
-            render(sequential, keys);
+            render(sequential, keys, area);
+            render(sequential_hubei, keys_hubei, area_hubei);
         });
     </script>
   </body>

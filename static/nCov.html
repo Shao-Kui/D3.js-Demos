@@ -6,7 +6,7 @@
     <script src="/static/js/d3.min.js"></script>
   </head>
   <body style="text-align: center">
-    <svg width="1650" height="920" id="mainsvg" class="svgs" style="background-color: #DCDCDC;"></svg>
+    <svg width="1650" height="920" id="mainsvg" class="svgs" style="background-color: #333333;"></svg>
     <script>
         // get main SVG and its attributes & setting hyper-parameters; 
         const svg = d3.select('#mainsvg');
@@ -66,8 +66,8 @@
             .attr('transform', `rotate(-90)`)
             .attr('x', -innerHeight / 2)
             .attr('y', -80)
-            .attr('fill', 'black')
-            .text('新增人数（对数）')
+            .attr('fill', 'white')
+            .text('新增确诊人数')
             .attr('text-anchor', 'middle') // Make label at the middle of axis. 
             yAxisGroup.selectAll('.domain').remove(); // we can select multiple tags using comma to seperate them and we can use space to signify nesting; 
             
@@ -76,8 +76,8 @@
             xAxisGroup.append('text')
             .attr('y', 60)
             .attr('x', innerWidth / 2)
-            .attr('fill', 'black')
-            .text('感染率（每万人累计确诊数）')
+            .attr('fill', 'white')
+            .text('感染率（每万人）')
             .attr('id', 'xaxis');
             xAxisGroup.selectAll('.domain').remove();
             
@@ -91,17 +91,105 @@
         
         const renderupdate = function(seq){
             // var color = d3.schemePaired;
-            var color = ['#008080','#FF0000','#FF7F50','#A0522D','#FF8C00','#D2B48C','#FFA500','#DAA520','#FFD700','#808000','#FFFF00','#7CFC00','#228B22','#2F4F4F','#00BFFF','#00008B','#FF00FF','#0000FF']
+            // var color = ['#008080','#FF0000','#FF7F50','#A0522D','#FF8C00','#D2B48C','#FFA500','#DAA520','#FFD700','#808000','#FFFF00','#7CFC00','#228B22','#2F4F4F','#00BFFF','#00008B','#FF00FF','#0000FF']
+            // var color = ["#DD6B66", //鄂州
+            //             "#759AA0", //恩施州
+            //             "#E69D87", //黄冈
+            //             "#EA7E53", //黄石
+            //             "#EEDD78", //荆门
+            //             "#73A373", //荆州
+            //             "#73B9BC", //潜江
+            //             "#7289AB", //神农架
+            //             "#91CA8C", //十堰
+            //             "#39656D", //随州
+            //             "#F49F42", //天门
+            //             "#AA312C", //武汉
+            //             "#B35E45", //仙桃
+            //             "#4B8E6F", //咸宁
+            //             "#B6481C", //襄阳
+            //             "#BBA838", //孝感
+            //             "#386F38", //宜昌
+            //             "#388589",
+            //             "#385177",
+            //             "#50964A",
+            //             "#C16B0D",
+            //             "#FF190F",
+            //             "#45BFD3",
+            //             "#FF5F2F",
+            //             "#50F3A8",
+            //             "#FF4800",
+            //             "#FFDE1A",
+            //             "#41D541",
+            //             "#32E7EF",
+            //             "#3B7CDE",
+            //             "#58FD4A",
+            //             "#FF8500"
+            //         ]
+            var color = ["#DD6B66", //鄂州
+                "#73A373", //恩施州
+                "#52f3a9", //黄冈
+                "#EA7E53", //黄石
+                "#EEDD78", //荆门
+                "#759AA0", //荆州
+                "#1e9d95", //潜江
+                "#7289AB", //神农架
+                "#E69D87", //十堰
+                "#47c0d4", //随州
+                "#d54873", //天门
+                "#ff1c12", //武汉
+                "#ff8603", //仙桃
+                "#4B8E6F", //咸宁
+                "#ff6131", //襄阳
+                "#ffde1d", //孝感
+                "#386F38", //宜昌
+                "#388589",
+                "#385177",
+                "#50964A",
+                "#C16B0D",
+                "#FF190F",
+                "#45BFD3",
+                "#FF5F2F",
+                "#50F3A8",
+                "#FF4800",
+                "#FFDE1A",
+                "#41D541",
+                "#32E7EF",
+                "#3B7CDE",
+                "#58FD4A",
+                "#FF8500"
+            ]
             const g = d3.select('#maingroup');
+            time = seq[0]['日期'];
+            // data = seq[0]['日期'].split('月');
+            // month = data[0];
+            // day = data[1].split('日')[0];
+            // if (month < 10) {
+            //     month = '0' + month;
+            // }
+            // if (day < 10) {
+            //     day = '0' + day;
+            // }
+            // time = month + '/' + day; //'2020/' +
+            g.selectAll('.date_text').remove();
+            g.append("text")
+            .data(['seq']) 
+            .attr('class', 'date_text')
+            .attr("x", innerWidth * 4 / 5 + 160)
+            .attr("y", innerHeight - 120)
+            .attr("dy", ".5em")
+            .style("text-anchor", "end")
+            .attr("fill", "#a6a5a5")
+            .text(time);
+
             circleupdates = g.selectAll('circle').data(seq, d => d['地区']);
             circleenter = circleupdates.enter().append('circle')
             .attr('cy', (datum) => { return yScale(yValue(datum)) })
             .attr('cx', (datum) => { return xScale(xValue(datum)) }) // use xSacle to re-scale data space (domain) and return the rescaled population; 
             .attr('r', datum => rValue(datum))
             .attr('stroke-width', 2)
-            .attr('stroke', '#FFF')
+            .attr('stroke', '#cccccc')
             .attr('fill', function(d,i) {return color[i]}) // #3fd4c5
-            .attr('opacity', 0.9);
+            .attr('opacity', .85);
             circleupdates.merge(circleenter).transition().ease(d3.easeLinear).duration(aduration)
             .attr('cy', (datum) => { return yScale(yValue(datum)) })
             .attr('cx', (datum) => { return xScale(xValue(datum)) }) // use xSacle to re-scale data space (domain) and return the rescaled population; 
@@ -113,7 +201,7 @@
                 .data(seq, d => d['地区'])
                 .enter().append("g")
                 .attr("class", "legend")
-                .attr("transform", function(d, i) { return "translate(" + (innerWidth - 100) + "," + (i * 25 + 10) + ")"; });
+                .attr("transform", function(d, i) { return "translate(" + (innerWidth - 100) + "," + (i * 25 + 250) + ")"; });
 			
             // draw legend colored rectangles
             legend.append("rect")
@@ -132,6 +220,7 @@
             .attr("x", 40)
             .attr("y", 9)
             .attr("dy", ".5em")
+            .attr("fill", 'white')
             .style("text-anchor", "start")
             .text(d => d['地区']);
 
@@ -250,17 +339,6 @@
                     clearInterval(intervalId); 
                 }else{
                     renderupdate(sequential[c]);
-                    var g = d3.select('#maingroup');
-                    //console.log(g);
-                    g.selectAll('.date_text').remove();
-                    g.append("text")
-                    .data(['seq']) 
-                    .attr('class', 'date_text')
-                    .attr("x", innerWidth * 3 / 4)
-                    .attr("y", 9)
-                    .attr("dy", ".5em")
-                    .style("text-anchor", "middle")
-                    .text(sequential[c][0]['日期']);
                     c = c + 1;
                 }
             }, aduration); 

@@ -1,0 +1,76 @@
+
+            // console.log(seq);
+            // var color = d3.schemePaired;
+            // const g = d3.select('#maingroup');
+            // circleupdates = g.selectAll('circle').data(seq, d => d['地区']);
+            // circleenter = circleupdates.enter().append('circle')
+            // .attr('cy', yScale(0))
+            // .attr('cx', 0) // use xSacle to re-scale data space (domain) and return the rescaled population; 
+            // .attr('r', 0)
+            // .attr('fill', function(d,i) {return color[i % 10]})
+            // .attr('opacity', 0.7);
+            // circleupdates.merge(circleenter).transition().ease(d3.easeLinear).duration(aduration)
+            // .attr('cy', (datum) => { return yScale(yValue(datum)) })
+            // .attr('cx', (datum) => { return xScale(xValue(datum)) }) // use xSacle to re-scale data space (domain) and return the rescaled population; 
+            // .attr('r', (datum) => { return Math.sqrt(yValue(datum) / 10) });
+            
+            // textupdates = g.selectAll('.text_place').data(seq, d => d['地区']);
+
+            // textenter = textupdates.enter().append('text')
+            // .attr('class', 'text_place')
+            // .attr('x', 0)
+            // .attr('y', yScale(0) + 5)
+            // .text(function (d, i) {
+            //     return d['地区'];
+            // })
+            // .attr("text-anchor", "middle");
+            // textupdates.merge(textenter).transition().ease(d3.easeLinear).duration(aduration)
+            // .attr('y', (datum) => { return yScale(yValue(datum)) + 5 })
+            // .attr('x', (datum) => { return xScale(xValue(datum)) });
+
+            // var color = d3.schemePaired;
+            // var color = ['#008080','#FF0000','#FF7F50','#A0522D','#FF8C00','#D2B48C','#FFA500','#DAA520','#FFD700','#808000','#FFFF00','#7CFC00','#228B22','#2F4F4F','#00BFFF','#00008B','#FF00FF','#0000FF']
+            // var color = ["#DD6B66", //鄂州
+            //             "#759AA0", //恩施州
+            //             "#E69D87", //黄冈
+            //             "#EA7E53", //黄石
+            //             "#EEDD78", //荆门
+            //             "#73A373", //荆州
+            //             "#73B9BC", //潜江
+            //             "#7289AB", //神农架
+            //             "#91CA8C", //十堰
+            //             "#39656D", //随州
+            //             "#F49F42", //天门
+            //             "#AA312C", //武汉
+            //             "#B35E45", //仙桃
+            //             "#4B8E6F", //咸宁
+            //             "#B6481C", //襄阳
+            //             "#BBA838", //孝感
+            //             "#386F38", //宜昌
+            //             "#388589",
+            //             "#385177",
+            //             "#50964A",
+            //             "#C16B0D",
+            //             "#FF190F",
+            //             "#45BFD3",
+            //             "#FF5F2F",
+            //             "#50F3A8",
+            //             "#FF4800",
+            //             "#FFDE1A",
+            //             "#41D541",
+            //             "#32E7EF",
+            //             "#3B7CDE",
+            //             "#58FD4A",
+            //             "#FF8500"
+            //         ]
+
+            // data = seq[0]['日期'].split('月');
+            // month = data[0];
+            // day = data[1].split('日')[0];
+            // if (month < 10) {
+            //     month = '0' + month;
+            // }
+            // if (day < 10) {
+            //     day = '0' + day;
+            // }
+            // time = month + '/' + day; //'2020/' +

@@ -44,12 +44,12 @@
 
             // Introducing y-Scale; 
             yScale = d3.scaleLinear()
-            .domain([-yMaxValue, yMaxValue]) // "extent" is equivalent to [d3.min(data, xValue), d3.max(data, xValue)]; 
+            .domain([-35000, 15000]) // "extent" is equivalent to [d3.min(data, xValue), d3.max(data, xValue)]; 
             .range([innerHeight, 0])
             .nice();
 
             nyScale = d3.scaleLinear()
-            .domain([yMaxValue, -yMaxValue]) // "extent" is equivalent to [d3.min(data, xValue), d3.max(data, xValue)]; 
+            .domain([35000, -15000])
             .range([innerHeight, 0])
             .nice();
 
@@ -92,7 +92,7 @@
             .attr('y', 60)
             .attr('x', innerWidth / 2)
             .attr('fill', 'white')
-            .text('横轴')
+            .text(' ')
             .attr('id', 'xaxis');
             xAxisGroup.selectAll('.domain').remove();
         };
@@ -104,18 +104,20 @@
             }else{
                 g = d3.select('#hubeigroup');
             }
-            
 
             let layers = d3.stack()
             .keys(keys)
             .offset(d3.stackOffsetNone) 
-            .order(d3.stackOrderDescending)(data);
+            //.order(d3.stackOrderDescending)
+            .order(d3.stackOrderNone)
+            (data);
             console.log(layers);  
 
             const path = g.selectAll("path")
             .data(layers)
             .enter().append("path")
             .attr("d", area)
+            // fill attrbute requires designers to assign colors for each province; 
             .attr("fill", () => d3.interpolateCool(Math.random()));
         };
 

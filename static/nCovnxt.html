@@ -101,24 +101,24 @@
             .tickSize(-innerHeight)
             .tickPadding(10);
 
-            let yAxisGroup = g.append('g').call(yAxis).attr('id', 'yaxis');;
+            let yAxisGroup = g.append('g').call(yAxis).attr('id', 'yaxis');
             yAxisGroup.append('text')
             .attr('transform', `rotate(-90)`)
             .attr('x', -innerHeight / 2)
-            .attr('y', -80)
+            .attr('y', -60)
             .attr('fill', 'white')
             .text(yAxisLabel)
             .attr('text-anchor', 'middle') // Make label at the middle of axis. 
             yAxisGroup.selectAll('.domain').remove(); // we can select multiple tags using comma to seperate them and we can use space to signify nesting; 
             
             let xAxisGroup = g.append('g').call(xAxis)
-            .attr('transform', `translate(${0}, ${innerHeight})`);
+            .attr('transform', `translate(${0}, ${innerHeight})`)
+            .attr('id', 'xaxis');
             xAxisGroup.append('text')
             .attr('y', 60)
             .attr('x', innerWidth / 2)
             .attr('fill', 'white')
-            .text(xAxisLabel)
-            .attr('id', 'xaxis');
+            .text(xAxisLabel);
             xAxisGroup.selectAll('.domain').remove();
             
             //document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
@@ -235,7 +235,7 @@
         });
 
         d3.csv('./static/data/province.csv').then(function(data){
-            
+            totals = data.filter(datum => {return datum['省份'] === '总计'});
             data = data.filter(datum => {return datum['省份'] !== '总计'});
             data.forEach(datum => {
                 // pre-process the data; 
@@ -280,6 +280,12 @@
                     }
                 })
             }
+
+            // 'K' for Wen-Yang; 
+            const total_last = totals.find(d => {return d['日期'] === alldates[alldates.length-1]}); 
+            const total_ls = totals.find(d => {return d['日期'] === alldates[alldates.length-2]}); 
+            const K = (total_last['确诊人数'] - total_ls['确诊人数']) / total_last['确诊人数'];
+            console.log(K);
 
             // initialize the chart; 
             renderinit(data, sequential[0]);

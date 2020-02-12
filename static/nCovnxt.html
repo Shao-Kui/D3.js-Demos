@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Scatter</title>
-    <link rel="stylesheet" href="/static/css/nCov.css"> 
+    <title>nCov-Province</title>
+    <link rel="stylesheet" href="/static/css/nCovnxt.css"> 
     <script src="/static/js/d3.min.js"></script>
   </head>
   <body style="text-align: center">
@@ -109,13 +109,13 @@
             "湖北": 0,
             "浙江": 35,
             "广西": -2,
-            "云南": 0,
+            "云南": 10,
             "江西": -15,
             "辽宁": 0,
             "福建": 30,
             "陕西": 0,
             "黑龙江": -30,
-            "山西": 0,
+            "山西": -10,
             "贵州": 30,
             "重庆": 25,
             "吉林": -5,
@@ -145,12 +145,12 @@
             "安徽": 45,
             "湖北": 15,
             "浙江": 20,
-            "广西": 0,
+            "广西": 2,
             "云南": 0,
             "江西": -5,
             "辽宁": 0,
             "福建": 20,
-            "陕西": 0,
+            "陕西": 40,
             "黑龙江": 0,
             "山西": 40,
             "贵州": 20,
@@ -242,8 +242,8 @@
             .attr("x2", xScale(11))
             .attr("y2", yScale(y2))
             .attr("stroke", "#333333")
-            .attr("stroke-width", "2px");
-
+            .attr("stroke-width", "2px")
+            .attr("opacity", 0);
 
             var legend_color = [
                 "#ff1c12", //武汉

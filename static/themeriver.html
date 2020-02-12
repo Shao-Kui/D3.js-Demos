@@ -31,6 +31,9 @@
         let aduration = 1000;
         let metapop;
 
+        const xAxisLabel = ' ';
+        const yAxisLabel = '新增人数';
+
         var province_color = {
             "北京": "#de5991",
             "天津": "#759AA0",
@@ -109,7 +112,7 @@
             .attr('x', -innerHeight / 2)
             .attr('y', -80)
             .attr('fill', 'white')
-            .text('纵轴')
+            .text(yAxisLabel)
             .attr('text-anchor', 'middle') // Make label at the middle of axis. 
             yAxisGroup.selectAll('.domain').remove(); // we can select multiple tags using comma to seperate them and we can use space to signify nesting; 
             
@@ -120,7 +123,7 @@
             .attr('y', 60)
             .attr('x', innerWidth / 2)
             .attr('fill', 'white')
-            .text(' ');
+            .text(xAxisLabel);
             xAxisGroup.selectAll('.domain').remove();
 
             console.log(document.getElementById('xaxis'));
@@ -152,7 +155,7 @@
             .attr("d", area)
             // fill attrbute requires designers to assign colors for each province; 
             .attr("fill", function (d,i) {
-                console.log(d); 
+                //console.log(d); 
                 return province_color[d["key"]]; });
         };
 
@@ -209,12 +212,15 @@
             // stack data; 
             let prestack = seqgen(data);
             let prestack_hubei = seqgen(data_hubei);
-            let keys = Array.from(new Set(data.map( datum => datum['省份'])));
+            // let keys = Array.from(new Set(data.map( datum => datum['省份'])));
+            // sort according to '累计确诊' and prepare keys; 
+            const sortedforkey = sequential[sequential.length-1].sort( (a,b) => b['确诊人数'] - a['确诊人数'] );
+            let keys = sortedforkey.map(d => d['省份']);
+            keys = keys.filter(d => {return d !== '湖北'});
             let keys_hubei = Array.from(new Set(data_hubei.map( datum => datum['省份'])));
 
             // generate low_max and up_max for Y-scale; 
             up_max = d3.max(sequential, seq => {
-                console.log(seq);
                 result = 0;
                 seq.forEach(s => {
                     if(s['省份'] !== '湖北'){
@@ -238,11 +244,13 @@
             renderinit(data);
 
             const area = d3.area()
+            .curve(d3.curveBundle.beta(1.0)) // default is d3.curveLinear
             .x(d => xScale(xValue(d.data)))
             .y0(d => yScale(d[0]))
             .y1(d => yScale(d[1]));
 
             const area_hubei = d3.area()
+            .curve(d3.curveBundle.beta(1.0))
             .x((d) => xScale(xValue(d.data)))
             .y0(d => nyScale(d[0]))
             .y1(d => nyScale(d[1]));

@@ -82,6 +82,14 @@
             .range([0, innerHeight])
             .nice();
 
+            dataXScale = d3.scaleBand()
+            .domain(["0", "2", "10", "20", "50", "150", "400", "1100", "3000", "8100", "22000", "60000"])
+            .range([0, innerWidth]);
+
+            dataYScale = d3.scaleBand()
+            .domain(["0", "2", "10", "20", "50", "150", "400", "1100", "3000", "8100", "22000", "60000"].reverse())
+            .range([0, innerHeight]);
+
             // generate maxX and maxY; 
             maxX = xScale(d3.max(data, xValue));
             maxY = yScale(d3.max(data, yValue));
@@ -92,12 +100,12 @@
             .attr('id', 'maingroup');
 
             // Adding axes; 
-            const yAxis = d3.axisLeft(yScale)
+            const yAxis = d3.axisLeft(dataYScale)
             .tickSize(-innerWidth)
             .tickFormat(d3.format('.2s'))
             .tickPadding(10); // .tickPadding is used to prevend intersection of ticks; 
-            const xAxis = d3.axisBottom(xScale)
-            //.tickFormat(d3.format('.2s'))
+            const xAxis = d3.axisBottom(dataXScale)
+            .tickFormat(d3.format('.2s'))
             .tickSize(-innerHeight)
             .tickPadding(10);
 
@@ -179,13 +187,12 @@
                 "神农架",
             ];
 
-            /*
             // draw legend
             var legend = d3.select('#maingroup').selectAll(".legend")
                 .data(seq, d => d['省份'])
                 .enter().append("g")
                 .attr("class", "legend")
-                .attr("transform", function(d, i) { return "translate(" + (innerWidth - 100) + "," + (i * 25 + 250) + ")"; });
+                .attr("transform", function(d, i) { return "translate(" + (innerWidth + 10) + "," + (i * 20) + ")"; });
 			
             // draw legend colored rectangles
             legend.append("rect")
@@ -193,8 +200,8 @@
             .attr("x", 0)
             .attr("y", 0)
             .attr("width", 30)
-            .attr("height", 20)
-            .style("fill", function (d,i) { return legend_color[i];});
+            .attr("height", 15)
+            .style("fill", function (d,i) { return color[i];});
 			
             // draw legend text
             legend.append("text")
@@ -202,12 +209,10 @@
             .attr('class', 'legend_text')
             .attr("x", 40)
             .attr("y", 9)
-            .attr("dy", ".5em")
+            .attr("dy", ".3em")
             .attr("fill", 'white')
             .style("text-anchor", "start")
-            .text(function (d,i) {return legend_name[i];});
-            */
-
+            .text(d => d['省份']);
         };
         
         const renderupdate = function(seq){
@@ -237,6 +242,24 @@
             .attr('cy', (datum) => { return yScale(yValue(datum)) })
             .attr('cx', (datum) => { return xScale(xValue(datum)) }) // use xSacle to re-scale data space (domain) and return the rescaled population; 
             .attr('r', datum => rValue(datum));
+
+            textupdates = g.selectAll('.province_text').data(seq);
+            textenter = textupdates.enter().append('text')
+            .attr("class", "province_text")
+            .attr("x", (datum) => { return xScale(xValue(datum)) })
+            .attr("y", (datum) => { return yScale(yValue(datum)) - 10; })
+            .attr("dy", ".1em")
+            .style("text-anchor", "middle")
+            .attr("fill", "#a6a5a5")
+            .text(function (d,i) { 
+                console.log(d);
+                console.log(d['省份']); 
+                return d['省份'];
+            });
+
+            textupdates.merge(textenter).transition().ease(d3.easeLinear).duration(aduration)
+            .attr('x', (datum) => { return xScale(xValue(datum)) })
+            .attr('y', (datum) => { return yScale(yValue(datum)) - 10 });
         };
 
         d3.csv('./static/data/2019population.csv').then(data => {

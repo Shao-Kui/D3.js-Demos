@@ -6,7 +6,7 @@
     <script src="/static/js/d3.min.js"></script>
   </head>
   <body style="text-align: center">
-    <svg width="1650" height="920" id="mainsvg" class="svgs" style="background-color: #333333;"></svg>
+    <svg width="1650" height="920" id="mainsvg" class="svgs" style="background-color: #ffffff;"></svg>
     <script>
         // get main SVG and its attributes & setting hyper-parameters; 
         const svg = d3.select('#mainsvg');
@@ -143,7 +143,7 @@
             "河北": 0,
             "湖南": 0,
             "安徽": 45,
-            "湖北": 0,
+            "湖北": 15,
             "浙江": 20,
             "广西": 0,
             "云南": 0,
@@ -209,7 +209,7 @@
             .attr('transform', `rotate(-90)`)
             .attr('x', -innerHeight / 2)
             .attr('y', -60)
-            .attr('fill', 'white')
+            .attr('fill', '#333333')
             .text(yAxisLabel)
             .attr('text-anchor', 'middle') // Make label at the middle of axis. 
             yAxisGroup.selectAll('.domain').remove(); // we can select multiple tags using comma to seperate them and we can use space to signify nesting; 
@@ -220,7 +220,7 @@
             xAxisGroup.append('text')
             .attr('y', 60)
             .attr('x', innerWidth / 2)
-            .attr('fill', 'white')
+            .attr('fill', '#333333')
             .text(xAxisLabel);
             xAxisGroup.selectAll('.domain').remove();
             
@@ -233,7 +233,7 @@
             // var y2 = 11 + Math.log(K);
             console.log(K);
             var x1 = 0;
-            var y2 = 11 + Math.log(K);
+            var y2 = K * 11;
 
             g.selectAll(".log_line").remove();
             lineupdates = g.append('line').attr("x1", xScale(x1))
@@ -241,7 +241,7 @@
             .attr("y1", yScale(0))
             .attr("x2", xScale(11))
             .attr("y2", yScale(y2))
-            .attr("stroke", "black")
+            .attr("stroke", "#333333")
             .attr("stroke-width", "2px");
 
 
@@ -283,31 +283,33 @@
                 "潜江市",
                 "神农架",
             ];
-
+                
+            var province_name = ["北京", "天津", "河北", "山西", "辽宁",  "黑龙江", "上海", "江苏", "浙江", "安徽", "福建", "江西", "山东", "河南", "湖北", "湖南", "广东", "广西", "海南", "重庆", "四川", "贵州", "云南", "陕西", "宁夏"]
             // draw legend
             var legend = d3.select('#maingroup').selectAll(".legend")
-                .data(seq, d => d['省份'])
+                .data(province_name)
                 .enter().append("g")
                 .attr("class", "legend")
-                .attr("transform", function(d, i) { return "translate(" + (innerWidth + 10) + "," + (i * 20) + ")"; });
+                .attr("transform", function(d, i) { return "translate(" + (innerWidth * 4 / 5 + 300) + "," + (i * 20 + 220) + ")"; });
 			
             // draw legend colored rectangles
             legend.append("rect")
-            .data(seq) 
+            .data(province_name) 
             .attr("x", 0)
             .attr("y", 0)
             .attr("width", 30)
             .attr("height", 15)
-            .style("fill", function (d,i) { return province_color[d['省份']]});
+            .style("fill", function (d,i) {
+                return province_color[d]});
 			
             // draw legend text
             legend.append("text")
-            .data(seq) 
-            .attr('class', 'legend_text')
+            .data(province_name)
+            .attr("class", "legend_text")
             .attr("x", 40)
             .attr("y", 9)
-            .attr("dy", ".3em")
-            .attr("fill", 'white')
+            .attr("dy", ".2em")
+            .attr("fill", '#333333')
             .style("text-anchor", "start")
             .text(d => d['省份']);
 
@@ -331,11 +333,11 @@
             g.append("text")
             .data(['seq']) 
             .attr('class', 'date_text')
-            .attr("x", innerWidth * 4 / 5 + 160)
-            .attr("y", innerHeight - 120)
+            .attr("x", innerWidth / 4 + 30)
+            .attr("y", innerHeight / 10 - 20)
             .attr("dy", ".5em")
             .style("text-anchor", "end")
-            .attr("fill", "#a6a5a5")
+            .attr("fill", "#504f4f")
             .text(time);
 
             circleupdates = g.selectAll('circle').data(seq, d => d['省份']);
@@ -343,8 +345,8 @@
             .attr('cy', (datum) => { return yScale(yValue(datum)) })
             .attr('cx', (datum) => { return xScale(xValue(datum)) }) // use xSacle to re-scale data space (domain) and return the rescaled population; 
             .attr('r', datum => rValue(datum))
-            .attr('stroke-width', 2)
-            .attr('stroke', '#cccccc')
+            // .attr('stroke-width', 2)
+            // .attr('stroke', '#cccccc')
             .attr('fill', function(d,i) {return province_color[d['省份']]}) // #3fd4c5
             .attr('opacity', .85);
             circleupdates.merge(circleenter).transition().ease(d3.easeLinear).duration(aduration)
@@ -359,7 +361,7 @@
             .attr("y", (datum) => { return yScale(yValue(datum)) - 15 + privece_offset_y[datum['省份']]; })
             .attr("dy", ".1em")
             .style("text-anchor", "middle")
-            .attr("fill", "#a6a5a5")
+            .attr("fill", "#333333")
             .text(function (d,i) { 
                 return d['省份'];
             });

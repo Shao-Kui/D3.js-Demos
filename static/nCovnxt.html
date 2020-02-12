@@ -321,14 +321,14 @@
             }
 
             // 'K' for Wen-Yang; 
-            const lastseq = sequential[sequential.length-1];
-            let total_new = 0;
-            let total_num = 0;
-            lastseq.forEach(d => {total_new += d['newinfec']; total_num += d['确诊人数'];});
-            const K = total_new / total_num;
-            //const total_last = totals.find(d => {return d['日期'] === alldates[alldates.length-1]}); 
-            //const total_ls = totals.find(d => {return d['日期'] === alldates[alldates.length-2]}); 
-            //const K = (total_last['确诊人数'] - total_ls['确诊人数']) / total_last['确诊人数'];
+            //const lastseq = sequential[sequential.length-1];
+            //let total_new = 0;
+            //let total_num = 0;
+            //lastseq.forEach(d => {total_new += d['newinfec']; total_num += d['确诊人数'];});
+            //const K = total_new / total_num;
+            const total_last = totals.find(d => {return d['日期'] === alldates[alldates.length-1]}); 
+            const total_ls = totals.find(d => {return d['日期'] === alldates[alldates.length-2]}); 
+            const K = (total_last['确诊人数'] - total_ls['确诊人数']) / total_last['确诊人数'];
             console.log(K);
 
             // initialize the chart; 

@@ -3,21 +3,27 @@ text{
 }
 
 .legend_text{
+    fill: #333333;
     font-size: 1em;
 }
 
 .date_text {
     font-weight: bold;
-    font-size: 7em;
+    font-size: 6em;
+}
+
+.province_text {
+    fill: #333333;
+    font-size: 1em;
 }
 
 .tick text{
     font-size: 1.6em;
-    fill: #cccccc;
+    fill: #333333;
 }
 
 .tick line {
-    stroke: #C0C0BB;
+    stroke: #333333;
 }
 
 #population{

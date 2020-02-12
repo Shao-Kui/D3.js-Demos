@@ -203,7 +203,8 @@
             .tickSize(-innerHeight)
             .tickPadding(10);
 
-            let yAxisGroup = g.append('g').call(yAxis).attr('id', 'yaxis');
+            let yAxisGroup = g.append('g').call(yAxis)
+            .attr('id', 'yaxis');
             yAxisGroup.append('text')
             .attr('transform', `rotate(-90)`)
             .attr('x', -innerHeight / 2)
@@ -310,7 +311,19 @@
             .attr("dy", ".2em")
             .attr("fill", '#333333')
             .style("text-anchor", "start")
-            .text(d => d);
+            .text(d => d['省份']);
+
+            //document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
+            myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000, 8100, 22000, 60000]
+            for(let tid = 0; tid < myticks.length; tid++){
+                document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
+            }
+
+            //document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
+            myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000, 8100]
+            for(let tid = 0; tid < myticks.length; tid++){
+                document.getElementById('yaxis').getElementsByClassName('tick')[myticks.length-1-tid].getElementsByTagName('text')[0].textContent = myticks[tid];
+            }
         };
         
         const renderupdate = function(seq){
@@ -365,7 +378,7 @@
             metapop = data;
         });
 
-        d3.csv('./static/data/province12.csv').then(function(data){
+        d3.csv('./static/data/province.csv').then(function(data){
             totals = data.filter(datum => {return datum['省份'] === '总计'});
             data = data.filter(datum => {return datum['省份'] !== '总计'});
             deletelist = ['澳门', '香港', '甘肃', '青海', '吉林', '内蒙古', '新疆', '台湾', '西藏'];

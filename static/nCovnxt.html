@@ -269,7 +269,7 @@
             metapop = data;
         });
 
-        d3.csv('./static/data/province12.csv').then(function(data){
+        d3.csv('./static/data/province.csv').then(function(data){
             totals = data.filter(datum => {return datum['省份'] === '总计'});
             data = data.filter(datum => {return datum['省份'] !== '总计'});
             deletelist = ['澳门', '香港', '甘肃', '青海', '吉林', '内蒙古', '新疆', '台湾', '西藏'];

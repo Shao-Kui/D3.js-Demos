@@ -13,19 +13,19 @@ text{
 
 .tick text{
     font-size: 1.6em;
-    fill: #cccccc;
+    fill: #333333;
 }
 
 .tick line {
-    stroke: #C0C0BB;
+    stroke: #cccccc;
 }
 
 #population{
     font-size: 3em;
-    stroke: #8E8883
+    stroke: #333333
 }
 
 #horsepower{
     font-size: 3em;
-    stroke: #8E8883
+    stroke: #333333
 }

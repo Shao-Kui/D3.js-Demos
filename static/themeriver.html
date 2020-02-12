@@ -143,12 +143,12 @@
 
             // Introducing y-Scale; 
             yScale = d3.scaleLinear()
-            .domain([-low_max, 0, up_max]) // "extent" is equivalent to [d3.min(data, xValue), d3.max(data, xValue)]; 
+            .domain([up_max, 0, -low_max]) // "extent" is equivalent to [d3.min(data, xValue), d3.max(data, xValue)]; 
             .range([innerHeight, innerHeight / 2, 0])
             .nice();
 
             nyScale = d3.scaleLinear()
-            .domain([low_max, 0, -up_max])
+            .domain([-up_max, 0, low_max])
             .range([innerHeight, innerHeight / 2, 0])
             .nice();
 

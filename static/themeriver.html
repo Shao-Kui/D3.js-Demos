@@ -31,6 +31,34 @@
         let aduration = 1000;
         let metapop;
 
+        var province_color = {
+            "北京": "#de5991",
+            "天津": "#759AA0",
+            "河北": "#E69D87",
+            "山西": "#be3259",
+            "辽宁": "#EA7E53",
+            "黑龙江": "#EEDD78",
+            "上海": "#9359b1",
+            "江苏": "#cb8eb3",
+            "浙江": "#F49F42",
+            "安徽": "#AA312C",
+            "福建": "#B35E45",
+            "江西": "#4B8E6F",
+            "山东": "#B6481C",
+            "河南": "#BBA838",
+            "湖北": "#FF190F",
+            "湖南": "#206c71",
+            "广东": "#385177",
+            "广西": "#50964A",
+            "海南": "#C16B0D",
+            "重庆": "#245824",
+            "四川": "#45BFD3",
+            "贵州": "#50F3A8",
+            "云南": "#FF4800",
+            "陕西": "#FFDE1A",
+            "宁夏": "#41D541"
+        }
+
         const renderinit = function(data, seq){
             
             // Linear Scale: Data Space -> Screen Space; 
@@ -38,10 +66,6 @@
             .domain(d3.extent(data, xValue))
             .range([0, innerWidth])
             .nice();
-
-            dataXScale = d3.scaleBand()
-            .domain(dates)
-            .range([0, innerWidth]);
 
             // Introducing y-Scale; 
             console.log(low_max, up_max)
@@ -73,10 +97,11 @@
             .tickSize(-innerWidth)
             .tickFormat(d3.format('.2s'))
             .tickPadding(10); // .tickPadding is used to prevend intersection of ticks; 
-            const xAxis = d3.axisBottom(dataXScale)
+            const xAxis = d3.axisBottom(xScale)
             //.tickFormat(d3.format('.2s'))
             .tickSize(-innerHeight)
-            .tickPadding(10);
+            .tickPadding(10)
+            .ticks(21);
 
             let yAxisGroup = g.append('g').call(yAxis).attr('id', 'yaxis');;
             yAxisGroup.append('text')
@@ -89,14 +114,20 @@
             yAxisGroup.selectAll('.domain').remove(); // we can select multiple tags using comma to seperate them and we can use space to signify nesting; 
             
             let xAxisGroup = g.append('g').call(xAxis)
-            .attr('transform', `translate(${0}, ${innerHeight})`);
+            .attr('transform', `translate(${0}, ${innerHeight})`)
+            .attr('id', 'xaxis');
             xAxisGroup.append('text')
             .attr('y', 60)
             .attr('x', innerWidth / 2)
             .attr('fill', 'white')
-            .text(' ')
-            .attr('id', 'xaxis');
+            .text(' ');
             xAxisGroup.selectAll('.domain').remove();
+
+            console.log(document.getElementById('xaxis'));
+            myticks = ["1月21日", "1月22日", "1月23日", "1月24日", "1月25日", "1月26日", "1月27日", "1月28日", "1月29日", "1月30日", "1月31日", "2月1日", "2月2日", "2月3日", "2月4日", "2月5日", "2月6日", "2月7日", "2月8日", "2月9日", "2月10日", "2月11日", "2月12日"]
+            for(let tid = 0; tid < myticks.length; tid++){
+                document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
+            }
         };
         
         const render = function(data, keys, area){
@@ -120,7 +151,9 @@
             .enter().append("path")
             .attr("d", area)
             // fill attrbute requires designers to assign colors for each province; 
-            .attr("fill", () => d3.interpolateCool(Math.random()));
+            .attr("fill", function (d,i) {
+                console.log(d); 
+                return province_color[d["key"]]; });
         };
 
         const seqgen = function(data){

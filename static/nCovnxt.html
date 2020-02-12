@@ -142,8 +142,8 @@
             "江苏": 20,
             "河北": 0,
             "湖南": 0,
-            "安徽": 45,
-            "湖北": 105,
+            "安徽": 30,
+            "湖北": 35,
             "浙江": 20,
             "广西": 2,
             "云南": 0,
@@ -362,13 +362,14 @@
             .attr("dy", ".1em")
             .style("text-anchor", "middle")
             .attr("fill", "#333333")
+            //.attr('opacity', 0)
             .text(function (d,i) { 
                 return d['省份'];
             });
 
             textupdates.merge(textenter).transition().ease(d3.easeLinear).duration(aduration)
             .attr('x', (datum) => { return xScale(xValue(datum)) + privece_offset_x[datum['省份']]; })
-            .attr('y', (datum) => { return yScale(yValue(datum)) - 15 + privece_offset_y[datum['省份']]; });
+            .attr('y', (datum) => { return yScale(yValue(datum)) - 23 + privece_offset_y[datum['省份']] + rValue(datum); });
         };
 
         d3.csv('./static/data/2019population.csv').then(data => {

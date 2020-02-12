@@ -15,7 +15,8 @@
         const margin = {top: 100, right: 120, bottom: 100, left: 120};
         const innerWidth = width - margin.left - margin.right;
         const innerHeight = height - margin.top - margin.bottom;
-        const xValue = (datum) => {return dates.indexOf(datum['日期'])};
+        const xValue = (datum) => {
+            return dates.indexOf(datum['日期'])};
         const yValue = (datum) => {return datum['新增确诊']};
         //const xValue = d => d['确诊人数'];
         //const xValue = d => d['感染率'];
@@ -135,12 +136,13 @@
 
 
         const renderinit = function(data, seq){
-            
+            console.log("hello");   
+            console.log(d3.extent(data, xValue));
             // Linear Scale: Data Space -> Screen Space; 
             xScale = d3.scaleLinear()
-            .domain(d3.extent(data, xValue))
-            .range([0, innerWidth])
-            .nice();
+            .domain([0,21])
+            .range([0, innerWidth]);
+            console.log(xScale(21), innerWidth);
 
             // Introducing y-Scale; 
             console.log(low_max, up_max)
@@ -157,7 +159,8 @@
             // generate maxX and maxY; 
             maxX = xScale(d3.max(data, xValue));
             maxY = yScale(d3.max(data, yValue));
-
+            console.log('maxX');
+            console.log(maxX);
             // The reason of using group is that nothing is rendered outside svg, so margin of svg is always blank while margin of group is rendered inside svg; 
             const g = svg.append('g')
             .attr('transform', `translate(${margin.left}, ${margin.top})`)
@@ -198,8 +201,8 @@
             .text(xAxisLabel);
             xAxisGroup.selectAll('.domain').remove();
 
-            console.log(document.getElementById('xaxis'));
-            myticks = ["1月21日", "1月22日", "1月23日", "1月24日", "1月25日", "1月26日", "1月27日", "1月28日", "1月29日", "1月30日", "1月31日", "2月1日", "2月2日", "2月3日", "2月4日", "2月5日", "2月6日", "2月7日", "2月8日", "2月9日", "2月10日", "2月11日", "2月12日"]
+            // console.log(document.getElementById('xaxis'));
+            myticks = ["1月21日", "1月22日", "1月23日", "1月24日", "1月25日", "1月26日", "1月27日", "1月28日", "1月29日", "1月30日", "1月31日", "2月1日", "2月2日", "2月3日", "2月4日", "2月5日", "2月6日", "2月7日", "2月8日", "2月9日", "2月10日", "2月11日"]
             for(let tid = 0; tid < myticks.length; tid++){
                 document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             }
@@ -219,7 +222,7 @@
             //.order(d3.stackOrderDescending)
             .order(d3.stackOrderNone)
             (data);
-            console.log(layers);  
+            // console.log(layers);  
 
             const path = g.selectAll("path")
             .data(layers)
@@ -228,10 +231,8 @@
             .attr("opacity",0.9)
             // fill attrbute requires designers to assign colors for each province; 
             .attr("fill", function (d,i) {
-                //console.log(d); 
                 return province_color[d["key"]]; });
         };
-
         const seqgen = function(data){
             // re-arrange the data sequentially; 
             let prestack = []; 
@@ -276,7 +277,7 @@
             data.forEach(datum => {
                 sequential[alldates.indexOf(datum['日期'])].push(datum);
             });
-            console.log(sequential);
+            // console.log(sequential);
 
             // split data from Hu-Bei and not from Hu-Bei; 
             data_hubei = data.filter(datum => {return datum['省份'] === '湖北'});
@@ -294,6 +295,7 @@
 
             // generate low_max and up_max for Y-scale; 
             up_max = d3.max(sequential, seq => {
+                // console.log(seq);
                 result = 0;
                 seq.forEach(s => {
                     if(s['省份'] !== '湖北'){

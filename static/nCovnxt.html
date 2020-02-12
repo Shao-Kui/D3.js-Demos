@@ -203,7 +203,8 @@
             .tickSize(-innerHeight)
             .tickPadding(10);
 
-            let yAxisGroup = g.append('g').call(yAxis).attr('id', 'yaxis');
+            let yAxisGroup = g.append('g').call(yAxis)
+            .attr('id', 'yaxis');
             yAxisGroup.append('text')
             .attr('transform', `rotate(-90)`)
             .attr('x', -innerHeight / 2)
@@ -309,6 +310,18 @@
             .attr("fill", 'white')
             .style("text-anchor", "start")
             .text(d => d['省份']);
+
+            //document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
+            myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000, 8100, 22000, 60000]
+            for(let tid = 0; tid < myticks.length; tid++){
+                document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
+            }
+
+            //document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
+            myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000, 8100]
+            for(let tid = 0; tid < myticks.length; tid++){
+                document.getElementById('yaxis').getElementsByClassName('tick')[myticks.length-1-tid].getElementsByTagName('text')[0].textContent = myticks[tid];
+            }
         };
         
         const renderupdate = function(seq){

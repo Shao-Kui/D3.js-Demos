@@ -135,32 +135,27 @@
         }
 
 
-        const renderinit = function(data, seq){
-            console.log("hello");   
-            console.log(d3.extent(data, xValue));
+        const renderinit = function(data, seq){ 
             // Linear Scale: Data Space -> Screen Space; 
             xScale = d3.scaleLinear()
-            .domain([0,21])
+            .domain([0, 21])
             .range([0, innerWidth]);
-            console.log(xScale(21), innerWidth);
 
             // Introducing y-Scale; 
-            console.log(low_max, up_max)
             yScale = d3.scaleLinear()
-            .domain([-low_max, up_max]) // "extent" is equivalent to [d3.min(data, xValue), d3.max(data, xValue)]; 
-            .range([innerHeight, 0])
+            .domain([-low_max, 0, up_max]) // "extent" is equivalent to [d3.min(data, xValue), d3.max(data, xValue)]; 
+            .range([innerHeight, innerHeight / 2, 0])
             .nice();
 
             nyScale = d3.scaleLinear()
-            .domain([low_max, -up_max])
-            .range([innerHeight, 0])
+            .domain([low_max, 0, -up_max])
+            .range([innerHeight, innerHeight / 2, 0])
             .nice();
 
             // generate maxX and maxY; 
             maxX = xScale(d3.max(data, xValue));
             maxY = yScale(d3.max(data, yValue));
-            console.log('maxX');
-            console.log(maxX);
+
             // The reason of using group is that nothing is rendered outside svg, so margin of svg is always blank while margin of group is rendered inside svg; 
             const g = svg.append('g')
             .attr('transform', `translate(${margin.left}, ${margin.top})`)
@@ -171,9 +166,15 @@
             .attr('id', 'hubeigroup');
 
             // Adding axes; 
+            var formatter = d3.format("0")
             const yAxis = d3.axisLeft(yScale)
             .tickSize(-innerWidth)
-            .tickFormat(d3.format('.2s'))
+            .tickFormat(function (d) { 
+                if (d === 0) return 0; // No label for '0'
+                else if (d < 0) d = -d; // No nagative labels
+                return formatter(d);
+            })
+            //.tickFormat(d3.format('.2s'))
             .tickPadding(10); // .tickPadding is used to prevend intersection of ticks; 
             const xAxis = d3.axisBottom(xScale)
             //.tickFormat(d3.format('.2s'))
@@ -181,7 +182,8 @@
             .tickPadding(10)
             .ticks(21);
 
-            let yAxisGroup = g.append('g').call(yAxis).attr('id', 'yaxis');;
+            let yAxisGroup = g.append('g').call(yAxis).attr('id', 'yaxis')
+            d3.selectAll('#yaxis .tick text').attr('transform', `translate(${0}, ${-3})`);
             yAxisGroup.append('text')
             .attr('transform', `rotate(-90)`)
             .attr('x', -innerHeight / 2)
@@ -191,9 +193,8 @@
             .attr('text-anchor', 'middle') // Make label at the middle of axis. 
             yAxisGroup.selectAll('.domain').remove(); // we can select multiple tags using comma to seperate them and we can use space to signify nesting; 
             
-            let xAxisGroup = g.append('g').call(xAxis)
-            .attr('transform', `translate(${0}, ${innerHeight})`)
-            .attr('id', 'xaxis');
+            let xAxisGroup = g.append('g').call(xAxis).attr('transform', `translate(${0}, ${innerHeight})`).attr('id', 'xaxis');
+            d3.selectAll('#xaxis .tick text').attr('transform', `translate(${0}, ${5})`);
             xAxisGroup.append('text')
             .attr('y', 60)
             .attr('x', innerWidth / 2)

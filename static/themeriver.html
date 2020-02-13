@@ -15,8 +15,7 @@
         const margin = {top: 100, right: 120, bottom: 100, left: 120};
         const innerWidth = width - margin.left - margin.right;
         const innerHeight = height - margin.top - margin.bottom;
-        const xValue = (datum) => {
-            return dates.indexOf(datum['日期'])};
+        const xValue = (datum) => { return dates.indexOf(datum['日期']); };
         const yValue = (datum) => {return datum['新增确诊']};
         //const xValue = d => d['确诊人数'];
         //const xValue = d => d['感染率'];
@@ -138,7 +137,7 @@
         const renderinit = function(data, seq){ 
             // Linear Scale: Data Space -> Screen Space; 
             xScale = d3.scaleLinear()
-            .domain([0, 21])
+            .domain([0, 22])
             .range([0, innerWidth]);
 
             // Introducing y-Scale; 
@@ -203,7 +202,10 @@
             xAxisGroup.selectAll('.domain').remove();
 
             // console.log(document.getElementById('xaxis'));
-            myticks = ["1月21日", "1月22日", "1月23日", "1月24日", "1月25日", "1月26日", "1月27日", "1月28日", "1月29日", "1月30日", "1月31日", "2月1日", "2月2日", "2月3日", "2月4日", "2月5日", "2月6日", "2月7日", "2月8日", "2月9日", "2月10日", "2月11日"]
+            myticks = ["1月21日", "1月22日", "1月23日", "1月24日", "1月25日", "1月26日", 
+            "1月27日", "1月28日", "1月29日", "1月30日", "1月31日", "2月1日", "2月2日", 
+            "2月3日", "2月4日", "2月5日", "2月6日", "2月7日", "2月8日", "2月9日", "2月10日", 
+            "2月11日", "2月12日"]
             for(let tid = 0; tid < myticks.length; tid++){
                 document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             }
@@ -248,6 +250,7 @@
         }
 
         d3.csv('./static/data/province.csv').then(function(data){
+            console.log(data);
             data.forEach(datum => {
                 // pre-process the data; 
                 datum['确诊人数'] = +(datum['确诊人数']);
@@ -278,7 +281,28 @@
             data.forEach(datum => {
                 sequential[alldates.indexOf(datum['日期'])].push(datum);
             });
-            // console.log(sequential);
+            // smooth new infec; 
+            let t = 0;
+            const originyValue = datum => datum['新增确诊'];
+            for(; t < sequential.length; t++){
+                sequential[t].forEach(datum => {
+                    if(t == 0){
+                        datum.newinfec_s = originyValue(datum);
+                    }else if(t == 1){
+                        datum.newinfec_s = (
+                            originyValue(datum) + 
+                            originyValue(sequential[t-1].find(x => x['省份'] === datum['省份']))
+                        ) / 2.0;
+                    }else{
+                        datum.newinfec_s = (
+                            originyValue(datum) + 
+                            originyValue(sequential[t-1].find(x => x['省份'] === datum['省份'])) + 
+                            originyValue(sequential[t-2].find(x => x['省份'] === datum['省份']))
+                        ) / 3.0;
+                    }
+                })
+            }
+            console.log(data);
 
             // split data from Hu-Bei and not from Hu-Bei; 
             data_hubei = data.filter(datum => {return datum['省份'] === '湖北'});
@@ -320,13 +344,13 @@
             renderinit(data);
 
             const area = d3.area()
-            .curve(d3.curveBundle.beta(1.0)) // default is d3.curveLinear
+            .curve(d3.curveCardinal.tension(0.3)) // default is d3.curveLinear, d3.curveBundle.beta(1.0)
             .x(d => xScale(xValue(d.data)))
             .y0(d => yScale(d[0]))
             .y1(d => yScale(d[1]));
 
             const area_hubei = d3.area()
-            .curve(d3.curveBundle.beta(1.0))
+            .curve(d3.curveCardinal.tension(0.3))
             .x((d) => xScale(xValue(d.data)))
             .y0(d => nyScale(d[0]))
             .y1(d => nyScale(d[1]));

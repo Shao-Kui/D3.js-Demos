@@ -24,8 +24,9 @@
         //const yValue = d => {return Math.log(d['newinfec']+1)};
         //const rValue = d => {return Math.sqrt(d['确诊人数']) + 6};
         const xValue = d => {return Math.log(d['确诊人数'] + 1)}; 
-        const yValue = d => {return Math.log(d['newinfec'] + 1)};
+        const yValue = d => {return Math.log(d['新增确诊'] + 1)};
         const rValue = d => {return Math.sqrt(d['感染率'] * 1000)};
+        const keyHint = '地区';
         let xScale, yScale;
         let maxX, maxY;
         let dates; 
@@ -300,7 +301,7 @@
             .attr("width", 30)
             .attr("height", 15)
             .style("fill", function (d,i) {
-                return province_color[d]});
+                return color[i]});
 			
             // draw legend text
             legend.append("text")
@@ -340,14 +341,14 @@
             .attr("fill", "#504f4f")
             .text(time);
 
-            circleupdates = g.selectAll('circle').data(seq, d => d['省份']);
+            circleupdates = g.selectAll('circle').data(seq, d => d[keyHint]);
             circleenter = circleupdates.enter().append('circle')
             .attr('cy', (datum) => { return yScale(yValue(datum)) })
             .attr('cx', (datum) => { return xScale(xValue(datum)) }) // use xSacle to re-scale data space (domain) and return the rescaled population; 
             .attr('r', datum => rValue(datum))
             // .attr('stroke-width', 2)
             // .attr('stroke', '#cccccc')
-            .attr('fill', function(d,i) {return province_color[d['省份']]}) // #3fd4c5
+            .attr('fill', function(d,i) {return color[i]}) // #3fd4c5
             .attr('opacity', .85);
             circleupdates.merge(circleenter).transition().ease(d3.easeLinear).duration(aduration)
             .attr('cy', (datum) => { return yScale(yValue(datum)) })
@@ -357,8 +358,8 @@
             textupdates = g.selectAll('.province_text').data(seq);
             textenter = textupdates.enter().append('text')
             .attr("class", "province_text")
-            .attr("x", (datum) => { return xScale(xValue(datum)) + privece_offset_x[datum['省份']]; })
-            .attr("y", (datum) => { return yScale(yValue(datum)) - 15 + privece_offset_y[datum['省份']]; })
+            .attr("x", (datum) => { return xScale(xValue(datum)) + privece_offset_x[datum[keyHint]]; })
+            .attr("y", (datum) => { return yScale(yValue(datum)) - 15 + privece_offset_y[datum[keyHint]]; })
             .attr("dy", ".1em")
             .style("text-anchor", "middle")
             .attr("fill", "#333333")
@@ -368,30 +369,32 @@
             });
 
             textupdates.merge(textenter).transition().ease(d3.easeLinear).duration(aduration)
-            .attr('x', (datum) => { return xScale(xValue(datum)) + privece_offset_x[datum['省份']]; })
-            .attr('y', (datum) => { return yScale(yValue(datum)) - 23 + privece_offset_y[datum['省份']] + rValue(datum); });
+            .attr('x', (datum) => { return xScale(xValue(datum)) + privece_offset_x[datum[keyHint]]; })
+            .attr('y', (datum) => { return yScale(yValue(datum)) - 23 + privece_offset_y[datum[keyHint]] + rValue(datum); });
         };
 
-        d3.csv('./static/data/2019population.csv').then(data => {
+        d3.csv('./static/data/hubeipop.csv').then(data => {
             data.forEach(datum => {
-                datum['2019年人口'] = +(datum['2019年人口']);
+                datum['人口（万人）'] = +(datum['人口（万人）']);
             })
             metapop = data;
         });
 
-        d3.csv('./static/data/province.csv').then(function(data){
-            totals = data.filter(datum => {return datum['省份'] === '总计'});
-            data = data.filter(datum => {return datum['省份'] !== '总计'});
-            deletelist = ['澳门', '香港', '甘肃', '青海', '吉林', '内蒙古', '新疆', '台湾', '西藏'];
+        d3.csv('./static/data/hubei_day14.csv').then(function(data){
+            totals = data.filter(datum => {return datum[keyHint] === '总计'});
+            data = data.filter(datum => {return datum[keyHint] !== '总计'});
+            //deletelist = ['澳门', '香港', '甘肃', '青海', '吉林', '内蒙古', '新疆', '台湾', '西藏'];
+            deletelist = []
             for(let di = 0; di < deletelist.length; di++){
-                data = data.filter(datum => {return datum['省份'] !== deletelist[di]});
+                data = data.filter(datum => {return datum[keyHint] !== deletelist[di]});
             }
             data.forEach(datum => {
                 // pre-process the data; 
                 datum['确诊人数'] = +(datum['确诊人数']);
                 datum['治愈人数'] = +(datum['治愈人数']);
                 datum['死亡人数'] = +(datum['死亡人数']);
-                datum['感染率'] = datum['确诊人数'] / (metapop.find(x => x['省份'] === datum['省份'])['2019年人口'] / 10000.0);
+                datum['新增确诊'] = +(datum['新增确诊']);
+                datum['感染率'] = datum['确诊人数'] / (metapop.find(x => x[keyHint] === datum[keyHint])['人口（万人）']);
             });
 
             // remove duplicated items; 
@@ -413,22 +416,7 @@
             data.forEach(datum => {
                 sequential[alldates.indexOf(datum['日期'])].push(datum);
             });
-            
-            // calculate 'newinfec' (新增确诊数); 
-            let t = 0;
-            for(; t < sequential.length; t++){
-                sequential[t].forEach(datum => {
-                    if(t == 0){
-                        datum['newinfec'] = 0;
-                    }else{
-                        datum['newinfec'] = datum['确诊人数'] - sequential[t-1].find(x => x['省份'] === datum['省份'])['确诊人数']
-                        if(datum['newinfec'] < 0){
-                            console.log(datum)
-                            datum['newinfec'] = 0;
-                        }
-                    }
-                })
-            }
+            console.log(sequential)
 
             // 'K' for Wen-Yang; 
             //const lastseq = sequential[sequential.length-1];

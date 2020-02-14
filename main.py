@@ -51,6 +51,10 @@ def themeriver():
 def colorgradient():
     return flask.send_from_directory('static', 'color-gradient.html')
 
+@app.route('/scatter-animation')
+def scatteranimation():
+    return flask.send_from_directory('static', 'Scatter-Animation.html')
+
 @app.route('/static/<fname>')
 def sendfile(fname):
     return flask.send_from_directory('static', fname)

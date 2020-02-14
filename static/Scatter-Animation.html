@@ -250,7 +250,8 @@
             }
         };
         
-        const renderupdate = function(seq){
+        const renderupdate = function(seq, c){
+            c = c+1;
             const g = d3.select('#maingroup');
             time = seq[0]['日期'];
             g.selectAll('.date_text').remove();
@@ -293,8 +294,8 @@
             });
 
             textupdates.merge(textenter).transition().ease(d3.easeLinear).duration(aduration)
-            .attr('x', (datum) => { return xScale(xValue(datum)) + city_offset_x[datum[keyHint]]; })
-            .attr('y', (datum) => { return yScale(yValue(datum)) + city_offset_y[datum[keyHint]] + rValue(datum); });
+            .attr('x', (datum) => { return xScale(xValue(datum)) + city_offset_x[datum[keyHint]] * c / alldates.length; })
+            .attr('y', (datum) => { return yScale(yValue(datum)) + (city_offset_y[datum[keyHint]] + rValue(datum)) * c / alldates.length; });
         };
 
         d3.csv('./static/data/hubeipop.csv').then(data => {
@@ -366,7 +367,7 @@
                     console.log('time to close this animation');
                     clearInterval(intervalId); 
                 }else{
-                    renderupdate(sequential[c]);
+                    renderupdate(sequential[c], c);
                     c = c + 1;
                 }
             }, aduration); 

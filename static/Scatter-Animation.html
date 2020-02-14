@@ -60,16 +60,16 @@
             "武汉": 0,
             "黄石": -10,
             "十堰": 0,
-            "荆州": 30,
+            "荆州": 50,
             "宜昌": -40,
             "襄阳": 0,
             "鄂州": 10,
             "荆门": 0,
             "孝感": 10,
-            "黄冈": -30,
+            "黄冈": -55,
             "咸宁": 0,
             "恩施州": 0,
-            "随州": 50,
+            "随州": 55,
             "仙桃": 0,
             "天门": 0,
             "潜江": 0,
@@ -77,23 +77,23 @@
         }
 
         const city_offset_y = {
-            "武汉": 0,
+            "武汉": 110,
             "黄石": 0,
-            "十堰": -70,
+            "十堰": -40,
             "荆州": -10,
-            "宜昌": -55,
-            "襄阳": 0,
-            "鄂州": -135,
-            "荆门": 0,
-            "孝感": -110,
+            "宜昌": -35,
+            "襄阳": 25,
+            "鄂州": -55,
+            "荆门": 30,
+            "孝感": -70,
             "黄冈": -10,
-            "咸宁": -80,
-            "恩施州": 0,
-            "随州": -20,
+            "咸宁": -50,
+            "恩施州": 15,
+            "随州": 0,
             "仙桃": 0,
-            "天门": -90,
-            "潜江": 0,
-            "神农架": 0
+            "天门": -50,
+            "潜江": 15,
+            "神农架": 20
         }
 
         const renderinit = function(data, seq, K){
@@ -295,7 +295,7 @@
 
             textupdates.merge(textenter).transition().ease(d3.easeLinear).duration(aduration)
             .attr('x', (datum) => { return xScale(xValue(datum)) + city_offset_x[datum[keyHint]] * c / alldates.length; })
-            .attr('y', (datum) => { return yScale(yValue(datum)) + (city_offset_y[datum[keyHint]] + rValue(datum)) * c / alldates.length; });
+            .attr('y', (datum) => { return yScale(yValue(datum)) + city_offset_y[datum[keyHint]] * c / alldates.length; });
         };
 
         d3.csv('./static/data/hubeipop.csv').then(data => {

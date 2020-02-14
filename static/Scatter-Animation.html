@@ -25,7 +25,7 @@
         //const rValue = d => {return Math.sqrt(d['确诊人数']) + 6};
         const xValue = d => {return Math.log(d['确诊人数'] + 1)}; 
         const yValue = d => {return Math.log(d['新增确诊'] + 1)};
-        const rValue = d => {return Math.sqrt(d['感染率'] * 500)};
+        const rValue = d => {return Math.sqrt(d['感染率'] * 500) * 0.8;};
         const keyHint = '地区';
         let xScale, yScale;
         let maxX, maxY;
@@ -35,141 +35,65 @@
 
         const xAxisLabel = '累计确诊人数（对数）';
         const yAxisLabel = '新增人数（对数）';
-        
-        var province_color = {
-            "北京": "#de5991",
-            "天津": "#759AA0",
-            "河北": "#E69D87",
-            "山西": "#be3259",
-            "辽宁": "#EA7E53",
-            "黑龙江": "#EEDD78",
-            "上海": "#9359b1",
-            "江苏": "#cb8eb3",
-            "浙江": "#F49F42",
-            "安徽": "#AA312C",
-            "福建": "#B35E45",
-            "江西": "#4B8E6F",
-            "山东": "#B6481C",
-            "河南": "#BBA838",
-            "湖北": "#FF190F",
-            "湖南": "#206c71",
-            "广东": "#385177",
-            "广西": "#50964A",
-            "海南": "#C16B0D",
-            "重庆": "#245824",
-            "四川": "#45BFD3",
-            "贵州": "#50F3A8",
-            "云南": "#FF4800",
-            "陕西": "#FFDE1A",
-            "宁夏": "#41D541"
+
+        var color = {
+            "武汉":"#ff1c12",
+            "黄石": "#de5991",
+            "十堰": "#759AA0",
+            "荆州": "#E69D87",
+            "宜昌": "#be3259",
+            "襄阳": "#EA7E53",
+            "鄂州": "#EEDD78",
+            "荆门": "#9359b1",
+            "孝感": "#47c0d4",
+            "黄冈": "#F49F42",
+            "咸宁": "#AA312C",
+            "恩施州": "#B35E45",
+            "随州": "#4B8E6F",
+            "仙桃": "#ff8603",
+            "天门": "#ffde1d",
+            "潜江": "#1e9d95",
+            "神农架": "#7289AB"
         }
 
-        var color = ["#DD6B66", //鄂州
-                "#73A373", //恩施州
-                "#52f3a9", //黄冈
-                "#EA7E53", //黄石
-                "#EEDD78", //荆门
-                "#759AA0", //荆州
-                "#1e9d95", //潜江
-                "#7289AB", //神农架
-                "#E69D87", //十堰
-                "#47c0d4", //随州
-                "#d54873", //天门
-                "#ff1c12", //武汉
-                "#ff8603", //仙桃
-                "#4B8E6F", //咸宁
-                "#ff6131", //襄阳
-                "#ffde1d", //孝感
-                "#386F38", //宜昌
-                "#388589",
-                "#385177",
-                "#50964A",
-                "#C16B0D",
-                "#FF190F",
-                "#45BFD3",
-                "#FF5F2F",
-                "#50F3A8",
-                "#FF4800",
-                "#FFDE1A",
-                "#41D541",
-                "#32E7EF",
-                "#3B7CDE",
-                "#58FD4A",
-                "#FF8500"
-        ]
-
-        const privece_offset_x = {
-            "广东": 5,
-            "山东": 5,
-            "河南": 30,
-            "四川": 0,
-            "江苏": 25,
-            "河北": 0,
-            "湖南": 5,
-            "安徽": 0,
-            "湖北": 0,
-            "浙江": 35,
-            "广西": -2,
-            "云南": 10,
-            "江西": -15,
-            "辽宁": 0,
-            "福建": 30,
-            "陕西": 0,
-            "黑龙江": -30,
-            "山西": -10,
-            "贵州": 30,
-            "重庆": 25,
-            "吉林": -5,
-            "甘肃": 0,
-            "内蒙古": 0,
-            "新疆": 0,
-            "上海": 35,
-            "台湾": -10,
-            "北京": 0,
-            "天津": -30,
-            "海南": 0,
-            "香港": -2,
-            "宁夏": 0,
-            "青海": 25,
-            "西藏": 0,
-            "澳门": 0,
+        const city_offset_x = {
+            "武汉": 0,
+            "黄石": -10,
+            "十堰": 0,
+            "荆州": 30,
+            "宜昌": -40,
+            "襄阳": 0,
+            "鄂州": 10,
+            "荆门": 0,
+            "孝感": 10,
+            "黄冈": -30,
+            "咸宁": 0,
+            "恩施州": 0,
+            "随州": 50,
+            "仙桃": 0,
+            "天门": 0,
+            "潜江": 0,
+            "神农架": 0
         }
 
-        const privece_offset_y = {
-            "广东": -5,
-            "山东": 40,
-            "河南": 20,
-            "四川": 0,
-            "江苏": 20,
-            "河北": 0,
-            "湖南": 0,
-            "安徽": 30,
-            "湖北": 35,
-            "浙江": 20,
-            "广西": 2,
-            "云南": 0,
-            "江西": -5,
-            "辽宁": 0,
-            "福建": 20,
-            "陕西": 40,
-            "黑龙江": 0,
-            "山西": 40,
-            "贵州": 20,
-            "重庆": 35,
-            "吉林": 0,
-            "甘肃": 0,
-            "内蒙古": 0,
-            "新疆": 0,
-            "上海": 20,
-            "台湾": 0,
-            "北京": -2,
-            "天津": 20,
-            "海南": -4,
-            "香港": 0,
-            "宁夏": 40,
-            "青海": 20,
-            "西藏": 0,
-            "澳门": -5,
+        const city_offset_y = {
+            "武汉": 0,
+            "黄石": 0,
+            "十堰": -70,
+            "荆州": -10,
+            "宜昌": -55,
+            "襄阳": 0,
+            "鄂州": -135,
+            "荆门": 0,
+            "孝感": -110,
+            "黄冈": -10,
+            "咸宁": -80,
+            "恩施州": 0,
+            "随州": -20,
+            "仙桃": 0,
+            "天门": -90,
+            "潜江": 0,
+            "神农架": 0
         }
 
         const renderinit = function(data, seq, K){
@@ -245,26 +169,26 @@
             .attr("stroke", "#333333")
             .attr("stroke-width", "2px")
             .attr("opacity", 0);
-
+            
             var legend_color = [
-                "#ff1c12", //武汉
-                "#EA7E53", //黄石
-                "#E69D87", //十堰
-                "#759AA0", //荆州
-                "#386F38", //宜昌
-                "#ff6131", //襄阳
-                "#DD6B66", //鄂州
-                "#EEDD78", //荆门
-                "#ffde1d", //孝感
-                "#52f3a9", //黄冈
-                "#4B8E6F", //咸宁
-                "#73A373", //恩施州
-                "#47c0d4", //随州
-                "#ff8603", //仙桃
-                "#d54873", //天门
-                "#1e9d95", //潜江
-                "#7289AB", //神农架
-            ];
+                "#ff1c12",
+                "#de5991",
+                "#759AA0",
+                "#E69D87",
+                "#be3259",
+                "#EA7E53",
+                "#EEDD78",
+                "#9359b1",
+                "#47c0d4",
+                "#F49F42",
+                "#AA312C",
+                "#B35E45",
+                "#4B8E6F",
+                "#ff8603",
+                "#ffde1d",
+                "#1e9d95",
+                "#7289AB"
+            ]
             
             var legend_name = ["武汉市",
                 "黄石市",
@@ -285,34 +209,33 @@
                 "神农架",
             ];
                 
-            var province_name = ["北京", "天津", "河北", "山西", "辽宁",  "黑龙江", "上海", "江苏", "浙江", "安徽", "福建", "江西", "山东", "河南", "湖北", "湖南", "广东", "广西", "海南", "重庆", "四川", "贵州", "云南", "陕西", "宁夏"]
             // draw legend
             var legend = d3.select('#maingroup').selectAll(".legend")
-                .data(province_name)
+                .data(legend_name)
                 .enter().append("g")
                 .attr("class", "legend")
-                .attr("transform", function(d, i) { return "translate(" + (innerWidth * 4 / 5 + 300) + "," + (i * 20 + 220) + ")"; });
+                .attr("transform", function(d, i) { return "translate(" + (innerWidth + 10) + "," + (i * 25 + 300) + ")"; });
 			
             // draw legend colored rectangles
             legend.append("rect")
-            .data(province_name) 
+            .data(legend_name) 
             .attr("x", 0)
             .attr("y", 0)
             .attr("width", 30)
-            .attr("height", 15)
-            .style("fill", function (d,i) {
-                return color[i]});
+            .attr("height", 20)
+            .style("fill", function (d,i) { 
+                return legend_color[i];});
 			
             // draw legend text
             legend.append("text")
-            .data(province_name)
-            .attr("class", "legend_text")
+            .data(legend_name) 
+            .attr('class', 'legend_text')
             .attr("x", 40)
             .attr("y", 9)
-            .attr("dy", ".2em")
-            .attr("fill", '#333333')
+            .attr("dy", ".5em")
+            .attr("fill", 'white')
             .style("text-anchor", "start")
-            .text(d => d);
+            .text(function (d,i) {return legend_name[i];}); 
 
             //document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
             myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000, 8100, 22000, 60000];
@@ -348,8 +271,9 @@
             .attr('r', datum => rValue(datum))
             // .attr('stroke-width', 2)
             // .attr('stroke', '#cccccc')
-            .attr('fill', function(d,i) {return color[i]}) // #3fd4c5
-            .attr('opacity', .85);
+            .attr('fill', function(d,i) {
+                return color[d[keyHint]]}) // #3fd4c5
+            .attr('opacity', .8);
             circleupdates.merge(circleenter).transition().ease(d3.easeLinear).duration(aduration)
             .attr('cy', (datum) => { return yScale(yValue(datum)) })
             .attr('cx', (datum) => { return xScale(xValue(datum)) }) // use xSacle to re-scale data space (domain) and return the rescaled population; 
@@ -358,19 +282,19 @@
             textupdates = g.selectAll('.province_text').data(seq);
             textenter = textupdates.enter().append('text')
             .attr("class", "province_text")
-            .attr("x", (datum) => { return xScale(xValue(datum)) + privece_offset_x[datum[keyHint]]; })
-            .attr("y", (datum) => { return yScale(yValue(datum)) - 15 + privece_offset_y[datum[keyHint]]; })
-            .attr("dy", ".1em")
+            .attr("x", (datum) => { return xScale(xValue(datum)) + city_offset_x[datum[keyHint]]; })
+            .attr("y", (datum) => { return yScale(yValue(datum)) + city_offset_y[datum[keyHint]] + rValue(datum); })
+            .attr("dy", "1em")
             .style("text-anchor", "middle")
             .attr("fill", "#333333")
             //.attr('opacity', 0)
             .text(function (d,i) { 
-                return d['省份'];
+                return d[keyHint];
             });
 
             textupdates.merge(textenter).transition().ease(d3.easeLinear).duration(aduration)
-            .attr('x', (datum) => { return xScale(xValue(datum)) + privece_offset_x[datum[keyHint]]; })
-            .attr('y', (datum) => { return yScale(yValue(datum)) - 23 + privece_offset_y[datum[keyHint]] + rValue(datum); });
+            .attr('x', (datum) => { return xScale(xValue(datum)) + city_offset_x[datum[keyHint]]; })
+            .attr('y', (datum) => { return yScale(yValue(datum)) + city_offset_y[datum[keyHint]] + rValue(datum); });
         };
 
         d3.csv('./static/data/hubeipop.csv').then(data => {

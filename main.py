@@ -47,6 +47,10 @@ def nCovnxt():
 def themeriver():
     return flask.send_from_directory('static', 'themeriver.html')
 
+@app.route('/themeriver-lr')
+def themeriverlr():
+    return flask.send_from_directory('static', 'themeriver-lr.html')
+
 @app.route('/colorgradient')
 def colorgradient():
     return flask.send_from_directory('static', 'color-gradient.html')

@@ -25,7 +25,7 @@
         //const rValue = d => {return Math.sqrt(d['确诊人数']) + 6};
         const xValue = d => {return Math.log(d['确诊人数'] + 1)}; 
         const yValue = d => {return Math.log(d['新增确诊'] + 1)};
-        const rValue = d => {return Math.sqrt(d['感染率'] * 1000)};
+        const rValue = d => {return Math.sqrt(d['感染率'] * 500)};
         const keyHint = '地区';
         let xScale, yScale;
         let maxX, maxY;
@@ -315,13 +315,13 @@
             .text(d => d);
 
             //document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
-            myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000, 8100, 22000, 60000]
+            myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000, 8100, 22000, 60000];
             for(let tid = 0; tid < myticks.length; tid++){
                 document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             }
 
             //document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
-            myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000, 8100]
+            myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000, 8100, 22000];
             for(let tid = 0; tid < myticks.length; tid++){
                 document.getElementById('yaxis').getElementsByClassName('tick')[myticks.length-1-tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             }
@@ -394,6 +394,9 @@
                 datum['治愈人数'] = +(datum['治愈人数']);
                 datum['死亡人数'] = +(datum['死亡人数']);
                 datum['新增确诊'] = +(datum['新增确诊']);
+                if(datum['新增确诊'] < 0){
+                    datum['新增确诊'] = 0;
+                }
                 datum['感染率'] = datum['确诊人数'] / (metapop.find(x => x[keyHint] === datum[keyHint])['人口（万人）']);
             });
 

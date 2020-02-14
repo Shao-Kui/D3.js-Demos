@@ -283,8 +283,8 @@
             textupdates = g.selectAll('.province_text').data(seq);
             textenter = textupdates.enter().append('text')
             .attr("class", "province_text")
-            .attr("x", (datum) => { return xScale(xValue(datum)) + city_offset_x[datum[keyHint]]; })
-            .attr("y", (datum) => { return yScale(yValue(datum)) + city_offset_y[datum[keyHint]] + rValue(datum); })
+            .attr("x", (datum) => { return xScale(xValue(datum)); })
+            .attr("y", (datum) => { return yScale(yValue(datum)); })
             .attr("dy", "1em")
             .style("text-anchor", "middle")
             .attr("fill", "#333333")

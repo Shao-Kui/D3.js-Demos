@@ -90,7 +90,7 @@
             "咸宁": -50,
             "恩施州": 15,
             "随州": 0,
-            "仙桃": 0,
+            "仙桃": 35,
             "天门": -50,
             "潜江": 15,
             "神农架": 20
@@ -294,7 +294,8 @@
             });
 
             textupdates.merge(textenter).transition().ease(d3.easeLinear).duration(aduration)
-            .attr('x', (datum) => { return xScale(xValue(datum)) + city_offset_x[datum[keyHint]] * c / alldates.length; })
+            .attr('x', (datum) => { 
+                return xScale(xValue(datum)) + city_offset_x[datum[keyHint]] * c / alldates.length; })
             .attr('y', (datum) => { return yScale(yValue(datum)) + city_offset_y[datum[keyHint]] * c / alldates.length; });
         };
 
@@ -367,6 +368,7 @@
                     console.log('time to close this animation');
                     clearInterval(intervalId); 
                 }else{
+                    // c = alldates.length - 1;
                     renderupdate(sequential[c], c);
                     c = c + 1;
                 }

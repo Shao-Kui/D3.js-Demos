@@ -26,6 +26,7 @@
         //const rValue = d => {return Math.sqrt(d['确诊人数']) + 6};
         let low_max = 4000; 
         let up_max = 1000;
+        let limit_up_max = 3500;
         let xScale, yScale, nyScale;
         let maxX, maxY;
         let dates; 
@@ -83,7 +84,7 @@
         const renderinit = function(data, seq){ 
             // Linear Scale: Data Space -> Screen Space; 
             xScale = d3.scaleLinear()
-            .domain([0, 22])
+            .domain([0, 24])
             .range([0, innerWidth]);
 
             // Introducing y-Scale; 
@@ -93,7 +94,7 @@
             .nice();
 
             nyScale = d3.scaleLinear()
-            .domain([-up_max, 0, low_max])
+            .domain([-up_max, 0, 3500])
             .range([innerHeight, innerHeight / 2, 0])
             .nice();
 
@@ -139,7 +140,7 @@
             //.tickFormat(d3.format('.2s'))
             .tickSize(-innerHeight)
             .tickPadding(10)
-            .ticks(21);
+            .ticks(24);
 
             let yAxisGroup = g.append('g').call(yAxis).attr('id', 'yaxis')
             d3.selectAll('#yaxis .tick text').attr('transform', `translate(${0}, ${-3})`);
@@ -165,7 +166,7 @@
             myticks = ["1月21日", "1月22日", "1月23日", "1月24日", "1月25日", "1月26日", 
             "1月27日", "1月28日", "1月29日", "1月30日", "1月31日", "2月1日", "2月2日", 
             "2月3日", "2月4日", "2月5日", "2月6日", "2月7日", "2月8日", "2月9日", "2月10日", 
-            "2月11日", "2月12日"]
+            "2月11日", "2月12日", "2月13日", "2月14日"]
             for(let tid = 0; tid < myticks.length; tid++){
                 document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             }
@@ -197,7 +198,9 @@
             .join("path") // use join to avoid split according to "enter" and "update"; 
             .attr("opacity",0.9)
             //.transition().duration(3000)
-            .attr("d", area)
+            .attr("d", function(d,i) {
+                return area(d);
+            })
             .attr("clip-path", "url(#rectClip)")
             // fill attrbute requires designers to assign colors for each province; 
             .attr("fill", function (d,i) {
@@ -227,7 +230,7 @@
             return prestack
         }
 
-        d3.csv('./static/data/province.csv').then(function(data){
+        d3.csv('./static/data/province0215.csv').then(function(data){
             data.forEach(datum => {
                 // pre-process the data; 
                 datum['确诊人数'] = +(datum['确诊人数']);
@@ -309,6 +312,9 @@
                 return result;
             })
             low_max = d3.max(sequential, seq => {
+                if(limit_up_max !== -1){
+                    return limit_up_max;
+                }
                 result = 0;
                 seq.forEach(s => {
                     if(s['省份'] === '湖北'){
@@ -332,7 +338,7 @@
             .x((d) => xScale(xValue(d.data)))
             .y0(d => nyScale(d[0]))
             .y1(d => nyScale(d[1]));
-
+            
             // set the animation interval; 
             render(prestack, keys, area);
             render(prestack_hubei, keys_hubei, area_hubei); 

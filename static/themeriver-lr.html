@@ -101,12 +101,12 @@
 
             yBandScale = d3.scaleBand()
             .domain(barKeys_reverse)
-            .range([innerHeight - innerHeight / 8 - 20, innerHeight - 20])
+            .range([innerHeight - innerHeight / 8, innerHeight])
             .padding(0.01);
 
             nyBandScale = d3.scaleBand()
             .domain(barKeys)
-            .range([0, innerHeight / 8])
+            .range([20, innerHeight / 8 + 20])
             .padding(0.01);
 
             xBarScale = d3.scaleLinear()

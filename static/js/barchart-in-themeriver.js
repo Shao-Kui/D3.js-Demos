@@ -48,6 +48,7 @@ const setting_up_barchart = function(data){
 }
 
 const barchart_color = {
+    '现有确诊': '#ff901a',
     '确诊人数': '#ff901a',
     '治愈人数': '#1aff86',
     '死亡人数': '#ff1a35'
@@ -59,7 +60,8 @@ const renderbarchart = function(data, isTatal){
     if(isTatal){
         g = d3.select('#maingroup');
         yscalehere = yBandScale;
-        data = data.reverse()
+        console.log(data[0])
+        console.log(120 + xBarScale(xBarValue(data[0])))
         // tmp_data = []
         // tmp_data.push(data[2]);
         // tmp_data.push(data[1]);
@@ -70,10 +72,19 @@ const renderbarchart = function(data, isTatal){
         g = d3.select('#hubeigroup');
         yscalehere = nyBandScale;
     }
+
+    g.selectAll('.text-barchart').data(data, data => data.name).join('text')
+    .attr('class', 'text-barchart')
+    .text(d => d.value)
+    .attr('x', 120)
+    .attr('y', datum => yscalehere(yBarValue(datum)) + yscalehere.bandwidth() / 3)
+    .transition().ease(d3.easeLinear).duration(aduration)
+    .attr('x', (datum) => {return 120 + xBarScale(xBarValue(datum))})
     
-    g.selectAll('rect')
+    g.selectAll('.rect-barchart')
     .data(data)
     .join('rect')
+    .attr('class', 'rect-barchart') // note to assgin class to it, or it will create new rect each time instead of smooth animation; 
     .attr('x', 100)
     .attr('y', datum => yscalehere(yBarValue(datum)))
     .attr('height', yscalehere.bandwidth() / 3)

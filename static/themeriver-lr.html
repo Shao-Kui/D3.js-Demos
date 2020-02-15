@@ -187,9 +187,10 @@
             .order(d3.stackOrderNone)
             (data);
             
-            const clipedrect = svg.append("clipPath") // Warning: Never append new rect after groups or it shall conflict with barcharts; 
+            const clipedrect = g.append("clipPath") // Warning: Never append new rect after groups or it shall conflict with barcharts; 
             .attr("id", "rectClip")
             .append("rect")
+            .attr('class', 'rect-clip')
             .attr("width", 0)
             .attr("height", innerHeight);
 
@@ -237,6 +238,7 @@
                 datum['治愈人数'] = +(datum['治愈人数']);
                 datum['死亡人数'] = +(datum['死亡人数']);
                 datum['新增确诊'] = +(datum['新增确诊']);
+                datum['现有确诊'] = +(datum['现有确诊']);
             });
             
             // remove duplicated items; 

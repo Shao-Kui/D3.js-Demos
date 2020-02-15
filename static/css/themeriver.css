@@ -3,11 +3,15 @@ text{
 }
 
 .text-barchart {
-    font-size: 1.2em;
+    font-size: 1em;
 }
 
 .legend_text{
     font-size: 1em;
+}
+
+.path_text{
+    font-size: 0.5em;
 }
 
 .date_text {
@@ -19,6 +23,7 @@ text{
     font-size: 1.6em;
     fill: #333333;
 }
+
 
 .tick line {
     stroke: #cccccc;

@@ -17,8 +17,6 @@ const setting_up_barchart = function(data){
     let data_hb = data.filter(datum => {return datum['省份'] === '湖北'});
     data_tt = data_tt.sort(dateSort);
     data_hb = data_hb.sort(dateSort);
-    console.log(data_tt);
-    console.log(data_hb);
     let i = 0; 
     for(; i < data_tt.length; i++){
         for(let j = 0; j < barKeys.length; j++){
@@ -60,14 +58,6 @@ const renderbarchart = function(data, isTatal){
     if(isTatal){
         g = d3.select('#maingroup');
         yscalehere = yBandScale;
-        console.log(data[0])
-        console.log(120 + xBarScale(xBarValue(data[0])))
-        // tmp_data = []
-        // tmp_data.push(data[2]);
-        // tmp_data.push(data[1]);
-        // tmp_data.push(data[0]);
-        // data = tmp_data;
-        // console.log('总计', data);
     }else{
         g = d3.select('#hubeigroup');
         yscalehere = nyBandScale;

@@ -41,6 +41,7 @@
         const xBarValue = (datum) => {return datum.value};
         const yBarValue = (datum) => {return datum.name};
         const barKeys = ['确诊人数', '治愈人数', '死亡人数'];
+        const barKeys_reverse = ['死亡人数', '治愈人数', '确诊人数'];
         let yBandScale, nyBandScale, xBarScale;
 
         var province_color = {
@@ -99,14 +100,14 @@
             .nice();
 
             yBandScale = d3.scaleBand()
-            .domain(barKeys)
-            .range([innerHeight - innerHeight / 4, innerHeight])
-            .padding(0.1);
+            .domain(barKeys_reverse)
+            .range([innerHeight - innerHeight / 8 - 20, innerHeight - 20])
+            .padding(0.01);
 
             nyBandScale = d3.scaleBand()
             .domain(barKeys)
-            .range([0, innerHeight / 4])
-            .padding(0.1);
+            .range([0, innerHeight / 8])
+            .padding(0.01);
 
             xBarScale = d3.scaleLinear()
             .domain([0, 60000])
@@ -170,6 +171,35 @@
             for(let tid = 0; tid < myticks.length; tid++){
                 document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             }
+            
+            var province_name = ["湖北", "广东", "河南", "浙江", "湖南", "安徽", "江西", "江苏", "重庆", "山东", "四川", "黑龙江", "北京", "上海", "河北", "福建", "广西", "陕西", "海南", "云南", "贵州", "山西", "天津", "辽宁", "甘肃", "吉林", "宁夏", "新疆", "内蒙古", "香港", "青海", "台湾", "澳门", "西藏"]
+            // draw legend
+            var legend = svg.selectAll(".legend")
+                .data(province_name)
+                .enter().append("g")
+                .attr("class", "legend")
+                .attr("transform", function(d, i) { return "translate(" + (innerWidth + 130) + "," + (i * 20 + 140) + ")"; });
+			
+            // draw legend colored rectangles
+            legend.append("rect")
+            .data(province_name) 
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", 30)
+            .attr("height", 15)
+            .style("fill", function (d,i) {
+                return province_color[d]});
+			
+            // draw legend text
+            legend.append("text")
+            .data(province_name)
+            .attr("class", "legend_text")
+            .attr("x", 40)
+            .attr("y", 9)
+            .attr("dy", ".2em")
+            .attr("fill", '#333333')
+            .style("text-anchor", "start")
+            .text(d => d);
         };
         
         const render = function(data, keys, area){
@@ -200,15 +230,17 @@
             .attr("opacity",0.9)
             //.transition().duration(3000)
             .attr("d", function(d,i) {
+                console.log(d);
                 return area(d);
             })
             .attr("clip-path", "url(#rectClip)")
             // fill attrbute requires designers to assign colors for each province; 
             .attr("fill", function (d,i) {
+                console.log(d["key"]);
                 return province_color[d["key"]]; });
 
             clipedrect.transition().ease(d3.easeLinear).duration(totalduration).attr("width", innerWidth);
-
+ 
             //const path = g.selectAll("path")
             //.data(layers)
             //.join("path") // use join to avoid split according to "enter" and "update"; 
@@ -217,6 +249,8 @@
             //.attr("d", area)
             // fill attrbute requires designers to assign colors for each province; 
             //.attr("fill", function (d,i) { return province_color[d["key"]]; });
+            
+
         };
         const seqgen = function(data){
             // re-arrange the data sequentially; 

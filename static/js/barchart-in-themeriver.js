@@ -1,6 +1,6 @@
 console.log('Entering barchar in themeriver. ');
 
-const dateSort = function(a,b){
+const dateSort = function(b,a){
     return new Date(b['日期']) - new Date(a['日期']);
 }
 
@@ -56,12 +56,10 @@ const barchart_color = {
 const renderbarchart = function(data, isTatal){
     let g;
     let yscalehere;
-    console.log(isTatal)
     if(isTatal){
         g = d3.select('#maingroup');
         yscalehere = yBandScale;
         data = data.reverse()
-        console.log('总计', data);
         // tmp_data = []
         // tmp_data.push(data[2]);
         // tmp_data.push(data[1]);
@@ -71,7 +69,6 @@ const renderbarchart = function(data, isTatal){
     }else{
         g = d3.select('#hubeigroup');
         yscalehere = nyBandScale;
-        console.log('湖北', data);
     }
     
     g.selectAll('rect')

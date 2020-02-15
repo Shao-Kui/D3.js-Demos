@@ -46,10 +46,10 @@ const setting_up_barchart = function(data){
 }
 
 const barchart_color = {
-    '现有确诊': '#ff901a',
-    '确诊人数': '#ff901a',
-    '治愈人数': '#1aff86',
-    '死亡人数': '#ff1a35'
+    '现有确诊': '#ed8b66',
+    '确诊人数': '#ed8b66',
+    '治愈人数': '#99c7b2',
+    '死亡人数': '#e07a76'
 }
 
 const renderbarchart = function(data, isTatal){
@@ -66,19 +66,24 @@ const renderbarchart = function(data, isTatal){
 
     const textbarchart = g.selectAll('.text-barchart').data(data, data => data.name);
     textbarchart.enter().append('text').attr('class', 'text-barchart')
-    .attr('y', datum => yscalehere(yBarValue(datum)) + yscalehere.bandwidth() / 3)
-    .attr('x', 120);
+    .attr('y', datum => yscalehere(yBarValue(datum)) + yscalehere.bandwidth() / 2 - 2)
+    .attr('x', 210)
+    .attr('text-anchor', 'start');
     textbarchart.text(d => d.value)
     .transition().ease(d3.easeLinear).duration(aduration)
-    .attr('x', (datum) => {return 120 + xBarScale(xBarValue(datum))})
+    .attr('x', (datum) => {
+        //console.log(datum.name);
+        //console.log(210 + xBarScale(xBarValue(datum)));
+        return 210 + xBarScale(xBarValue(datum));
+    });
     
     g.selectAll('.rect-barchart')
     .data(data)
     .join('rect')
     .attr('class', 'rect-barchart') // note to assgin class to it, or it will create new rect each time instead of smooth animation; 
-    .attr('x', 100)
+    .attr('x', 200)
     .attr('y', datum => yscalehere(yBarValue(datum)))
-    .attr('height', yscalehere.bandwidth() / 3)
+    .attr('height', yscalehere.bandwidth() / 2)
     .attr('fill', function(datum){return barchart_color[datum.name]})
     .transition().ease(d3.easeLinear).duration(aduration)
     .attr('width', (datum) => {return xBarScale(xBarValue(datum))}); // use xSacle to re-scale data space (domain) and return the rescaled population; 

@@ -17,8 +17,6 @@ const setting_up_barchart = function(data){
     let data_hb = data.filter(datum => {return datum['省份'] === '湖北'});
     data_tt = data_tt.sort(dateSort);
     data_hb = data_hb.sort(dateSort);
-    console.log(data_tt);
-    console.log(data_hb);
     let i = 0; 
     for(; i < data_tt.length; i++){
         for(let j = 0; j < barKeys.length; j++){
@@ -48,9 +46,9 @@ const setting_up_barchart = function(data){
 }
 
 const barchart_color = {
-    '确诊人数': '#ff901a',
-    '治愈人数': '#1aff86',
-    '死亡人数': '#ff1a35'
+    '确诊人数': '#ed8b66',
+    '治愈人数': '#99c7b2',
+    '死亡人数': '#e07a76'
 }
 
 const renderbarchart = function(data, isTatal){
@@ -59,13 +57,6 @@ const renderbarchart = function(data, isTatal){
     if(isTatal){
         g = d3.select('#maingroup');
         yscalehere = yBandScale;
-        data = data.reverse()
-        // tmp_data = []
-        // tmp_data.push(data[2]);
-        // tmp_data.push(data[1]);
-        // tmp_data.push(data[0]);
-        // data = tmp_data;
-        // console.log('总计', data);
     }else{
         g = d3.select('#hubeigroup');
         yscalehere = nyBandScale;
@@ -74,9 +65,9 @@ const renderbarchart = function(data, isTatal){
     g.selectAll('rect')
     .data(data)
     .join('rect')
-    .attr('x', 100)
-    .attr('y', datum => yscalehere(yBarValue(datum)))
-    .attr('height', yscalehere.bandwidth() / 3)
+    .attr('x', 200)
+    .attr('y', datum => (yscalehere(yBarValue(datum)) + 20))
+    .attr('height', yscalehere.bandwidth() / 2)
     .attr('fill', function(datum){return barchart_color[datum.name]})
     .transition().ease(d3.easeLinear).duration(aduration)
     .attr('width', (datum) => {return xBarScale(xBarValue(datum))}); // use xSacle to re-scale data space (domain) and return the rescaled population; 

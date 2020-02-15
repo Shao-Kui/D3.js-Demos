@@ -58,16 +58,17 @@ const renderbarchart = function(data, isTatal){
     if(isTatal){
         g = d3.select('#maingroup');
         yscalehere = yBandScale;
+        console.log(data[0]);
     }else{
         g = d3.select('#hubeigroup');
         yscalehere = nyBandScale;
     }
 
-    g.selectAll('.text-barchart').data(data, data => data.name).join('text')
-    .attr('class', 'text-barchart')
-    .text(d => d.value)
-    .attr('x', 120)
+    const textbarchart = g.selectAll('.text-barchart').data(data, data => data.name);
+    textbarchart.enter().append('text').attr('class', 'text-barchart')
     .attr('y', datum => yscalehere(yBarValue(datum)) + yscalehere.bandwidth() / 3)
+    .attr('x', 120);
+    textbarchart.text(d => d.value)
     .transition().ease(d3.easeLinear).duration(aduration)
     .attr('x', (datum) => {return 120 + xBarScale(xBarValue(datum))})
     

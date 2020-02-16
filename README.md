@@ -26,5 +26,11 @@ python main.py
  * Debugger PIN: 331-382-827
  * Running on http://0.0.0.0:11666/ (Press CTRL+C to quit)
 ```
+# 示例导航
+* 柱状图：链接
+* 柱状图，图元可交互：链接
+* 动态气泡图：链接
+* 静态主题河流：链接
+* 动态主题河流与柱状图，从左到右逐渐展现流动过程，柱状图同时随主题河流发生改变：链接
 
 [pythonweb]:https://www.python.org/

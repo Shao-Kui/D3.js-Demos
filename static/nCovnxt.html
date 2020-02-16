@@ -24,15 +24,16 @@
         //const yValue = d => {return Math.log(d['newinfec']+1)};
         //const rValue = d => {return Math.sqrt(d['确诊人数']) + 6};
         const xValue = d => {return Math.log(d['确诊人数'] + 1)}; 
-        const yValue = d => {return Math.log(d['newinfec'] + 1)};
-        const rValue = d => {return Math.sqrt(d['感染率'] * 1000)};
+        //const yValue = d => {return Math.log(d['newinfec'] + 1)};
+        const yValue = d => {return d['扩散指数']};
+        const rValue = d => {return Math.sqrt(Math.sqrt(d['感染率'] * 1000000))};
         let xScale, yScale;
         let maxX, maxY;
         let dates; 
         let aduration = 1000;
         let metapop;
 
-        const xAxisLabel = '累计确诊人数（对数）';
+        const xAxisLabel = '扩散指数';
         const yAxisLabel = '新增人数（对数）';
         
         var province_color = {
@@ -62,40 +63,6 @@
             "陕西": "#FFDE1A",
             "宁夏": "#41D541"
         }
-
-        var color = ["#DD6B66", //鄂州
-                "#73A373", //恩施州
-                "#52f3a9", //黄冈
-                "#EA7E53", //黄石
-                "#EEDD78", //荆门
-                "#759AA0", //荆州
-                "#1e9d95", //潜江
-                "#7289AB", //神农架
-                "#E69D87", //十堰
-                "#47c0d4", //随州
-                "#d54873", //天门
-                "#ff1c12", //武汉
-                "#ff8603", //仙桃
-                "#4B8E6F", //咸宁
-                "#ff6131", //襄阳
-                "#ffde1d", //孝感
-                "#386F38", //宜昌
-                "#388589",
-                "#385177",
-                "#50964A",
-                "#C16B0D",
-                "#FF190F",
-                "#45BFD3",
-                "#FF5F2F",
-                "#50F3A8",
-                "#FF4800",
-                "#FFDE1A",
-                "#41D541",
-                "#32E7EF",
-                "#3B7CDE",
-                "#58FD4A",
-                "#FF8500"
-        ]
 
         const privece_offset_x = {
             "广东": 5,
@@ -231,7 +198,6 @@
             
             // var x1 = - Math.log(K);
             // var y2 = 11 + Math.log(K);
-            console.log(K);
             var x1 = 0;
             var y2 = K * 11;
 
@@ -316,13 +282,13 @@
             //document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
             myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000, 8100, 22000, 60000]
             for(let tid = 0; tid < myticks.length; tid++){
-                document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
+                //document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             }
 
             //document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
             myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000, 8100]
             for(let tid = 0; tid < myticks.length; tid++){
-                document.getElementById('yaxis').getElementsByClassName('tick')[myticks.length-1-tid].getElementsByTagName('text')[0].textContent = myticks[tid];
+                //document.getElementById('yaxis').getElementsByClassName('tick')[myticks.length-1-tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             }
         };
         
@@ -382,6 +348,7 @@
         d3.csv('./static/data/province.csv').then(function(data){
             totals = data.filter(datum => {return datum['省份'] === '总计'});
             data = data.filter(datum => {return datum['省份'] !== '总计'});
+            data = data.filter(datum => {return datum['日期'] !== '1月21日'}); // delete first day data; 
             deletelist = ['澳门', '香港', '甘肃', '青海', '吉林', '内蒙古', '新疆', '台湾', '西藏'];
             for(let di = 0; di < deletelist.length; di++){
                 data = data.filter(datum => {return datum['省份'] !== deletelist[di]});
@@ -391,6 +358,11 @@
                 datum['确诊人数'] = +(datum['确诊人数']);
                 datum['治愈人数'] = +(datum['治愈人数']);
                 datum['死亡人数'] = +(datum['死亡人数']);
+                if(isNaN(datum['扩散指数'])){
+                    datum['扩散指数'] = 0.0;
+                }else{
+                    datum['扩散指数'] = +(datum['扩散指数']);
+                }
                 datum['感染率'] = datum['确诊人数'] / (metapop.find(x => x['省份'] === datum['省份'])['2019年人口'] / 10000.0);
             });
 
@@ -423,7 +395,6 @@
                     }else{
                         datum['newinfec'] = datum['确诊人数'] - sequential[t-1].find(x => x['省份'] === datum['省份'])['确诊人数']
                         if(datum['newinfec'] < 0){
-                            console.log(datum)
                             datum['newinfec'] = 0;
                         }
                     }

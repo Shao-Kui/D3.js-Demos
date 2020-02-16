@@ -18,18 +18,18 @@
         //const xValue = (datum) => {return dates.indexOf(datum['日期'])};
         //const yValue = (datum) => {return datum['确诊人数']};
         //const xValue = d => d['确诊人数'];
-        const xValue = d => d['感染率'];
+        const xValue = d => Math.log(d['感染率']+1);
         //const yValue = d => {return Math.log(d['diffuse_smooth'] + 1)};
         //const yValue = d => {return d['diffuse_smooth']};
-        const yValue = d => {return Math.log(d['newinfec']+1)};
-        const rValue = d => {return Math.sqrt(d['确诊人数']) + 6};
+        const yValue = d => {return Math.log(d['新增确诊']+1)};
+        const rValue = d => {return 0.7*(Math.sqrt(d['确诊人数'])+6)};
         let xScale, yScale;
         let maxX, maxY;
         let dates; 
         let aduration = 1000;
         let metapop;
 
-        var color = ["#DD6B66", //鄂州
+        var color = ["#c25ec3", //鄂州
                 "#73A373", //恩施州
                 "#52f3a9", //黄冈
                 "#EA7E53", //黄石
@@ -95,7 +95,7 @@
             .tickSize(-innerHeight)
             .tickPadding(10);
 
-            let yAxisGroup = g.append('g').call(yAxis).attr('id', 'yaxis');;
+            let yAxisGroup = g.append('g').call(yAxis).attr('id', 'yaxis');
             yAxisGroup.append('text')
             .attr('transform', `rotate(-90)`)
             .attr('x', -innerHeight / 2)
@@ -106,19 +106,34 @@
             yAxisGroup.selectAll('.domain').remove(); // we can select multiple tags using comma to seperate them and we can use space to signify nesting; 
             
             let xAxisGroup = g.append('g').call(xAxis)
+            .attr('id', 'xaxis')
             .attr('transform', `translate(${0}, ${innerHeight})`);
             xAxisGroup.append('text')
             .attr('y', 60)
             .attr('x', innerWidth / 2)
             .attr('fill', 'white')
-            .text('感染率（每万人）')
-            .attr('id', 'xaxis');
+            .text('感染率（每万人）');
             xAxisGroup.selectAll('.domain').remove();
             
             //document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
-            myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000]
-            for(let tid = 0; tid < myticks.length; tid++){
-                document.getElementById('yaxis').getElementsByClassName('tick')[myticks.length-1-tid].getElementsByTagName('text')[0].textContent = myticks[tid];
+            let leftTicks = document.getElementById('yaxis').getElementsByClassName('tick');
+            let tid = 0;
+            let myticks = [];
+            for(tid = 0; tid < leftTicks.length; tid++){
+                console.log(Math.pow(Math.E, +(leftTicks[tid].textContent)))
+                myticks.push(parseFloat(Math.ceil(Math.pow(Math.E, +(leftTicks[tid].textContent)) - 1).toPrecision(1)));
+            }
+            for(tid = 0; tid < myticks.length; tid++){
+                leftTicks[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
+            }
+
+            let bottomTicks = document.getElementById('xaxis').getElementsByClassName('tick');
+            myticks = [];
+            for(tid = 0; tid < bottomTicks.length; tid++){
+                myticks.push(Math.ceil(Math.pow(Math.E, +(bottomTicks[tid].textContent))) - 1);
+            }
+            for(tid = 0; tid < myticks.length; tid++){
+                bottomTicks[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             }
 
             var legend_color = [
@@ -128,7 +143,7 @@
                 "#759AA0", //荆州
                 "#386F38", //宜昌
                 "#ff6131", //襄阳
-                "#DD6B66", //鄂州
+                "#c25ec3", //鄂州
                 "#EEDD78", //荆门
                 "#ffde1d", //孝感
                 "#52f3a9", //黄冈
@@ -162,10 +177,10 @@
 
             // draw legend
             var legend = d3.select('#maingroup').selectAll(".legend")
-                .data(seq, d => d['地区'])
-                .enter().append("g")
-                .attr("class", "legend")
-                .attr("transform", function(d, i) { return "translate(" + (innerWidth - 100) + "," + (i * 25 + 250) + ")"; });
+            .data(seq, d => d['地区'])
+            .enter().append("g")
+            .attr("class", "legend")
+            .attr("transform", function(d, i) { return "translate(" + (innerWidth+10) + "," + (i * 25 + 250) + ")"; });
 			
             // draw legend colored rectangles
             legend.append("rect")
@@ -226,7 +241,7 @@
             metapop = data;
         });
 
-        d3.csv('./static/data/hubei11.csv').then(function(data){
+        d3.csv('./static/data/hubeinxt.csv').then(function(data){
             
             data = data.filter(datum => {return datum['地区'] !== '总计'});
             data.forEach(datum => {
@@ -234,6 +249,7 @@
                 datum['确诊人数'] = +(datum['确诊人数']);
                 datum['治愈人数'] = +(datum['治愈人数']);
                 datum['死亡人数'] = +(datum['死亡人数']);
+                datum['新增确诊'] = +(datum['新增确诊']);
                 if(isNaN(datum['扩散曲线'])){
                     datum['扩散曲线'] = 0.0;
                 }else{

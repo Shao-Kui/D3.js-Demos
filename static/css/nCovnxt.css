@@ -3,7 +3,6 @@ text{
 }
 
 .legend_text{
-    fill: #333333;
     font-size: 1em;
 }
 
@@ -13,17 +12,17 @@ text{
 }
 
 .province_text {
-    fill: #333333;
+    fill: #cccccc;
     font-size: 1em;
 }
 
 .tick text{
     font-size: 1.6em;
-    fill: #333333;
+    fill: #cccccc;
 }
 
 .tick line {
-    stroke: #333333;
+    stroke: #C0C0BB;
 }
 
 #population{

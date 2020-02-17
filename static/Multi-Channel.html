@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Multi-Channel</title>
+    <script src="/static/js/d3.min.js"></script>
+    <link rel="stylesheet" href="/static/css/multi-channel.css"> 
+  </head>
+  <body>
+    <svg width="1650" height="920" id="mainsvg" class="svgs"></svg>
+    <script>
+      const mainsvg = d3.select('.svgs');
+      const svg = d3.select('#mainsvg');
+      const width = +svg.attr('width');
+      const height = +svg.attr('height');
+      const margin = {top: 100, right: 120, bottom: 100, left: 120};
+      const innerWidth = width - margin.left - margin.right;
+      const innerHeight = height - margin.top - margin.bottom;
+      const strategies = []; 
+      const xValue = datum => datum.name;
+      const yValue = datum => datum; 
+      let xScale, yScale; 
+
+      const length_saturation = {
+        primitive: 'rect',
+        name: 'length_saturation',
+        step: 10, 
+        channel1: 'width',
+        channel1_value: datum => Math.floor(datum / length_saturation.step)/2,
+        channel2: 'fill',
+        channel2_value: datum => d3.interpolateBlues((datum % length_saturation.step) / length_saturation.step),
+      }; 
+      
+      const render_rect = function(data, strategy){
+        d3.select('#maingroup').selectAll(`.rect-${strategy.name}`)
+        .data(data)
+        .join(strategy.primitive)
+        .attr('class', `.rect-${strategy.name}`) 
+        .attr('x', datum => xScale(strategy.name) + xScale.bandwidth()/2 - strategy.channel1_value(datum)/2)
+        .attr('y', datum => yScale(datum))
+        .attr(strategy.channel1, strategy.channel1_value)
+        .attr(strategy.channel2, strategy.channel2_value)
+        .attr('height', 50)
+      };
+
+      strategies.push(length_saturation);
+
+      const area_saturation = {
+        primitive: 'circle',
+        name: 'area_saturation',
+        step: 10, 
+        channel1: 'r',
+        channel1_value: datum => Math.sqrt(Math.floor(datum / length_saturation.step)),
+        channel2: 'fill',
+        channel2_value: datum => d3.interpolateBlues((datum % length_saturation.step) / length_saturation.step),
+      }; 
+
+      const render_circle = function(data, strategy){
+        d3.select('#maingroup').selectAll(`.circle-${strategy.name}`)
+        .data(data)
+        .join(strategy.primitive)
+        .attr('class', `.circle-${strategy.name}`) 
+        .attr('cx', xScale(strategy.name) + xScale.bandwidth()/2)
+        .attr('cy', datum => yScale(datum))
+        .attr(strategy.channel1, strategy.channel1_value)
+        .attr(strategy.channel2, strategy.channel2_value)
+      }
+
+      strategies.push(area_saturation);
+
+      const renderinit = function(data){
+        const g = svg.append('g')
+        .attr('transform', `translate(${margin.left}, ${margin.top})`)
+        .attr('id', 'maingroup');
+
+        xScale = d3.scaleBand()
+        .domain(strategies.map(xValue))
+        .range([0, innerWidth])
+
+        yScale = d3.scaleBand()
+        .domain(data.map(yValue))
+        .range([0, innerHeight])
+
+        // Adding axes; 
+        const yAxis = d3.axisLeft(yScale)
+        .tickSize(-innerWidth)
+        //.tickFormat(d3.format('.2s'))
+        .tickPadding(10); // .tickPadding is used to prevend intersection of ticks; 
+        const xAxis = d3.axisTop(xScale)
+        //.tickFormat(d3.format('.2s'))
+        .tickSize(-innerHeight)
+        .tickPadding(10);
+
+        let yAxisGroup = g.append('g').call(yAxis)
+        .attr('id', 'yaxis');
+        yAxisGroup.append('text')
+        .attr('transform', `rotate(-90)`)
+        .attr('x', -innerHeight / 2)
+        .attr('y', -60)
+        .attr('fill', '#333333')
+        //.text(yAxisLabel)
+        .attr('text-anchor', 'middle') // Make label at the middle of axis. 
+        yAxisGroup.selectAll('.domain').remove(); // we can select multiple tags using comma to seperate them and we can use space to signify nesting; 
+        yAxisGroup.selectAll('.domain, .tick line').remove();
+        let xAxisGroup = g.append('g').call(xAxis)
+        //.attr('transform', `translate(${0}, ${innerHeight})`)
+        .attr('id', 'xaxis');
+        xAxisGroup.append('text')
+        .attr('y', 60)
+        .attr('x', innerWidth / 2)
+        .attr('fill', '#333333')
+        //.text(xAxisLabel);
+        xAxisGroup.selectAll('.domain').remove();
+        xAxisGroup.selectAll('.domain, .tick line').remove();
+      }
+
+      const testData = [5, 9, 18, 100, 600, 1000, 5000, 6000, 6009, 10000];
+      renderinit(testData);
+      render_rect(testData, length_saturation);
+      render_circle(testData, area_saturation);
+    </script>
+  </body>
+</html>

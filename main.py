@@ -42,7 +42,6 @@ def nCov():
 def nCovnxt():
     return flask.send_from_directory('static', 'nCovnxt.html')
 
-
 @app.route('/themeriver')
 def themeriver():
     return flask.send_from_directory('static', 'themeriver.html')
@@ -58,6 +57,10 @@ def colorgradient():
 @app.route('/scatter-animation')
 def scatteranimation():
     return flask.send_from_directory('static', 'Scatter-Animation.html')
+
+@app.route('/multi-channel')
+def multichannel():
+    return flask.send_from_directory('static', 'Multi-Channel.html')
 
 @app.route('/static/<fname>')
 def sendfile(fname):

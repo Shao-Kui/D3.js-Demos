@@ -4,6 +4,8 @@
     <title>nCov-Province</title>
     <link rel="stylesheet" href="/static/css/nCovnxt.css"> 
     <script src="/static/js/d3.min.js"></script>
+    <script src="/static/js/library/moment.min.js"></script>
+    <script src="/static/js/color-strategies.js"></script>
   </head>
   <body style="text-align: center">
     <svg width="1650" height="920" id="mainsvg" class="svgs" style="background-color: #333333;"></svg>
@@ -30,150 +32,16 @@
         let xScale, yScale;
         let maxX, maxY;
         let dates; 
+        let keys;
+        const keys_to_color = city_color;
+        const offset_x = city_offset_x;
+        const offset_y = city_offset_y;
         let aduration = 1000;
         let metapop;
+        let keyHint = '地区'
 
         const xAxisLabel = '累计确诊人数';
         const yAxisLabel = '扩散指数（%）';
-        
-        var province_color = {
-            "广东": "#DD6B66",
-            "河南": "#759AA0",
-            "浙江": "#E69D87",
-            "湖南": "#8DC1A9",
-            "安徽": "#EA7E53",
-            "江西": "#EEDD78",
-            "江苏": "#73A373",
-            "重庆": "#73B9BC",
-            "山东": "#7289AB",
-            "四川": "#91CA8C",
-            "黑龙江": "#F49F42",
-            "北京": "#AA312C",
-            "上海": "#39656D",
-            "福建": "#B35E45",
-            "河北": "#4B8E6F",
-            "陕西": "#B6481C",
-            "广西": "#BBA838",
-            "云南": "#386F38",
-            "海南": "#388589",
-            "贵州": "#385177",
-            "山西": "#50964A",
-            "辽宁": "#C16B0D",
-            "天津": "#FF8500",
-            "甘肃": "#45BFD3",
-            "吉林": "#FF5F2F",
-            "内蒙古":"#50F3A8",
-            "新疆":"#FF4800",
-            "宁夏":"#FFDE1A",
-            "香港":"#41D541",
-            "青海":"#32E7EF",
-            "台湾":"#ef638e",
-            "澳门":"#3B7CDE",
-            "西藏":"#58FD4A",
-            "湖北":"#FF190F"
-        }
-
-        // var province_color = {
-        //     "北京": "#de5991",
-        //     "天津": "#759AA0",
-        //     "河北": "#E69D87",
-        //     "山西": "#be3259",
-        //     "辽宁": "#EA7E53",
-        //     "黑龙江": "#EEDD78",
-        //     "上海": "#9359b1",
-        //     "江苏": "#cb8eb3",
-        //     "浙江": "#F49F42",
-        //     "安徽": "#AA312C",
-        //     "福建": "#B35E45",
-        //     "江西": "#4B8E6F",
-        //     "山东": "#B6481C",
-        //     "河南": "#BBA838",
-        //     "湖北": "#FF190F",
-        //     "湖南": "#206c71",
-        //     "广东": "#385177",
-        //     "广西": "#50964A",
-        //     "海南": "#C16B0D",
-        //     "重庆": "#245824",
-        //     "四川": "#45BFD3",
-        //     "贵州": "#50F3A8",
-        //     "云南": "#FF4800",
-        //     "陕西": "#FFDE1A",
-        //     "宁夏": "#41D541"
-        // }
-
-        const privece_offset_x = {
-            "广东": 5,
-            "山东": 5,
-            "河南": 30,
-            "四川": 0,
-            "江苏": 25,
-            "河北": 5,
-            "湖南": 5,
-            "安徽": 0,
-            "湖北": 0,
-            "浙江": 35,
-            "广西": -5,
-            "云南": 10,
-            "江西": -15,
-            "辽宁": 30,
-            "福建": -30,
-            "陕西": 0,
-            "黑龙江": -30,
-            "山西": -10,
-            "贵州": 0,
-            "重庆": 25,
-            "吉林": -5,
-            "甘肃": 0,
-            "内蒙古": 0,
-            "新疆": 0,
-            "上海": 35,
-            "台湾": -10,
-            "北京": 0,
-            "天津": -30,
-            "海南": 0,
-            "香港": -2,
-            "宁夏": 0,
-            "青海": 25,
-            "西藏": 0,
-            "澳门": 0,
-        }
-
-        const privece_offset_y = {
-            "广东": -5,
-            "山东": 40,
-            "河南": 20,
-            "四川": -10,
-            "江苏": 20,
-            "河北": -10,
-            "湖南": 30,
-            "安徽": 30,
-            "湖北": 35,
-            "浙江": 20,
-            "广西": -10,
-            "云南": 0,
-            "江西": -5,
-            "辽宁": 20,
-            "福建": 20,
-            "陕西": -15,
-            "黑龙江": 0,
-            "山西": 40,
-            "贵州": 0,
-            "重庆": 35,
-            "吉林": 40,
-            "甘肃": 0,
-            "内蒙古": -10,
-            "新疆": -10,
-            "上海": 20,
-            "台湾": 0,
-            "北京": 32,
-            "天津": 20,
-            "海南": -4,
-            "香港": -10,
-            "宁夏": 40,
-            "青海": 20,
-            "西藏": 0,
-            "澳门": -25,
-        }
 
         const renderinit = function(data, seq, K){
             // Linear Scale: Data Space -> Screen Space; 
@@ -292,27 +160,42 @@
                 "神农架",
             ];
                 
-            var province_name = ["北京", "天津", "河北", "山西", "内蒙古", "辽宁", "吉林", "黑龙江", "上海", "江苏", "浙江", "安徽", "福建", "江西", "山东", "河南", "湖北", "湖南", "广东", "广西", "海南", "重庆", "四川", "贵州", "云南", "西藏", "陕西", "甘肃", "青海", "宁夏", "新疆", "香港", "澳门", "台湾"]
+            //var province_name = ["北京", "天津", "河北", "山西", "内蒙古", "辽宁", "吉林", "黑龙江", "上海", "江苏", "浙江", "安徽", "福建", "江西", "山东", "河南", "湖北", "湖南", "广东", "广西", "海南", "重庆", "四川", "贵州", "云南", "西藏", "陕西", "甘肃", "青海", "宁夏", "新疆", "香港", "澳门", "台湾"]
+            keys = ["武汉", "黄石", "十堰", "荆州", "宜昌", "襄阳",
+                "鄂州",
+                "荆门",
+                "孝感",
+                "黄冈",
+                "咸宁",
+                "恩施州",
+                "随州",
+                "仙桃",
+                "天门",
+                "潜江",
+                "神农架",
+            ]
+            // note that keys are able to be manually replaced; 
+            
             // draw legend
             var legend = d3.select('#maingroup').selectAll(".legend")
-                .data(province_name)
+                .data(keys)
                 .enter().append("g")
                 .attr("class", "legend")
                 .attr("transform", function(d, i) { return "translate(" + (innerWidth * 4 / 5 + 300) + "," + (i * 20 + 40) + ")"; });
 			
             // draw legend colored rectangles
             legend.append("rect")
-            .data(province_name) 
+            .data(keys) 
             .attr("x", 0)
             .attr("y", 0)
             .attr("width", 30)
             .attr("height", 15)
             .style("fill", function (d,i) {
-                return province_color[d]});
+                return keys_to_color[d]});
 			
             // draw legend text
             legend.append("text")
-            .data(province_name)
+            .data(keys)
             .attr("class", "legend_text")
             .attr("x", 40)
             .attr("y", 9)
@@ -324,13 +207,13 @@
             //document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
             myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000, 8100, 22000, 60000, 160000]
             for(let tid = 0; tid < myticks.length; tid++){
-                document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
+                //document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             }
 
-            document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
+            //document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
             myticks = [0, 0.2, 1.0, 2.0, 5.0, 15, 40, 110, 300, 800]
             for(let tid = 0; tid < myticks.length; tid++){
-                document.getElementById('yaxis').getElementsByClassName('tick')[myticks.length-1-tid].getElementsByTagName('text')[0].textContent = myticks[tid];
+                //document.getElementById('yaxis').getElementsByClassName('tick')[myticks.length-1-tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             }
         };
         
@@ -348,14 +231,14 @@
             .attr("fill", "#a6a5a5")
             .text(time);
 
-            circleupdates = g.selectAll('circle').data(seq, d => d['省份']);
+            circleupdates = g.selectAll('circle').data(seq, d => d[keyHint]);
             circleenter = circleupdates.enter().append('circle')
             .attr('cy', (datum) => { return yScale(yValue(datum)) })
             .attr('cx', (datum) => { return xScale(xValue(datum)) }) // use xSacle to re-scale data space (domain) and return the rescaled population; 
             .attr('r', datum => rValue(datum))
             .attr('stroke-width', 2)
             .attr('stroke', '#cccccc')
-            .attr('fill', function(d,i) {return province_color[d['省份']]}) // #3fd4c5
+            .attr('fill', function(d,i) {return keys_to_color[d[keyHint]]}) // #3fd4c5
             .attr('opacity', .85);
             circleupdates.merge(circleenter).transition().ease(d3.easeLinear).duration(aduration)
             .attr('cy', (datum) => { return yScale(yValue(datum)) })
@@ -365,19 +248,19 @@
             textupdates = g.selectAll('.province_text').data(seq);
             textenter = textupdates.enter().append('text')
             .attr("class", "province_text")
-            .attr("x", (datum) => { return xScale(xValue(datum)) + privece_offset_x[datum['省份']]; })
-            .attr("y", (datum) => { return yScale(yValue(datum)) - 15 + privece_offset_y[datum['省份']]; })
+            .attr("x", (datum) => { return xScale(xValue(datum)) + offset_x[datum[keyHint]]; })
+            .attr("y", (datum) => { return yScale(yValue(datum)) - 15 + offset_y[datum[keyHint]]; })
             .attr("dy", ".1em")
             .style("text-anchor", "middle")
             .attr("fill", "#333333")
             //.attr('opacity', 0)
             .text(function (d,i) { 
-                return d['省份'];
+                return d[keyHint];
             });
 
             textupdates.merge(textenter).transition().ease(d3.easeLinear).duration(aduration)
-            .attr('x', (datum) => { return xScale(xValue(datum)) + privece_offset_x[datum['省份']]; })
-            .attr('y', (datum) => { return yScale(yValue(datum)) - 23 + privece_offset_y[datum['省份']] + rValue(datum); });
+            .attr('x', (datum) => { return xScale(xValue(datum)) + offset_x[datum[keyHint]]; })
+            .attr('y', (datum) => { return yScale(yValue(datum)) - 23 + offset_y[datum[keyHint]] + rValue(datum); });
         };
 
         d3.csv('./static/data/2019population.csv').then(data => {
@@ -387,31 +270,45 @@
             metapop = data;
         });
 
-        d3.csv('./static/data/province.csv').then(function(data){
-            totals = data.filter(datum => {return datum['省份'] === '总计'});
-            data = data.filter(datum => {return datum['省份'] !== '总计'});
-            data = data.filter(datum => {return datum['日期'] !== '1月21日'}); // delete first day data; 
-            
+        d3.csv('./static/data/hubeinxt.csv').then(function(data){
+            totals = data.filter(datum => {return datum[keyHint] === '总计'});
+            data = data.filter(datum => {return datum[keyHint] !== '总计'});            
             // deletelist = ['澳门', '香港', '甘肃', '青海', '吉林', '内蒙古', '新疆', '台湾', '西藏'];
             // for(let di = 0; di < deletelist.length; di++){
-            //     data = data.filter(datum => {return datum['省份'] !== deletelist[di]});
+            //     data = data.filter(datum => {return datum[keyHint] !== deletelist[di]});
             // }
+
             data.forEach(datum => {
                 // pre-process the data; 
                 datum['确诊人数'] = +(datum['确诊人数']);
                 datum['治愈人数'] = +(datum['治愈人数']);
                 datum['死亡人数'] = +(datum['死亡人数']);
+                if(datum['扩散指数'] === undefined){
+                    let lastmoment = moment(datum['日期'], 'M月D日', 'en', true)
+                    let lastdate = lastmoment.date(lastmoment.date()-1).format('M月D日');
+                    console.log(datum['日期'], lastdate)
+                    datum_last_day = data.find(x => {
+                        return x[keyHint] === datum[keyHint] && lastdate === x['日期'];
+                    }); 
+                    //console.log(datum, datum_last_day);
+                    if(datum_last_day === undefined || datum_last_day['确诊人数'] === 0){
+                        datum['扩散指数'] = 0.0;
+                    }else{
+                        datum['扩散指数'] = datum['新增确诊'] / datum_last_day['确诊人数'];
+                    }
+                }
                 if(isNaN(datum['扩散指数'])){
                     datum['扩散指数'] = 0.0;
                 }else{
                     datum['扩散指数'] = +(datum['扩散指数']);
                 }
-                console.log(datum);
-                datum['感染率'] = datum['确诊人数'] / (metapop.find(x => x['省份'] === datum['省份'])['2019年人口'] / 10000.0);
+                datum['感染率'] = datum['确诊人数'] / (metapop.find(x => x[keyHint] === datum[keyHint])['2019年人口'] / 10000.0);
             });
 
             // remove duplicated items; 
+            data = data.filter(datum => {return datum['日期'] !== '1月21日'}); // delete first day data; 
             alldates = Array.from(new Set(data.map( datum => datum['日期'])));
+            keys = Array.from(new Set(data.map( datum => datum[keyHint])));
 
             // make sure dates are listed according to real time order; 
             alldates = alldates.sort(function(a,b){
@@ -437,7 +334,7 @@
                     if(t == 0){
                         datum['newinfec'] = 0;
                     }else{
-                        datum['newinfec'] = datum['确诊人数'] - sequential[t-1].find(x => x['省份'] === datum['省份'])['确诊人数']
+                        datum['newinfec'] = datum['确诊人数'] - sequential[t-1].find(x => x[keyHint] === datum[keyHint])['确诊人数']
                         if(datum['newinfec'] < 0){
                             datum['newinfec'] = 0;
                         }

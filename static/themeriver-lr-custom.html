@@ -4,7 +4,8 @@
     <title>ThemeRiver</title>
     <link rel="stylesheet" href="/static/css/themeriver.css"> 
     <script src="/static/js/d3.min.js"></script>
-    <script src="/static/js/barchart-in-themeriver.js"></script>
+    <script src="/static/js/barchart-in-themeriver-custom.js"></script>
+    <script src="/static/js/color-strategies.js"></script>
   </head>
   <body style="text-align: center">
     <svg width="1650" height="920" id="mainsvg" class="svgs" style="background-color: #ffffff;"></svg>
@@ -35,6 +36,11 @@
         let metapop;
         let rawdata; 
 
+        const keyHint = '地区';
+        const alone = '武汉';
+        const color_strategy = city_color;
+        let keysall;
+
         const xAxisLabel = ' ';
         const yAxisLabel = '新增人数';
 
@@ -43,44 +49,6 @@
         const barKeys = ['确诊人数', '治愈人数', '死亡人数'];
         const barKeys_reverse = ['死亡人数', '治愈人数', '确诊人数'];
         let yBandScale, nyBandScale, xBarScale;
-
-        var province_color = {
-            "广东": "#DD6B66",
-            "河南": "#759AA0",
-            "浙江": "#E69D87",
-            "湖南": "#8DC1A9",
-            "安徽": "#EA7E53",
-            "江西": "#EEDD78",
-            "江苏": "#73A373",
-            "重庆": "#73B9BC",
-            "山东": "#7289AB",
-            "四川": "#91CA8C",
-            "黑龙江": "#F49F42",
-            "北京": "#AA312C",
-            "上海": "#39656D",
-            "福建": "#B35E45",
-            "河北": "#4B8E6F",
-            "陕西": "#B6481C",
-            "广西": "#BBA838",
-            "云南": "#386F38",
-            "海南": "#388589",
-            "贵州": "#385177",
-            "山西": "#50964A",
-            "辽宁": "#C16B0D",
-            "天津": "#FF190F",
-            "甘肃": "#45BFD3",
-            "吉林": "#FF5F2F",
-            "内蒙古":"#50F3A8",
-            "新疆":"#FF4800",
-            "宁夏":"#FFDE1A",
-            "香港":"#41D541",
-            "青海":"#32E7EF",
-            "台湾":"#ef638e",
-            "澳门":"#3B7CDE",
-            "西藏":"#58FD4A",
-            "湖北":"#FF8500"
-        }
-
 
         const renderinit = function(data, seq){ 
             // Linear Scale: Data Space -> Screen Space; 
@@ -163,36 +131,49 @@
             .text(xAxisLabel);
             xAxisGroup.selectAll('.domain').remove();
 
-            // console.log(document.getElementById('xaxis'));
             myticks = ["1月21日", "22日", "23日", "24日", "25日", "26日", 
             "27日", "28日", "29日", "30日", "31日", "2月1日", "2日", 
             "3日", "4日", "5日", "6日", "7日", "8日", "9日", "10日", 
-            "11日", "12日", "13日", "14日", "15日", "16日"]
+            "11日", "12日", "13日", "14日", "15日"]
+
             for(let tid = 0; tid < myticks.length; tid++){
                 document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             }
-            
-            var province_name = ["湖北", "广东", "河南", "浙江", "湖南", "安徽", "江西", "江苏", "重庆", "山东", "四川", "黑龙江", "北京", "上海", "河北", "福建", "广西", "陕西", "海南", "云南", "贵州", "山西", "天津", "辽宁", "甘肃", "吉林", "宁夏", "新疆", "内蒙古", "香港", "青海", "台湾", "澳门", "西藏"]
+
+            keysall = ["武汉", "黄石", "十堰", "荆州", "宜昌", "襄阳",
+                "鄂州",
+                "荆门",
+                "孝感",
+                "黄冈",
+                "咸宁",
+                "恩施州",
+                "随州",
+                "仙桃",
+                "天门",
+                "潜江",
+                "神农架",
+            ]
+
             // draw legend
             var legend = svg.selectAll(".legend")
-                .data(province_name)
+                .data(keysall)
                 .enter().append("g")
                 .attr("class", "legend")
                 .attr("transform", function(d, i) { return "translate(" + (innerWidth + 130) + "," + (i * 20 + 140) + ")"; });
 			
             // draw legend colored rectangles
             legend.append("rect")
-            .data(province_name) 
+            .data(keysall) 
             .attr("x", 0)
             .attr("y", 0)
             .attr("width", 30)
             .attr("height", 15)
             .style("fill", function (d,i) {
-                return province_color[d]});
+                return color_strategy[d]});
 			
             // draw legend text
             legend.append("text")
-            .data(province_name)
+            .data(keysall)
             .attr("class", "legend_text")
             .attr("x", 40)
             .attr("y", 9)
@@ -204,7 +185,7 @@
         
         const render = function(data, keys, area){
             let g;
-            if(keys.includes('湖北')){
+            if(keys.includes(alone)){
                 g = d3.select('#maingroup');
             }else{
                 g = d3.select('#hubeigroup');
@@ -230,27 +211,14 @@
             .attr("opacity",0.9)
             //.transition().duration(3000)
             .attr("d", function(d,i) {
-                console.log(d);
                 return area(d);
             })
             .attr("clip-path", "url(#rectClip)")
             // fill attrbute requires designers to assign colors for each province; 
             .attr("fill", function (d,i) {
-                console.log(d["key"]);
-                return province_color[d["key"]]; });
+                return color_strategy[d["key"]]; });
 
-            clipedrect.transition().ease(d3.easeLinear).duration(totalduration).attr("width", innerWidth);
- 
-            //const path = g.selectAll("path")
-            //.data(layers)
-            //.join("path") // use join to avoid split according to "enter" and "update"; 
-            //.attr("opacity",0.9)
-            //.transition().duration(3000)
-            //.attr("d", area)
-            // fill attrbute requires designers to assign colors for each province; 
-            //.attr("fill", function (d,i) { return province_color[d["key"]]; });
-            
-
+            clipedrect.transition().ease(d3.easeLinear).duration(totalduration).attr("width", innerWidth);    
         };
         const seqgen = function(data){
             // re-arrange the data sequentially; 
@@ -260,12 +228,12 @@
             });
             data.forEach(datum => {
                 //sequential[alldates.indexOf(datum['日期'])].push(datum);
-                prestack[dates.indexOf(datum['日期'])][datum['省份']] = yValue(datum);
+                prestack[dates.indexOf(datum['日期'])][datum[keyHint]] = yValue(datum);
             });
             return prestack
         }
 
-        d3.csv('./static/data/province.csv').then(function(data){
+        d3.csv('./static/data/hubeinxt.csv').then(function(data){
             data.forEach(datum => {
                 // pre-process the data; 
                 datum['确诊人数'] = +(datum['确诊人数']);
@@ -290,7 +258,8 @@
             setting_up_barchart(data);
 
             // delete '总计'; 
-            data = data.filter(datum => {return datum['省份'] !== '总计'});
+            data = data.filter(datum => {return datum[keyHint] !== '总计'});
+            keysall = Array.from(new Set(data.map( datum => datum[keyHint])));
 
             // generate sequential data; 
             let sequential = []; 
@@ -310,38 +279,37 @@
                     }else if(t == 1){
                         datum.newinfec_s = (
                             originyValue(datum) + 
-                            originyValue(sequential[t-1].find(x => x['省份'] === datum['省份']))
+                            originyValue(sequential[t-1].find(x => x[keyHint] === datum[keyHint]))
                         ) / 2.0;
                     }else{
                         datum.newinfec_s = (
                             originyValue(datum) + 
-                            originyValue(sequential[t-1].find(x => x['省份'] === datum['省份'])) + 
-                            originyValue(sequential[t-2].find(x => x['省份'] === datum['省份']))
+                            originyValue(sequential[t-1].find(x => x[keyHint] === datum[keyHint])) + 
+                            originyValue(sequential[t-2].find(x => x[keyHint] === datum[keyHint]))
                         ) / 3.0;
                     }
                 })
             }
 
             // split data from Hu-Bei and not from Hu-Bei; 
-            data_hubei = data.filter(datum => {return datum['省份'] === '湖北'});
-            data = data.filter(datum => {return datum['省份'] !== '湖北'});
+            data_hubei = data.filter(datum => {return datum[keyHint] === alone});
+            data = data.filter(datum => {return datum[keyHint] !== alone});
 
             // stack data; 
             let prestack = seqgen(data);
             let prestack_hubei = seqgen(data_hubei);
-            // let keys = Array.from(new Set(data.map( datum => datum['省份'])));
+            // let keys = Array.from(new Set(data.map( datum => datum[keyHint])));
             // sort according to '累计确诊' and prepare keys; 
             const sortedforkey = sequential[sequential.length-1].sort( (a,b) => b['确诊人数'] - a['确诊人数'] );
-            let keys = sortedforkey.map(d => d['省份']);
-            keys = keys.filter(d => {return d !== '湖北'});
-            let keys_hubei = Array.from(new Set(data_hubei.map( datum => datum['省份'])));
+            let keys = sortedforkey.map(d => d[keyHint]);
+            keys = keys.filter(d => {return d !== alone});
+            let keys_hubei = Array.from(new Set(data_hubei.map( datum => datum[keyHint])));
 
             // generate low_max and up_max for Y-scale; 
             up_max = d3.max(sequential, seq => {
-                // console.log(seq);
                 result = 0;
                 seq.forEach(s => {
-                    if(s['省份'] !== '湖北'){
+                    if(s[keyHint] !== alone){
                         result += yValue(s);
                     }
                 })
@@ -353,7 +321,7 @@
                 }
                 result = 0;
                 seq.forEach(s => {
-                    if(s['省份'] === '湖北'){
+                    if(s[keyHint] === alone){
                         result += yValue(s);
                     }
                 })

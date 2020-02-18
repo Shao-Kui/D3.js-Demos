@@ -50,6 +50,10 @@ def themeriver():
 def themeriverlr():
     return flask.send_from_directory('static', 'themeriver-lr.html')
 
+@app.route('/themeriver-lr-custom')
+def themeriverlrcus():
+    return flask.send_from_directory('static', 'themeriver-lr-custom.html')
+
 @app.route('/colorgradient')
 def colorgradient():
     return flask.send_from_directory('static', 'color-gradient.html')

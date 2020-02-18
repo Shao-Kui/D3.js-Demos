@@ -33,7 +33,7 @@ const setting_up_barchart = function(data){
     // set the animation interval; 
     aduration = totalduration / data_tt.length; 
     let c = 0; 
-    intervalId = setInterval(function(){
+    let intervalId = setInterval(function(){
         if(c >= alldates.length){
             console.log('time to close this animation');
             clearInterval(intervalId); 
@@ -69,7 +69,7 @@ const renderbarchart = function(data, isTatal){
     .attr('x', 210)
     .attr('text-anchor', 'start');
     textbarchart.text(d => d.value)
-    .transition().ease(d3.easeLinear).duration(aduration)
+    .transition().ease(d3.easeCubic).duration(aduration)
     .attr('x', (datum) => {
         return 210 + xBarScale(xBarValue(datum));
     });
@@ -82,6 +82,6 @@ const renderbarchart = function(data, isTatal){
     .attr('y', datum => yscalehere(yBarValue(datum)))
     .attr('height', yscalehere.bandwidth() / 2)
     .attr('fill', function(datum){return barchart_color[datum.name]})
-    .transition().ease(d3.easeLinear).duration(aduration)
+    .transition().ease(d3.easeCubic).duration(aduration)
     .attr('width', (datum) => {return xBarScale(xBarValue(datum))}); // use xSacle to re-scale data space (domain) and return the rescaled population; 
 }

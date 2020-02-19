@@ -141,8 +141,21 @@
                 document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             }
             
-            console.log(keys, keys_hubei);
-            keysall = keys_hubei.concat(keys);
+            // console.log(keys, keys_hubei);
+            // keysall = keys_hubei.concat(keys);
+            keysall = ["武汉", "黄石", "十堰", "荆州", "宜昌", "襄阳",
+                "鄂州",
+                "荆门",
+                "孝感",
+                "黄冈",
+                "咸宁",
+                "恩施州",
+                "随州",
+                "仙桃",
+                "天门",
+                "潜江",
+                "神农架",
+            ]
 
             // draw legend
             var legend = svg.selectAll(".legend")

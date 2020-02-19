@@ -31,8 +31,8 @@
         let xScale, yScale, nyScale;
         let maxX, maxY;
         let dates; 
-        let aduration = 1000;
-        let totalduration = 25000;
+        let aduration = 0;
+        let totalduration = 20000;
         let metapop;
         let rawdata; 
 
@@ -40,6 +40,7 @@
         const alone = '武汉';
         const color_strategy = city_color;
         let keysall;
+        let keys, keys_hubei;
 
         const xAxisLabel = ' ';
         const yAxisLabel = '新增人数';
@@ -139,20 +140,9 @@
             for(let tid = 0; tid < myticks.length; tid++){
                 document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             }
-
-            keysall = ["武汉", "黄石", "十堰", "荆州", "宜昌", "襄阳",
-                "鄂州",
-                "荆门",
-                "孝感",
-                "黄冈",
-                "咸宁",
-                "恩施州",
-                "随州",
-                "仙桃",
-                "天门",
-                "潜江",
-                "神农架",
-            ]
+            
+            console.log(keys, keys_hubei);
+            keysall = keys_hubei.concat(keys);
 
             // draw legend
             var legend = svg.selectAll(".legend")
@@ -218,7 +208,7 @@
             .attr("fill", function (d,i) {
                 return color_strategy[d["key"]]; });
 
-            //clipedrect.transition().ease(d3.easeLinear).duration(totalduration).attr("width", innerWidth);    
+            clipedrect.transition().ease(d3.easeLinear).duration(totalduration).attr("width", innerWidth);    
         };
 
         const render_update = function(width){
@@ -306,10 +296,10 @@
             // let keys = Array.from(new Set(data.map( datum => datum[keyHint])));
             // sort according to '累计确诊' and prepare keys; 
             const sortedforkey = sequential[sequential.length-1].sort( (a,b) => b['确诊人数'] - a['确诊人数'] );
-            let keys = sortedforkey.map(d => d[keyHint]);
+            
+            keys = sortedforkey.map(d => d[keyHint]);
             keys = keys.filter(d => {return d !== alone});
-            let keys_hubei = Array.from(new Set(data_hubei.map( datum => datum[keyHint])));
-
+            keys_hubei = Array.from(new Set(data_hubei.map( datum => datum[keyHint])));
             // generate low_max and up_max for Y-scale; 
             up_max = d3.max(sequential, seq => {
                 result = 0;
@@ -352,17 +342,17 @@
             render(prestack, keys, area);
             render(prestack_hubei, keys_hubei, area_hubei); 
 
-            let c = 0; 
-            let width_step = innerWidth / (alldates.length-1);
-            let intervalId = setInterval(function(){
-            if(c >= alldates.length){
-                console.log('time to close this animation');
-                clearInterval(intervalId); 
-            }else{
-                render_update(c * width_step);
-                c = c + 1;
-            }
-    }, aduration); 
+    //         let c = 0; 
+    //         let width_step = innerWidth / (alldates.length-1);
+    //         let intervalId = setInterval(function(){
+    //         if(c >= alldates.length){
+    //             console.log('time to close this animation');
+    //             clearInterval(intervalId); 
+    //         }else{
+    //             render_update(c * width_step);
+    //             c = c + 1;
+    //         }
+    // }, aduration); 
         });
     </script>
   </body>

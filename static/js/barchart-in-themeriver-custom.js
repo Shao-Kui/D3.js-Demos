@@ -9,7 +9,7 @@ const toNameValue = function(data){
     for(let i = 0; i < barKeys.length; i++){
         ret.push({name: barKeys[i], value: data[barKeys[i]]});
     }
-    return ret;
+        return ret;
 }
 
 const setting_up_barchart = function(data){
@@ -46,10 +46,10 @@ const setting_up_barchart = function(data){
 }
 
 const barchart_color = {
-    '现有确诊': '#ed8b66',
-    '确诊人数': '#ed8b66',
-    '治愈人数': '#99c7b2',
-    '死亡人数': '#e07a76'
+    '现有确诊': '#6cd7e6',
+    '确诊人数': '#6cd7e6',
+    '治愈人数': '#6be86b',
+    '死亡人数': '#df5353'
 }
 
 const renderbarchart = function(data, isTatal){

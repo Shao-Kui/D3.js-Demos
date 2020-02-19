@@ -27,8 +27,9 @@
         //const rValue = d => {return Math.sqrt(d['确诊人数']) + 6};
         const xValue = d => {return Math.log(d['确诊人数'] + 1)}; 
         //const yValue = d => {return Math.log(d['newinfec'] + 1)};
-        const yValue = d => {return Math.log(d['扩散指数'] * 1000 + 1);};
-        const rValue = d => {return Math.sqrt(Math.sqrt(d['感染率'] * 1000000))};
+        const yValue = d => {
+            return Math.log(d['扩散指数'] * 1000 + 1);};
+        const rValue = d => {return Math.sqrt(d['感染率'] * 1000) * 0.4 ;};
         let xScale, yScale;
         let maxX, maxY;
         let dates; 
@@ -46,10 +47,10 @@
         const renderinit = function(data, seq, K){
             // Linear Scale: Data Space -> Screen Space; 
             xScale = d3.scaleLinear()
-            .domain([d3.min(data, xValue), d3.max(data, xValue) + 1]) // "extent" is equivalent to [d3.min(data, xValue), d3.max(data, xValue)]; 
+            .domain([d3.min(data, xValue), d3.max(data, xValue)]) // "extent" is equivalent to [d3.min(data, xValue), d3.max(data, xValue)]; 
             .range([0, innerWidth])
             .nice();
-
+            console.log(d3.extent(data, yValue).reverse());
             // Introducing y-Scale; 
             yScale = d3.scaleLinear()
             .domain(d3.extent(data, yValue).reverse()) // remember to use reverse() to make y-axis start from the bottom; 
@@ -205,21 +206,23 @@
             .text(d => d);
 
             //document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
-            myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000, 8100, 22000, 60000, 160000]
+            myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000, 8100, 22000, 60000]
             for(let tid = 0; tid < myticks.length; tid++){
-                //document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
+                document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             }
 
             //document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
-            myticks = [0, 0.2, 1.0, 2.0, 5.0, 15, 40, 110, 300, 800]
+            myticks = [0, 0.2, 1.0, 2.0, 5.0, 15, 40, 110, 300, 800, 2200]
             for(let tid = 0; tid < myticks.length; tid++){
-                //document.getElementById('yaxis').getElementsByClassName('tick')[myticks.length-1-tid].getElementsByTagName('text')[0].textContent = myticks[tid];
+                document.getElementById('yaxis').getElementsByClassName('tick')[myticks.length-1-tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             }
         };
         
         const renderupdate = function(seq){
             const g = d3.select('#maingroup');
             time = seq[0]['日期'];
+            split_time  = time.split('/');
+            time = split_time[1] + "月" + split_time[2] + "日";
             g.selectAll('.date_text').remove();
             g.append("text")
             .data(['seq']) 
@@ -286,7 +289,7 @@
                 if(datum['扩散指数'] === undefined){
                     let lastmoment = moment(datum['日期'], 'M月D日', 'en', true)
                     let lastdate = lastmoment.date(lastmoment.date()-1).format('M月D日');
-                    console.log(datum['日期'], lastdate)
+                    console.log(datum)
                     datum_last_day = data.find(x => {
                         return x[keyHint] === datum[keyHint] && lastdate === x['日期'];
                     }); 
@@ -305,8 +308,19 @@
                 datum['感染率'] = datum['确诊人数'] / (metapop.find(x => x[keyHint] === datum[keyHint])['2019年人口'] / 10000.0);
             });
 
-            // remove duplicated items; 
-            data = data.filter(datum => {return datum['日期'] !== '1月21日'}); // delete first day data; 
+            // remove duplicated items;
+            data = data.filter(datum => {
+                console.log(datum['日期'], (datum['日期'] === '2020/1/21'));
+                var delete_dates = ['2020/1/21', '2020/1/22', '2020/1/23', '2020/1/24'];
+                //  '2020/1/25', '2020/1/26', '2020/1/27', '2020/1/28', '2020/1/29', '2020/1/30', '2020/1/31'];
+                var flag = true;
+                for(var i=0; i<delete_dates.length; ++i) {
+                    if(datum['日期'] == delete_dates[i]){
+                        flag = false;
+                        break;
+                    }
+                }
+                return flag;}) // delete first day data; 
             alldates = Array.from(new Set(data.map( datum => datum['日期'])));
             keys = Array.from(new Set(data.map( datum => datum[keyHint])));
 
@@ -363,6 +377,7 @@
                     console.log('time to close this animation');
                     clearInterval(intervalId); 
                 }else{
+                    // c = alldates.length - 1;
                     renderupdate(sequential[c]);
                     c = c + 1;
                 }

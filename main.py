@@ -46,6 +46,10 @@ def nCov():
 def nCovnxt():
     return flask.send_from_directory('static', 'nCovnxt.html')
 
+@app.route('/nCovnxt-province')
+def nCovnxtprovince():
+    return flask.send_from_directory('static', 'nCovnxt-province.html')
+
 @app.route('/themeriver')
 def themeriver():
     return flask.send_from_directory('static', 'themeriver.html')
@@ -53,6 +57,10 @@ def themeriver():
 @app.route('/themeriver-lr')
 def themeriverlr():
     return flask.send_from_directory('static', 'themeriver-lr.html')
+
+@app.route('/themeriver-lr-custom')
+def themeriverlrcus():
+    return flask.send_from_directory('static', 'themeriver-lr-custom.html')
 
 @app.route('/colorgradient')
 def colorgradient():
@@ -65,6 +73,10 @@ def scatteranimation():
 @app.route('/multi-channel')
 def multichannel():
     return flask.send_from_directory('static', 'Multi-Channel.html')
+
+@app.route('/multi-channel-texture')
+def multichanneltexture():
+    return flask.send_from_directory('static', 'multi-channel-texture.html')
 
 @app.route('/static/<fname>')
 def sendfile(fname):

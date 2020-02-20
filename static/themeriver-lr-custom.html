@@ -27,7 +27,7 @@
         //const rValue = d => {return Math.sqrt(d['确诊人数']) + 6};
         let low_max = 4000; 
         let up_max = 1000;
-        let limit_up_max = 2500;
+        let limit_up_max = 3500;
         let xScale, yScale, nyScale;
         let maxX, maxY;
         let dates; 
@@ -36,9 +36,10 @@
         let metapop;
         let rawdata; 
 
-        const keyHint = '地区';
-        const alone = '武汉';
-        const color_strategy = city_color;
+        const keyHint = '省份';
+        const alone = '湖北';
+        const data_url = 'province'
+        const color_strategy = province_color;
         let keysall;
         let keys, keys_hubei;
 
@@ -135,7 +136,7 @@
             myticks = ["1月21日", "22日", "23日", "24日", "25日", "26日", 
             "27日", "28日", "29日", "30日", "31日", "2月1日", "2日", 
             "3日", "4日", "5日", "6日", "7日", "8日", "9日", "10日", 
-            "11日", "12日", "13日", "14日", "15日", "16日", "17日", "18日"]
+            "11日", "12日", "13日", "14日", "15日", "16日", "17日", "18日", "19日"]
 
             for(let tid = 0; tid < myticks.length; tid++){
                 document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
@@ -143,19 +144,11 @@
             
             // console.log(keys, keys_hubei);
             // keysall = keys_hubei.concat(keys);
-            keysall = ["武汉", "黄石", "十堰", "荆州", "宜昌", "襄阳",
-                "鄂州",
-                "荆门",
-                "孝感",
-                "黄冈",
-                "咸宁",
-                "恩施州",
-                "随州",
-                "仙桃",
-                "天门",
-                "潜江",
-                "神农架",
-            ]
+            //keysall = ["武汉", "黄石", "十堰", "荆州", "宜昌", "襄阳", "鄂州", "荆门",
+            //    "孝感", "黄冈", "咸宁", "恩施州", "随州", "仙桃", "天门", "潜江", "神农架",
+            //]
+
+            keysall = ["湖北", "广东", "河南", "浙江", "湖南", "安徽", "江西", "江苏", "重庆", "山东", "四川", "黑龙江", "北京", "上海", "河北", "福建", "广西", "陕西", "海南", "云南", "贵州", "山西", "天津", "辽宁", "甘肃", "吉林", "宁夏", "新疆", "内蒙古", "香港", "青海", "台湾", "澳门", "西藏"]
 
             // draw legend
             var legend = svg.selectAll(".legend")
@@ -241,7 +234,7 @@
             return prestack
         }
 
-        d3.csv('./static/data/hubeinxt.csv').then(function(data){
+        d3.csv(`./static/data/${data_url}.csv`).then(function(data){
             data.forEach(datum => {
                 // pre-process the data; 
                 datum['确诊人数'] = +(datum['确诊人数']);

@@ -100,7 +100,7 @@ var province_color_themeriver = {
 //     "宁夏": "#41D541"
 // }
 
-const privece_offset_x = {
+const province_offset_x = {
     "广东": 5,
     "山东": 5,
     "河南": 30,
@@ -137,7 +137,7 @@ const privece_offset_x = {
     "澳门": 0,
 }
 
-const privece_offset_y = {
+const province_offset_y = {
     "广东": -5,
     "山东": 40,
     "河南": 20,

@@ -7,7 +7,7 @@
 # 安装Python-Flask
 Python的安装请参考[官方网站][pythonweb]，安装后请打开命令行，输入如下命令安装服务器端需要的flask库：
 ```
-pip install flask, flask_cors
+pip install flask flask_cors
 ```
 
 # 启动服务器

@@ -65,7 +65,7 @@ const renderbarchart = function(data, isTatal){
 
     const textbarchart = g.selectAll('.text-barchart').data(data, data => data.name);
     textbarchart.enter().append('text').attr('class', 'text-barchart')
-    .attr('y', datum => yscalehere(yBarValue(datum)) + yscalehere.bandwidth() / 2 - 2)
+    .attr('y', datum => yscalehere(yBarValue(datum)) + yscalehere.bandwidth() / 2 - 12)
     .attr('x', 210)
     .attr('text-anchor', 'start');
     textbarchart.text(d => d.value)
@@ -79,7 +79,7 @@ const renderbarchart = function(data, isTatal){
     .join('rect')
     .attr('class', 'rect-barchart') // note to assgin class to it, or it will create new rect each time instead of smooth animation; 
     .attr('x', 200)
-    .attr('y', datum => yscalehere(yBarValue(datum)))
+    .attr('y', datum => yscalehere(yBarValue(datum))-10)
     .attr('height', yscalehere.bandwidth() / 2)
     .attr('fill', function(datum){return barchart_color[datum.name]})
     .transition().ease(d3.easeCubic).duration(aduration)

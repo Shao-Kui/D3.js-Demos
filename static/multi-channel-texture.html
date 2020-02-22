@@ -43,12 +43,12 @@
 
       const length_texture = {
         primitive: 'rect',
-        name: 'length_saturation',
+        name: 'length_texture',
         step: 10, 
         channel1: 'width',
-        channel1_value: datum => 10 * Math.floor(datum / length_saturation.step) + 20,
+        channel1_value: datum => 10 * Math.floor(datum / length_texture.step) + 20,
         channel2: 'fill',
-        channel2_value: datum => 14 - datum % length_saturation.step, // 4 ~ 14
+        channel2_value: datum => 14 - datum % length_texture.step, // 4 ~ 14
         channel2_texture_type: 1,
         channel2_texture_color: '#1b9e77',
       }; 
@@ -64,39 +64,58 @@
         .style('stroke', '#1b9e77')
         .attr(strategy.channel1, strategy.channel1_value)
         .attr(strategy.channel2, function(d,i) {
-          var tex = colorizeTexture(textureGenerators[length_saturation.channel2_texture_type](length_saturation.channel2_value(d)), length_saturation.channel2_texture_color);
+          var tex = colorizeTexture(textureGenerators[length_texture.channel2_texture_type](length_texture.channel2_value(d)), length_texture.channel2_texture_color);
           g.call(tex);
-          console.log(tex.url());
-          console.log(length_saturation.channel2_value(d));
           return tex.url();
         })
         .attr('height', 50)
       };
 
-      strategies.push(length_saturation);
+      strategies.push(length_texture);
 
       const area_texture = {
         primitive: 'circle',
-        name: 'area_saturation',
-        step: 16, 
+        name: 'area_texture',
+        step: 100, 
         channel1: 'r',
-        channel1_value: datum => Math.sqrt(Math.floor(datum / length_saturation.step)),
+        channel1_value: datum => 10 * Math.floor(datum / area_texture.step) + 20,
         channel2: 'fill',
-        channel2_value: datum => d3.interpolateBlues((datum % length_saturation.step) / length_saturation.step),
+        channel2_value: datum => datum % area_texture.step
       }; 
 
       const render_circle = function(data, strategy){
-        d3.select('#maingroup').selectAll(`.circle-${strategy.name}`)
-        .data(data)
-        .join(strategy.primitive)
-        .attr('class', `.circle-${strategy.name}`) 
-        .attr('cx', xScale(strategy.name) + xScale.bandwidth()/2)
-        .attr('cy', datum => yScale(datum))
-        .attr(strategy.channel1, strategy.channel1_value)
-        .attr(strategy.channel2, strategy.channel2_value)
+        var color = ['#7A6D1E', 'white']
+        for (var i=0;i<data.length;++i) {
+          var per = area_texture.channel2_value(data[i]);
+          var g = d3.select('#maingroup');
+          var arc_generator  = d3.arc().innerRadius([0]).outerRadius([area_texture.channel1_value(data[i])]);
+          var pieDate = [
+            {data: per
+            ,endAngle: 2 * Math.PI * (per / area_texture.step)
+            ,index: 0
+            ,padAngle: 0
+            ,startAngle: 0.
+            ,value: per},
+            {data: area_texture.step - per
+            ,endAngle: 2 * Math.PI
+            ,index: 1
+            ,padAngle: 0
+            ,startAngle: 2 * Math.PI * (per / area_texture.step)
+            ,value: area_texture.step - per}
+          ]
+          var gs = g.selectAll(`.pie-${i}`).data(pieDate).enter().append("g").attr('class', `pie-${i}`).attr("transform","translate("+ (xScale(strategy.name) + xScale.bandwidth()/2) +","+ (yScale(data[i]) + 100) +")");
+          gs.append("path")
+          .attr("stroke", "#E3AF80")
+          .attr("fill", function(d,i) {
+            return color[i];
+          })
+          .attr("d", function (d) {
+            return arc_generator(d);
+          });
+        }
       }
 
-      strategies.push(area_saturation);
+      strategies.push(area_texture);
 
       const renderinit = function(data){
         const g = svg.append('g')
@@ -145,10 +164,10 @@
       }
 
       // const testData = [5, 9, 18, 100, 600, 1000, 5000, 6000, 6009, 10020, 10040, 10060, 10080];
-      const testData = [5, 9, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 100];
+      const testData = [300, 320, 340, 360, 380, 400];
       renderinit(testData);
-      render_rect(testData, length_saturation);
-      render_circle(testData, area_saturation);
+      render_rect(testData, length_texture);
+      render_circle(testData, area_texture);
     </script>
   </body>
 </html>

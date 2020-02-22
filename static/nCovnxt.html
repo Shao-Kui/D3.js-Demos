@@ -25,33 +25,52 @@
         //const yValue = d => {return d['diffuse_smooth']};
         //const yValue = d => {return Math.log(d['newinfec']+1)};
         //const rValue = d => {return Math.sqrt(d['确诊人数']) + 6};
-        const xValue = d => {return Math.log(d['确诊人数'] + 1)}; 
-        //const yValue = d => {return Math.log(d['newinfec'] + 1)};
+        // const xValue = d => {
+        //     return Math.log(d['确诊人数'] + 1);}; 
+        // const yValue = d => {
+        //     if (d['确诊人数'] === 0) {
+        //         return 0;
+        //     }
+        //     else {
+        //         return Math.sqrt(d['治愈人数'] / d['确诊人数']);
+        //     }
+        // }
+        // const rValue = d => {return Math.sqrt(d['感染率'] * 1000) * 0.4 ;};
+        const xValue = d => {
+            return Math.log(d['现有确诊'] + 1);}; 
         const yValue = d => {
-            return Math.log(d['扩散指数'] * 1000 + 1);};
-        const rValue = d => {return Math.sqrt(d['感染率'] * 1000) * 0.4 ;};
+            if (d['确诊人数'] === 0) {
+                return 0;
+            }
+            else {
+                return (d['治愈人数'] / d['确诊人数']) * 100;
+            }
+        }
+        const rValue = d => {
+            console.log(d['确诊人数'], Math.log(d['确诊人数'] + 1));
+            return Math.sqrt(d['确诊人数'] + 1) * 0.5 + 2;};
         let xScale, yScale;
         let maxX, maxY;
         let dates; 
         let keys;
-        const keys_to_color = city_color;
+        const keys_to_color = qipao_city_color;
         const offset_x = city_offset_x;
         const offset_y = city_offset_y;
         let aduration = 1000;
         let metapop;
         let keyHint = '地区'
 
-        const xAxisLabel = '累计确诊人数';
-        const yAxisLabel = '扩散指数（%）';
-
+        const xAxisLabel = '现有确诊人数';
+        const yAxisLabel = '治愈率（%）';
+            
         const renderinit = function(data, seq, K){
             // Linear Scale: Data Space -> Screen Space; 
             xScale = d3.scaleLinear()
             .domain([d3.min(data, xValue), d3.max(data, xValue)]) // "extent" is equivalent to [d3.min(data, xValue), d3.max(data, xValue)]; 
             .range([0, innerWidth])
             .nice();
-            console.log(d3.extent(data, yValue).reverse());
             // Introducing y-Scale; 
+            console.log(d3.extent(data, yValue));
             yScale = d3.scaleLinear()
             .domain(d3.extent(data, yValue).reverse()) // remember to use reverse() to make y-axis start from the bottom; 
             .range([0, innerHeight])
@@ -182,7 +201,7 @@
                 .data(keys)
                 .enter().append("g")
                 .attr("class", "legend")
-                .attr("transform", function(d, i) { return "translate(" + (innerWidth * 4 / 5 + 300) + "," + (i * 20 + 40) + ")"; });
+                .attr("transform", function(d, i) { return "translate(" + (innerWidth * 4 / 5 + 300) + "," + (i * 20 + 2) + ")"; });
 			
             // draw legend colored rectangles
             legend.append("rect")
@@ -212,9 +231,9 @@
             }
 
             //document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
-            myticks = [0, 0.2, 1.0, 2.0, 5.0, 15, 40, 110, 300, 800, 2200]
+            myticks = [0, 1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
             for(let tid = 0; tid < myticks.length; tid++){
-                document.getElementById('yaxis').getElementsByClassName('tick')[myticks.length-1-tid].getElementsByTagName('text')[0].textContent = myticks[tid];
+                // document.getElementById('yaxis').getElementsByClassName('tick')[myticks.length-1-tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             }
         };
         
@@ -227,7 +246,7 @@
             g.append("text")
             .data(['seq']) 
             .attr('class', 'date_text')
-            .attr("x", innerWidth - 50)
+            .attr("x", innerWidth - 20)
             .attr("y", innerHeight / 10 - 20)
             .attr("dy", ".5em")
             .style("text-anchor", "end")
@@ -283,13 +302,14 @@
 
             data.forEach(datum => {
                 // pre-process the data; 
+                datum['新增确诊'] = +(datum['新增确诊']);
+                datum['现有确诊'] = +(datum['现有确诊']);
                 datum['确诊人数'] = +(datum['确诊人数']);
                 datum['治愈人数'] = +(datum['治愈人数']);
                 datum['死亡人数'] = +(datum['死亡人数']);
                 if(datum['扩散指数'] === undefined){
                     let lastmoment = moment(datum['日期'], 'M月D日', 'en', true)
                     let lastdate = lastmoment.date(lastmoment.date()-1).format('M月D日');
-                    console.log(datum)
                     datum_last_day = data.find(x => {
                         return x[keyHint] === datum[keyHint] && lastdate === x['日期'];
                     }); 
@@ -310,8 +330,7 @@
 
             // remove duplicated items;
             data = data.filter(datum => {
-                console.log(datum['日期'], (datum['日期'] === '2020/1/21'));
-                var delete_dates = ['2020/1/21', '2020/1/22', '2020/1/23', '2020/1/24'];
+                var delete_dates = [];// '2020/1/21', '2020/1/22', '2020/1/23', '2020/1/24'];
                 //  '2020/1/25', '2020/1/26', '2020/1/27', '2020/1/28', '2020/1/29', '2020/1/30', '2020/1/31'];
                 var flag = true;
                 for(var i=0; i<delete_dates.length; ++i) {
@@ -365,7 +384,6 @@
             const total_last = totals.find(d => {return d['日期'] === alldates[alldates.length-1]}); 
             const total_ls = totals.find(d => {return d['日期'] === alldates[alldates.length-2]}); 
             const K = (total_last['确诊人数'] - total_ls['确诊人数']) / total_last['确诊人数'];
-            console.log(K);
 
             // initialize the chart; 
             renderinit(data, sequential[0], K);

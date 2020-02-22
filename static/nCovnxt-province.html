@@ -28,7 +28,7 @@
         const xValue = d => {return Math.log(d['现有确诊'] + 1)}; 
         //const yValue = d => {return Math.log(d['newinfec'] + 1)};
         const yValue = d => {return Math.log(d['新增确诊'] + 1);};
-        const rValue = d => {return Math.sqrt(d['扩散指数'] * 100) * 2 + 10;};
+        const rValue = d => {return Math.sqrt(d['扩散指数'] * 100) * 3 + 5;};
         // const rValue = d => {return Math.sqrt(Math.sqrt(d['扩散指数'] * 10000));};
         let xScale, yScale;
         let maxX, maxY;
@@ -176,7 +176,7 @@
             textenter = textupdates.enter().append('text')
             .attr("class", "province_text")
             .attr("x", (datum) => { return xScale(xValue(datum)) + offset_x[datum[keyHint]]; })
-            .attr("y", (datum) => { return yScale(yValue(datum)) - 15 + offset_y[datum[keyHint]]; })
+            .attr("y", (datum) => { return yScale(yValue(datum)) - 23 + offset_y[datum[keyHint]] + rValue(datum); })
             .attr("dy", ".1em")
             .style("text-anchor", "middle")
             .attr("fill", "#333333")
@@ -234,17 +234,17 @@
             });
 
             // remove duplicated items;
-            data = data.filter(datum => {
-                var delete_dates = ['2020/1/21', '2020/1/22', '2020/1/23', '2020/1/24'];
-                //  '2020/1/25', '2020/1/26', '2020/1/27', '2020/1/28', '2020/1/29', '2020/1/30', '2020/1/31'];
-                var flag = true;
-                for(var i=0; i<delete_dates.length; ++i) {
-                    if(datum['日期'] == delete_dates[i]){
-                        flag = false;
-                        break;
-                    }
-                }
-                return flag;}) // delete first day data; 
+            // data = data.filter(datum => {
+            //     var delete_dates = ['2020/1/21', '2020/1/22', '2020/1/23', '2020/1/24'];
+            //     //  '2020/1/25', '2020/1/26', '2020/1/27', '2020/1/28', '2020/1/29', '2020/1/30', '2020/1/31'];
+            //     var flag = true;
+            //     for(var i=0; i<delete_dates.length; ++i) {
+            //         if(datum['日期'] == delete_dates[i]){
+            //             flag = false;
+            //             break;
+            //         }
+            //     }
+            //     return flag;}) // delete first day data; 
             alldates = Array.from(new Set(data.map( datum => datum['日期'])));
             keys = Array.from(new Set(data.map( datum => datum[keyHint])));
 

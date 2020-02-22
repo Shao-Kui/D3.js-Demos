@@ -14,6 +14,10 @@ def index():
 def barchart():
     return flask.send_from_directory('static', 'barchart.html')
 
+@app.route('/barchart-tutorial')
+def barcharttutorial():
+    return flask.send_from_directory('static', 'd3-tutorial/barchart.html')
+
 @app.route('/baraxes')
 def baraxes():
     return flask.send_from_directory('static', 'baraxes.html')

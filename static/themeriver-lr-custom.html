@@ -14,7 +14,7 @@
         const svg = d3.select('#mainsvg');
         const width = +svg.attr('width');
         const height = +svg.attr('height');
-        const margin = {top: 100, right: 120, bottom: 100, left: 120};
+        const margin = {top: 100, right: 220, bottom: 100, left: 120};
         const innerWidth = width - margin.left - margin.right;
         const innerHeight = height - margin.top - margin.bottom;
         const xValue = (datum) => { return dates.indexOf(datum['日期']); };
@@ -93,7 +93,7 @@
             // Linear Scale: Data Space -> Screen Space; 
             xScale = d3.scaleLinear()
             .domain([0, dates.length-1])
-            .range([0, innerWidth-100]);
+            .range([0, innerWidth]);
 
             // Introducing y-Scale; 
             yScale = d3.scaleLinear()
@@ -136,7 +136,7 @@
             // Adding axes; 
             var formatter = d3.format("0")
             const yAxis = d3.axisLeft(yScale)
-            .tickSize(100-innerWidth)
+            .tickSize(-innerWidth)
             .tickFormat(function (d) { 
                 if (d === 0) return 0; // No label for '0'
                 else if (d < 0) d = -d; // No nagative labels
@@ -177,7 +177,7 @@
             myticks = ["1月21日", "22", "23", "24", "25", "26", 
             "27", "28", "29", "30", "31", "2月1日", "2", 
             "3", "4", "5", "6", "7", "8", "9", "10", 
-            "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22"]
+            "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"]
 
             for(let tid = 0; tid < myticks.length; tid++){
                 document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
@@ -196,7 +196,7 @@
                 .data(keysall)
                 .enter().append("g")
                 .attr("class", "legend")
-                .attr("transform", function(d, i) { return "translate(" + (innerWidth + 30) + "," + (i * 20 + 140) + ")"; });
+                .attr("transform", function(d, i) { return "translate(" + (innerWidth + 130) + "," + (i * 20 + 140) + ")"; });
 			
             // draw legend colored rectangles
             legend.append("rect")
@@ -255,11 +255,11 @@
             .attr("fill", function (d,i) {
                 return province_color_themeriver[d["key"]]; });
 
-            clipedrect.transition().ease(d3.easeLinear).duration(totalduration).attr("width", innerWidth);    
+            //clipedrect.transition().ease(d3.easeLinear).duration(totalduration).attr("width", innerWidth);    
         };
 
         const render_update = function(width){
-            d3.select('.rect-clip').transition().ease(d3.easeCubic).duration(aduration).attr("width", width); 
+            d3.select('.rect-clip').transition().ease(d3.easeLinear).duration(aduration).attr("width", width); 
         }
 
         const seqgen = function(data){
@@ -389,18 +389,18 @@
             render(prestack, keys, area);
             render(prestack_hubei, keys_hubei, area_hubei); 
             console.log(alldates);
-        //     let c = 0; 
-        //     let width_step = innerWidth / (alldates.length-1);
-        //     let intervalId = setInterval(function(){
-        //     if(c >= alldates.length){
-        //         console.log('time to close this animation');
-        //         clearInterval(intervalId); 
-        //     }else{
-        //         console.log(c * width_step);
-        //         render_update(c * width_step);
-        //         c = c + 1;
-        //     }
-        // }, aduration); 
+            let c = 0; 
+            let width_step = innerWidth / (alldates.length-1);
+            let intervalId = setInterval(function(){
+                if(c >= alldates.length){
+                    console.log('time to close this animation');
+                    clearInterval(intervalId); 
+                }else{
+                    console.log(c * width_step);
+                    render_update(c * width_step);
+                    c = c + 1;
+                }
+            }, aduration); 
         });
     </script>
   </body>

@@ -31,7 +31,7 @@
         let xScale, yScale, nyScale;
         let maxX, maxY;
         let dates; 
-        let aduration = 0;
+        let aduration = 1000;
         let totalduration = 20000;
         let metapop;
         let rawdata; 
@@ -52,11 +52,48 @@
         const barKeys_reverse = ['死亡人数', '治愈人数', '确诊人数'];
         let yBandScale, nyBandScale, xBarScale;
 
+        let province_name_map = {
+                "北京": "Beijing",
+                "天津": "Tianjin",
+                "河北": "Hebei",
+                "山西": "Shanxi",
+                "内蒙古": "Neimenggu",
+                "辽宁": "Liaoning",
+                "吉林": "Jilin",
+                "黑龙江": "Heilongjiang",
+                "上海": "Shanghai",
+                "江苏": "Jiangsu",
+                "浙江": "Zhejiang",
+                "安徽": "Anhui",
+                "福建": "Fujian",
+                "江西": "Jiangxi",
+                "山东": "Shandong",
+                "河南": "Henan",
+                "湖北": "Hubei",
+                "湖南": "Hunan",
+                "广东": "Guangdong",
+                "广西": "Guangxi",
+                "海南": "Hainan",
+                "重庆": "Chongqing",
+                "四川": "Sichuan",
+                "贵州": "Guizhou",
+                "云南": "Yunnan",
+                "西藏": "Xizang",
+                "陕西": "Shanxi",
+                "甘肃": "Gansu",
+                "青海": "Qinghai",
+                "宁夏": "Ningxia",
+                "新疆": "Xinjiang",
+                "香港": "Xianggang",
+                "澳门": "Aomen",
+                "台湾": "Taiwan"
+            }
+
         const renderinit = function(data, seq){ 
             // Linear Scale: Data Space -> Screen Space; 
             xScale = d3.scaleLinear()
             .domain([0, dates.length-1])
-            .range([0, innerWidth]);
+            .range([0, innerWidth-100]);
 
             // Introducing y-Scale; 
             yScale = d3.scaleLinear()
@@ -99,7 +136,7 @@
             // Adding axes; 
             var formatter = d3.format("0")
             const yAxis = d3.axisLeft(yScale)
-            .tickSize(-innerWidth)
+            .tickSize(100-innerWidth)
             .tickFormat(function (d) { 
                 if (d === 0) return 0; // No label for '0'
                 else if (d < 0) d = -d; // No nagative labels
@@ -133,10 +170,14 @@
             .text(xAxisLabel);
             xAxisGroup.selectAll('.domain').remove();
 
-            myticks = ["1月21日", "22日", "23日", "24日", "25日", "26日", 
-            "27日", "28日", "29日", "30日", "31日", "2月1日", "2日", 
-            "3日", "4日", "5日", "6日", "7日", "8日", "9日", "10日", 
-            "11日", "12日", "13日", "14日", "15日", "16日", "17日", "18日", "19日", "20日"]
+            // myticks = ["1月21日", "22日", "23日", "24日", "25日", "26日", 
+            // "27日", "28日", "29日", "30日", "31日", "2月1日", "2日", 
+            // "3日", "4日", "5日", "6日", "7日", "8日", "9日", "10日", 
+            // "11日", "12日", "13日", "14日", "15日", "16日", "17日", "18日", "19日", "20日"]
+            myticks = ["1月21日", "22", "23", "24", "25", "26", 
+            "27", "28", "29", "30", "31", "2月1日", "2", 
+            "3", "4", "5", "6", "7", "8", "9", "10", 
+            "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22"]
 
             for(let tid = 0; tid < myticks.length; tid++){
                 document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
@@ -155,7 +196,7 @@
                 .data(keysall)
                 .enter().append("g")
                 .attr("class", "legend")
-                .attr("transform", function(d, i) { return "translate(" + (innerWidth + 130) + "," + (i * 20 + 140) + ")"; });
+                .attr("transform", function(d, i) { return "translate(" + (innerWidth + 30) + "," + (i * 20 + 140) + ")"; });
 			
             // draw legend colored rectangles
             legend.append("rect")
@@ -165,7 +206,7 @@
             .attr("width", 30)
             .attr("height", 15)
             .style("fill", function (d,i) {
-                return color_strategy[d]});
+                return province_color_themeriver[d]});
 			
             // draw legend text
             legend.append("text")
@@ -212,7 +253,7 @@
             .attr("clip-path", "url(#rectClip)")
             // fill attrbute requires designers to assign colors for each province; 
             .attr("fill", function (d,i) {
-                return color_strategy[d["key"]]; });
+                return province_color_themeriver[d["key"]]; });
 
             clipedrect.transition().ease(d3.easeLinear).duration(totalduration).attr("width", innerWidth);    
         };
@@ -347,18 +388,19 @@
             // set the animation interval; 
             render(prestack, keys, area);
             render(prestack_hubei, keys_hubei, area_hubei); 
-
-    //         let c = 0; 
-    //         let width_step = innerWidth / (alldates.length-1);
-    //         let intervalId = setInterval(function(){
-    //         if(c >= alldates.length){
-    //             console.log('time to close this animation');
-    //             clearInterval(intervalId); 
-    //         }else{
-    //             render_update(c * width_step);
-    //             c = c + 1;
-    //         }
-    // }, aduration); 
+            console.log(alldates);
+        //     let c = 0; 
+        //     let width_step = innerWidth / (alldates.length-1);
+        //     let intervalId = setInterval(function(){
+        //     if(c >= alldates.length){
+        //         console.log('time to close this animation');
+        //         clearInterval(intervalId); 
+        //     }else{
+        //         console.log(c * width_step);
+        //         render_update(c * width_step);
+        //         c = c + 1;
+        //     }
+        // }, aduration); 
         });
     </script>
   </body>

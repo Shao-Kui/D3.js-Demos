@@ -25,10 +25,22 @@
         //const yValue = d => {return d['diffuse_smooth']};
         //const yValue = d => {return Math.log(d['newinfec']+1)};
         //const rValue = d => {return Math.sqrt(d['确诊人数']) + 6};
-        const xValue = d => {return Math.log(d['现有确诊'] + 1)}; 
-        //const yValue = d => {return Math.log(d['newinfec'] + 1)};
-        const yValue = d => {return Math.log(d['新增确诊'] + 1);};
-        const rValue = d => {return Math.sqrt(d['扩散指数'] * 100) * 3 + 5;};
+        // const xValue = d => {return Math.log(d['现有确诊'] + 1)}; 
+        // const yValue = d => {return Math.log(d['新增确诊'] + 1);};
+        // const rValue = d => {return Math.sqrt(d['扩散指数'] * 100) * 3 + 5;};
+        const xValue = d => {
+            return Math.log(d['现有确诊'] + 1);}; 
+        const yValue = d => {
+            if (d['确诊人数'] === 0) {
+                return 0;
+            }
+            else {
+                return (d['治愈人数'] / d['确诊人数']) * 100;
+            }
+        }
+        const rValue = d => {
+            console.log(d['确诊人数'], Math.log(d['确诊人数'] + 1));
+            return Math.sqrt(d['确诊人数'] + 1) * 0.5 + 2;};
         // const rValue = d => {return Math.sqrt(Math.sqrt(d['扩散指数'] * 10000));};
         let xScale, yScale;
         let maxX, maxY;
@@ -41,15 +53,52 @@
         let metapop;
         let keyHint = '省份';
 
-        const xAxisLabel = '现有确诊人数';
-        const yAxisLabel = '新增确诊人数';
+        const xAxisLabel = 'Number of confirmed cases';
+        const yAxisLabel = 'Cure rate (%)';
+
+        let province_name_map = {
+                "北京": "Beijing",
+                "天津": "Tianjin",
+                "河北": "Hebei",
+                "山西": "Shanxi",
+                "内蒙古": "Neimenggu",
+                "辽宁": "Liaoning",
+                "吉林": "Jilin",
+                "黑龙江": "Heilongjiang",
+                "上海": "Shanghai",
+                "江苏": "Jiangsu",
+                "浙江": "Zhejiang",
+                "安徽": "Anhui",
+                "福建": "Fujian",
+                "江西": "Jiangxi",
+                "山东": "Shandong",
+                "河南": "Henan",
+                "湖北": "Hubei",
+                "湖南": "Hunan",
+                "广东": "Guangdong",
+                "广西": "Guangxi",
+                "海南": "Hainan",
+                "重庆": "Chongqing",
+                "四川": "Sichuan",
+                "贵州": "Guizhou",
+                "云南": "Yunnan",
+                "西藏": "Xizang",
+                "陕西": "Shaanxi",
+                "甘肃": "Gansu",
+                "青海": "Qinghai",
+                "宁夏": "Ningxia",
+                "新疆": "Xinjiang",
+                "香港": "Xianggang",
+                "澳门": "Aomen",
+                "台湾": "Taiwan"
+            }
 
         const renderinit = function(data, seq, K){
             console.log(d3.extent(data, rValue));
             // Linear Scale: Data Space -> Screen Space; 
             xScale = d3.scaleLinear()
-            .domain(d3.extent(data, xValue)) // "extent" is equivalent to [d3.min(data, xValue), d3.max(data, xValue)]; 
-            .range([0, innerWidth])
+            .domain([d3.min(data, xValue), d3.max(data, xValue)+1]) // "extent" is equivalent to [d3.min(data, xValue), d3.max(data, xValue)]; 
+            .range([0, innerWidth - 100])
             .nice();
             // Introducing y-Scale; 
             yScale = d3.scaleLinear()
@@ -68,7 +117,7 @@
 
             // Adding axes; 
             const yAxis = d3.axisLeft(yScale)
-            .tickSize(-innerWidth)
+            .tickSize(100-innerWidth)
             //.tickFormat(d3.format('.2s'))
             .tickPadding(10); // .tickPadding is used to prevend intersection of ticks; 
             const xAxis = d3.axisBottom(xScale)
@@ -96,7 +145,8 @@
             .attr('fill', 'white')
             .text(xAxisLabel);
             xAxisGroup.selectAll('.domain').remove();
-                
+            
+            
             var province_name = ["北京", "天津", "河北", "山西", "内蒙古", "辽宁", "吉林", "黑龙江", "上海", "江苏", "浙江", "安徽", "福建", "江西", "山东", "河南", "湖北", "湖南", "广东", "广西", "海南", "重庆", "四川", "贵州", "云南", "西藏", "陕西", "甘肃", "青海", "宁夏", "新疆", "香港", "澳门", "台湾"]
             
             // var province_name = ["湖北", "广东", "河南", "浙江", "湖南", "安徽", "江西", "江苏", "重庆", "山东", "四川", "黑龙江", "北京", "上海", "河北", "福建", "广西", "陕西", "海南", "云南", "贵州", "山西", "天津", "辽宁", "甘肃", "吉林", "宁夏", "新疆", "内蒙古", "香港", "青海", "台湾", "澳门", "西藏"]
@@ -105,7 +155,7 @@
                 .data(province_name)
                 .enter().append("g")
                 .attr("class", "legend")
-                .attr("transform", function(d, i) { return "translate(" + (innerWidth + 130) + "," + (i * 20 + 140) + ")"; });
+                .attr("transform", function(d, i) { return "translate(" + (innerWidth + 30) + "," + (i * 20 + 140) + ")"; });
 			
             // draw legend colored rectangles
             legend.append("rect")
@@ -126,16 +176,16 @@
             .attr("dy", ".2em")
             .attr("fill", 'white')
             .style("text-anchor", "start")
-            .text(d => d);
+            .text(d => province_name_map[d]);
 
             //document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
-            myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000, 8100, 22000, 60000]
+            myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000, 8100, 22000, 60000, 160000]
             for(let tid = 0; tid < myticks.length; tid++){
                 document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             }
 
             //document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
-            myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000, 8100, 22000]
+            myticks = [0, 1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
             for(let tid = 0; tid < myticks.length; tid++){
                 document.getElementById('yaxis').getElementsByClassName('tick')[myticks.length-1-tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             }
@@ -145,13 +195,13 @@
             const g = d3.select('#maingroup');
             console.log(seq);
             time = seq[0]['日期'];
-            split_time  = time.split('/');
-            time = split_time[1] + "月" + split_time[2] + "日";
+            // split_time  = time.split('/');
+            // time = split_time[1] + "月" + split_time[2] + "日";
             g.selectAll('.date_text').remove();
             g.append("text")
             .data(['seq']) 
             .attr('class', 'date_text')
-            .attr("x", innerWidth / 4 + 50)
+            .attr("x", innerWidth - 120)
             .attr("y", innerHeight / 10 - 20)
             .attr("dy", ".5em")
             .style("text-anchor", "end")
@@ -180,9 +230,9 @@
             .attr("dy", ".1em")
             .style("text-anchor", "middle")
             .attr("fill", "#333333")
-            //.attr('opacity', 0)
+            .attr('opacity', 0)
             .text(function (d,i) { 
-                return d[keyHint];
+                return province_name_map[d[keyHint]];
             });
 
             textupdates.merge(textenter).transition().ease(d3.easeLinear).duration(aduration)
@@ -301,7 +351,7 @@
                     console.log('time to close this animation');
                     clearInterval(intervalId); 
                 }else{
-                    // c = alldates.length - 1;
+                    c = alldates.length - 1;
                     renderupdate(sequential[c]);
                     c = c + 1;
                 }

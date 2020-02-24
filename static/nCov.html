@@ -101,7 +101,7 @@
             .attr('x', -innerHeight / 2)
             .attr('y', -80)
             .attr('fill', 'white')
-            .text('新增确诊人数')
+            .text('New confirmed patients')
             .attr('text-anchor', 'middle') // Make label at the middle of axis. 
             yAxisGroup.selectAll('.domain').remove(); // we can select multiple tags using comma to seperate them and we can use space to signify nesting; 
             
@@ -112,7 +112,7 @@
             .attr('y', 60)
             .attr('x', innerWidth / 2)
             .attr('fill', 'white')
-            .text('感染率（每万人）');
+            .text('Infection rate (per 10,000 people)');
             xAxisGroup.selectAll('.domain').remove();
             
             //document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
@@ -175,12 +175,31 @@
                 "神农架",
             ];
 
+            var legend_name1 = ["Wuhan",
+                "Huangshi",
+                "Shiyan",
+                "Jingzhou",
+                "Yichang",
+                "Xiangyang",
+                "Ezhou",
+                "Jingmen",
+                "Xiaogan",
+                "Huanggang",
+                "Xianning",
+                "Enshi",
+                "Suizhou",
+                "Xiantao",
+                "Tianmen",
+                "Qianjiang",
+                "Shennongjia",
+            ];
+
             // draw legend
             var legend = d3.select('#maingroup').selectAll(".legend")
             .data(seq, d => d['地区'])
             .enter().append("g")
             .attr("class", "legend")
-            .attr("transform", function(d, i) { return "translate(" + (innerWidth+10) + "," + (i * 25 + 250) + ")"; });
+            .attr("transform", function(d, i) { return "translate(" + (innerWidth - 150) + "," + (i * 25 + 280) + ")"; });
 			
             // draw legend colored rectangles
             legend.append("rect")
@@ -200,7 +219,7 @@
             .attr("dy", ".5em")
             .attr("fill", 'white')
             .style("text-anchor", "start")
-            .text(function (d,i) {return legend_name[i];});
+            .text(function (d,i) {return legend_name1[i];});
 
         };
         
@@ -211,8 +230,8 @@
             g.append("text")
             .data(['seq']) 
             .attr('class', 'date_text')
-            .attr("x", innerWidth * 4 / 5 + 160)
-            .attr("y", innerHeight - 120)
+            .attr("x", innerWidth / 4 + 260)
+            .attr("y", innerHeight / 10)
             .attr("dy", ".5em")
             .style("text-anchor", "end")
             .attr("fill", "#a6a5a5")

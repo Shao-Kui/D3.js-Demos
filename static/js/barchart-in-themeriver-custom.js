@@ -32,6 +32,7 @@ const setting_up_barchart = function(data){
     console.log('setting up barchart...');
     // set the animation interval; 
     aduration = totalduration / data_tt.length; 
+    console.log(data_tt);
     let c = 0; 
     let intervalId = setInterval(function(){
         if(c >= alldates.length){
@@ -78,7 +79,7 @@ const renderbarchart = function(data, isTatal){
     .data(data)
     .join('rect')
     .attr('class', 'rect-barchart') // note to assgin class to it, or it will create new rect each time instead of smooth animation; 
-    .attr('x', 200)
+    .attr('x', 205)
     .attr('y', datum => yscalehere(yBarValue(datum))-10)
     .attr('height', yscalehere.bandwidth() / 2)
     .attr('fill', function(datum){return barchart_color[datum.name]})

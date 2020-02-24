@@ -202,10 +202,11 @@
                 .enter().append("g")
                 .attr("class", "legend")
                 .attr("transform", function(d, i) { return "translate(" + (innerWidth * 4 / 5 + 300) + "," + (i * 20 + 2) + ")"; });
-			
+            
+                
             // draw legend colored rectangles
             legend.append("rect")
-            .data(keys) 
+            .data(keys)
             .attr("x", 0)
             .attr("y", 0)
             .attr("width", 30)

@@ -48,6 +48,8 @@
         g.append('g').call(yAxis);
         g.append('g').call(xAxis).attr('transform', `translate(0, ${innerHeight})`);
 
+        // the following lines are improved version of the above four lines, 
+        // which configurates more attributes and adds two axis labels; 
         /*const yAxis = d3.axisLeft(yScale).tickSize(-innerWidth);
         const xAxis = d3.axisBottom(xScale).tickSize(-innerHeight);
 

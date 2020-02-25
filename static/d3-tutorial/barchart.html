@@ -35,14 +35,21 @@
         const yAxis = d3.axisLeft(yScale).tickSize(-innerWidth);
         const xAxis = d3.axisBottom(xScale).tickSize(-innerHeight);
 
-        const yAxisGroup = g.append('g').call(yAxis);
-        yAxisGroup.append('text').text('Name').attr('font-size', '3em')
-        .attr('transform', 'rotate(-90)')
+        const yAxisGroup = g.append('g').call(yAxis)
+        .attr('id', 'yaxis')
+        .append('text')
+        .text('Name')
+        .attr('font-size', '3em')
+        .attr('transform', 'rotate(-90)') // y-axis label needs an additional transform; 
         .attr('x', -innerHeight / 2)
         .attr('y', -120)
         .attr('fill', 'black')
-        const xAxisGroup = g.append('g').call(xAxis).attr('transform', `translate(${0}, ${innerHeight})`)
-        .append('text').text('Value').attr('font-size', '3em')
+        const xAxisGroup = g.append('g').call(xAxis)
+        .attr('id', 'xaxis')
+        .attr('transform', `translate(${0}, ${innerHeight})`)
+        .append('text')
+        .text('Value')
+        .attr('font-size', '3em')
         .attr('x', innerWidth / 2)
         .attr('y', 50)
         .attr('fill', 'black');

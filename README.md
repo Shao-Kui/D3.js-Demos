@@ -4,6 +4,8 @@
 # 欢迎大家选修并加入数据可视化！
 本代码库对应清华大学-计算机系春季学期课程《数据可视化》，由张松海老师任课。代码库中的框架可作为大作业-可视化编程的基础，同时其中的样例可供大家参考。任何同学有任何问题，欢迎在Github上issue或给我发邮件（zhangsk18@mails.tsinghua.edu.cn）。
 
+D3.js的课上用幻灯片在[slides文件夹][theslides]下。
+
 # 安装Python-Flask
 Python的安装请参考[官方网站][pythonweb]，安装后请打开命令行，输入如下命令安装服务器端需要的flask库：
 ```
@@ -30,8 +32,11 @@ python main.py
 # 示例导航
 * 柱状图：链接
 * 柱状图，图元可交互：链接
+* 折线图，带上下浮动动画：[链接][linechart]
 * 动态气泡图：链接
 * 静态主题河流：链接
 * 动态主题河流与柱状图，从左到右逐渐展现流动过程，柱状图同时随主题河流发生改变：链接
 
 [pythonweb]:https://www.python.org/
+[theslides]:https://github.com/Shao-Kui/D3.js-Demos/tree/master/slides
+[linechart]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/lineChart.html

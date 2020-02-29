@@ -140,8 +140,8 @@ const renderbarchart = function(data){
         return y + 10 + 30*i; })
     .style('font-size', '1.7em')
     .attr('text-anchor', 'middle')
-    .style('font-weight', 'bold')
-    .style('font-family', 'FangSong')
+    // .style('font-weight', 'bold')
+    // .style('font-family', 'FangSong')
     .text(d => d);
 
     g.selectAll('.label1-barchart').remove();

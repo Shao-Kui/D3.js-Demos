@@ -86,6 +86,10 @@ def multichannel():
 def multichanneltexture():
     return flask.send_from_directory('static', 'multi-channel-texture.html')
 
+@app.route('/line')
+def line():
+    return flask.send_from_directory('static', 'lineChart.html')
+
 @app.route('/static/<fname>')
 def sendfile(fname):
     return flask.send_from_directory('static', fname)

@@ -66,10 +66,8 @@ const barchart_color = {
 }
 
 const renderbarchart = function(data){
-    
-
     let x = 170;
-    let y = 730;
+    let y = 700;
     g = d3.select('#mainsvg').selectAll('.rect-barchart');
 
     var update = g.data(data);

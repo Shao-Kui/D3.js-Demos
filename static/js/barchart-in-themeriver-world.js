@@ -90,13 +90,15 @@ const renderbarchart = function(data){
     })
     .attr('width', 15)
     .attr('height', d => barScale(d['确诊人数']))
-    .attr('fill', d => world_color_themeriver[d['国家']])
+    // .attr('fill', d => world_color_themeriver[d['国家']])
+    .attr('fill', '#454445')
     .attr('opacity', 0.)
     .transition().ease(d3.easeCubic)
     .attr('opacity', 1.);
 
     update.transition().ease(d3.easeCubic).duration(aduration)
-    .attr('fill', d => world_color_themeriver[d['国家']])
+    .attr('fill', '#454445')
+    // .attr('fill', d => world_color_themeriver[d['国家']])
     .attr('y', function (d,i) {
         return y - barScale(d['确诊人数']);
     })
@@ -128,13 +130,19 @@ const renderbarchart = function(data){
 
     g = d3.select('#mainsvg');
     g.selectAll('.cnt').remove();
-    g.append('text')
+
+    var aaaa= ['国家', '总数', data.length];
+    console.log(aaaa);
+    g.selectAll('.cnt').data(aaaa).enter().append('text')
     .attr('class', 'cnt')
-    .attr('x', function (d,i) { return x + 22*data.length + 15 / 2; })
-    .attr('y', y + 25)
-    .style('font-size', '1.1em')
-    .attr('text-anchor', 'start')
-    .text("总数:" + data.length);
+    .attr('x', function (d,i) { return x + 22*data.length + 40; })
+    .attr('y', function (d,i) { 
+        return y + 10 + 30*i; })
+    .style('font-size', '1.7em')
+    .attr('text-anchor', 'middle')
+    .style('font-weight', 'bold')
+    .style('font-family', 'FangSong')
+    .text(d => d);
 
     g.selectAll('.label1-barchart').remove();
     g.selectAll('.label2-barchart').remove();

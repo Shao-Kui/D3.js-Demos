@@ -174,13 +174,12 @@
             // "27日", "28日", "29日", "30日", "31日", "2月1日", "2日", 
             // "3日", "4日", "5日", "6日", "7日", "8日", "9日", "10日", 
             // "11日", "12日", "13日", "14日", "15日", "16日", "17日", "18日", "19日", "20日"]
-            myticks = ["1月21日", "22", "23", "24", "25", "26", 
-            "27", "28", "29", "30", "31", "2月1日", "2", 
+            myticks = ["2月2日", 
             "3", "4", "5", "6", "7", "8", "9", "10", 
-            "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27"]
+            "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28"]
 
             for(let tid = 0; tid < myticks.length; tid++){
-                // document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
+                document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             }
             
             // console.log(keys, keys_hubei);
@@ -188,8 +187,9 @@
             //keysall = ["武汉", "黄石", "十堰", "荆州", "宜昌", "襄阳", "鄂州", "荆门",
             //    "孝感", "黄冈", "咸宁", "恩施州", "随州", "仙桃", "天门", "潜江", "神农架",
             //]
-            keysall = keys_hubei.concat(keys);
 
+            keysall = keys_hubei.concat(keys);
+            console.log(keysall);
             // draw legend
             var legend = svg.selectAll(".legend")
                 .data(keysall)

@@ -62,6 +62,14 @@ def themeriverlr():
 def themeriverlrcus():
     return flask.send_from_directory('static', 'themeriver-lr-custom.html')
 
+@app.route('/themeriver-lr-hubei')
+def themeriverlrhubei():
+    return flask.send_from_directory('static', 'themeriver-lr-hubei.html')
+
+@app.route('/themeriver-lr-world')
+def themeriverlrworld():
+    return flask.send_from_directory('static', 'themeriver-lr-world.html')
+
 @app.route('/colorgradient')
 def colorgradient():
     return flask.send_from_directory('static', 'color-gradient.html')

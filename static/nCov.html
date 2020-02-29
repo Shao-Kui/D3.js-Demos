@@ -3,6 +3,7 @@
   <head>
     <title>Scatter</title>
     <link rel="stylesheet" href="/static/css/nCov.css"> 
+    <script src="/static/js/color-strategies.js"></script>
     <script src="/static/js/d3.min.js"></script>
   </head>
   <body style="text-align: center">
@@ -12,22 +13,42 @@
         const svg = d3.select('#mainsvg');
         const width = +svg.attr('width');
         const height = +svg.attr('height');
-        const margin = {top: 100, right: 120, bottom: 100, left: 120};
+        const margin = {top: 100, right: 200, bottom: 100, left: 120};
         const innerWidth = width - margin.left - margin.right;
         const innerHeight = height - margin.top - margin.bottom;
         //const xValue = (datum) => {return dates.indexOf(datum['日期'])};
         //const yValue = (datum) => {return datum['确诊人数']};
-        //const xValue = d => d['确诊人数'];
-        const xValue = d => Math.log(d['感染率']+1);
-        //const yValue = d => {return Math.log(d['diffuse_smooth'] + 1)};
-        //const yValue = d => {return d['diffuse_smooth']};
-        const yValue = d => {return Math.log(d['新增确诊']+1)};
-        const rValue = d => {return 0.7*(Math.sqrt(d['确诊人数'])+6)};
+        const xValue = d => {return Math.log(d['确诊人数'] +1)};
+        // const xValue = d => Math.log(d['感染率']+1);
+        const yValue = d => {return Math.log(d['diffuse_smooth'] * 1000 + 1)};
+        // const yValue = d => {return d['diffuse_smooth']};
+        // const yValue = d => {return Math.log(d['新增确诊']+1)};
+        const rValue = d => {return Math.sqrt(d['感染率']+1) * 10};
         let xScale, yScale;
         let maxX, maxY;
         let dates; 
         let aduration = 1000;
         let metapop;
+        let keyHint = '地区';
+
+        let name_map = {"武汉": "Wuhan",
+            "黄石": "Huangshi",
+            "十堰": "Shiyan",
+            "荆州": "Jingzhou",
+            "宜昌": "Yichang",
+            "襄阳": "Xiangyang",
+            "鄂州": "Ezhou",
+            "荆门": "Jingmen",
+            "孝感": "Xiaogan",
+            "黄冈": "Huanggang",
+            "咸宁": "Xianning",
+            "恩施州": "Enshi",
+            "随州": "Suizhou",
+            "仙桃": "Xiantao",
+            "天门": "Tianmen",
+            "潜江": "Qianjiang",
+            "神农架": "Shennongjia"
+        };
 
         var color = ["#c25ec3", //鄂州
                 "#73A373", //恩施州
@@ -88,7 +109,7 @@
             // Adding axes; 
             const yAxis = d3.axisLeft(yScale)
             .tickSize(-innerWidth)
-            .tickFormat(d3.format('.2s'))
+            // .tickFormat(d3.format('.2s'))
             .tickPadding(10); // .tickPadding is used to prevend intersection of ticks; 
             const xAxis = d3.axisBottom(xScale)
             //.tickFormat(d3.format('.2s'))
@@ -101,7 +122,7 @@
             .attr('x', -innerHeight / 2)
             .attr('y', -80)
             .attr('fill', 'white')
-            .text('New confirmed patients')
+            .text('')
             .attr('text-anchor', 'middle') // Make label at the middle of axis. 
             yAxisGroup.selectAll('.domain').remove(); // we can select multiple tags using comma to seperate them and we can use space to signify nesting; 
             
@@ -112,29 +133,39 @@
             .attr('y', 60)
             .attr('x', innerWidth / 2)
             .attr('fill', 'white')
-            .text('Infection rate (per 10,000 people)');
+            .text('');
             xAxisGroup.selectAll('.domain').remove();
             
-            //document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
-            let leftTicks = document.getElementById('yaxis').getElementsByClassName('tick');
-            let tid = 0;
-            let myticks = [];
-            for(tid = 0; tid < leftTicks.length; tid++){
-                console.log(Math.pow(Math.E, +(leftTicks[tid].textContent)))
-                myticks.push(parseFloat(Math.ceil(Math.pow(Math.E, +(leftTicks[tid].textContent)) - 1).toPrecision(1)));
-            }
-            for(tid = 0; tid < myticks.length; tid++){
-                leftTicks[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
+            // document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
+            // let leftTicks = document.getElementById('yaxis').getElementsByClassName('tick');
+            // let tid = 0;
+            // let myticks = [];
+            // for(tid = 0; tid < leftTicks.length; tid++){
+            //     console.log(Math.pow(Math.E, +(leftTicks[tid].textContent)))
+            //     myticks.push(parseFloat(Math.ceil(Math.pow(Math.E, +(leftTicks[tid].textContent)) - 1).toPrecision(1)));
+            // }
+            // for(tid = 0; tid < myticks.length; tid++){
+            //     leftTicks[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
+            // }
+
+            myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000, 8100, 22000, 60000]
+            for(let tid = 0; tid < myticks.length; tid++){
+                document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             }
 
-            let bottomTicks = document.getElementById('xaxis').getElementsByClassName('tick');
-            myticks = [];
-            for(tid = 0; tid < bottomTicks.length; tid++){
-                myticks.push(Math.ceil(Math.pow(Math.E, +(bottomTicks[tid].textContent))) - 1);
+            myticks = [0, 0.2, 1, 2, 5, 15, 40, 110, 300, 800].reverse();
+            for(let tid = 0; tid < myticks.length; tid++){
+                document.getElementById('yaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             }
-            for(tid = 0; tid < myticks.length; tid++){
-                bottomTicks[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
-            }
+
+            // let bottomTicks = document.getElementById('xaxis').getElementsByClassName('tick');
+            // myticks = [];
+            // for(tid = 0; tid < bottomTicks.length; tid++){
+            //     myticks.push(Math.ceil(Math.pow(Math.E, +(bottomTicks[tid].textContent))) - 1);
+            // }
+            // for(tid = 0; tid < myticks.length; tid++){
+            //     bottomTicks[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
+            // }
 
             var legend_color = [
                 "#ff1c12", //武汉
@@ -156,24 +187,24 @@
                 "#7289AB", //神农架
             ];
             
-            var legend_name = ["武汉市",
-                "黄石市",
-                "十堰市",
-                "荆州市",
-                "宜昌市",
-                "襄阳市",
-                "鄂州市",
-                "荆门市",
-                "孝感市",
-                "黄冈市",
-                "咸宁市",
-                "恩施州",
-                "随州市",
-                "仙桃市",
-                "天门市",
-                "潜江市",
-                "神农架",
-            ];
+            // var legend_name = ["武汉市",
+            //     "黄石市",
+            //     "十堰市",
+            //     "荆州市",
+            //     "宜昌市",
+            //     "襄阳市",
+            //     "鄂州市",
+            //     "荆门市",
+            //     "孝感市",
+            //     "黄冈市",
+            //     "咸宁市",
+            //     "恩施州",
+            //     "随州市",
+            //     "仙桃市",
+            //     "天门市",
+            //     "潜江市",
+            //     "神农架",
+            // ];
 
             var legend_name1 = ["Wuhan",
                 "Huangshi",
@@ -199,7 +230,7 @@
             .data(seq, d => d['地区'])
             .enter().append("g")
             .attr("class", "legend")
-            .attr("transform", function(d, i) { return "translate(" + (innerWidth - 150) + "," + (i * 25 + 280) + ")"; });
+            .attr("transform", function(d, i) { return "translate(" + (innerWidth + 10) + "," + (i * 25 + 290) + ")"; });
 			
             // draw legend colored rectangles
             legend.append("rect")
@@ -230,8 +261,8 @@
             g.append("text")
             .data(['seq']) 
             .attr('class', 'date_text')
-            .attr("x", innerWidth / 4 + 260)
-            .attr("y", innerHeight / 10)
+            .attr("x", innerWidth - 30)
+            .attr("y", innerHeight / 10 - 20)
             .attr("dy", ".5em")
             .style("text-anchor", "end")
             .attr("fill", "#a6a5a5")
@@ -251,6 +282,24 @@
             .attr('cx', (datum) => { return xScale(xValue(datum)) }) // use xSacle to re-scale data space (domain) and return the rescaled population; 
             .attr('r', datum => rValue(datum));
             console.log(seq);
+
+            textupdates = g.selectAll('.province_text').data(seq);
+            textenter = textupdates.enter().append('text')
+            .attr("class", "province_text")
+            .attr("x", (datum) => { return xScale(xValue(datum)) + city_offset_x[datum[keyHint]]; })
+            .attr("y", (datum) => { return yScale(yValue(datum)) - 15 + city_offset_y[datum[keyHint]]; })
+            .attr("dy", ".1em")
+            .style("text-anchor", "middle")
+            .attr("fill", "#333333")
+            //.attr('opacity', 0)
+            .text(function (d,i) { 
+                console.log(d);
+                return name_map[d[keyHint]];
+            });
+
+            textupdates.merge(textenter).transition().ease(d3.easeLinear).duration(aduration)
+            .attr('x', (datum) => { return xScale(xValue(datum)) + city_offset_x[datum[keyHint]]; })
+            .attr('y', (datum) => { return yScale(yValue(datum)) - 23 + city_offset_y[datum[keyHint]] + rValue(datum); });
         };
 
         d3.csv('./static/data/hubeipop.csv').then(data => {
@@ -337,6 +386,7 @@
                     console.log('time to close this animation');
                     clearInterval(intervalId); 
                 }else{
+                    // c = alldates.length - 1;
                     renderupdate(sequential[c]);
                     c = c + 1;
                 }

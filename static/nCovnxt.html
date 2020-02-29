@@ -47,8 +47,7 @@
             }
         }
         const rValue = d => {
-            console.log(d['确诊人数'], Math.log(d['确诊人数'] + 1));
-            return Math.sqrt(d['确诊人数'] + 1) * 0.5 + 2;};
+            return Math.sqrt(d['新增确诊']) * 1.2 + 2;};
         let xScale, yScale;
         let maxX, maxY;
         let dates; 

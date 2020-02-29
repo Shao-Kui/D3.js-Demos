@@ -4,7 +4,7 @@
     <title>ThemeRiver</title>
     <link rel="stylesheet" href="/static/css/themeriver.css"> 
     <script src="/static/js/d3.min.js"></script>
-    <script src="/static/js/barchart-in-themeriver-custom.js"></script>
+    <script src="/static/js/barchart-in-themeriver-hubei.js"></script>
     <script src="/static/js/color-strategies.js"></script>
   </head>
   <body style="text-align: center">
@@ -36,9 +36,9 @@
         let metapop;
         let rawdata; 
 
-        const keyHint = '省份';
-        const alone = '湖北';
-        const data_url = 'province'
+        const keyHint = '地区';
+        const alone = '武汉';
+        const data_url = 'hubeinxt'
         const color_strategy = province_color;
         let keysall;
         let keys, keys_hubei;
@@ -51,43 +51,6 @@
         const barKeys = ['现有确诊', '治愈人数', '死亡人数'];
         const barKeys_reverse = ['死亡人数', '治愈人数', '现有确诊'];
         let yBandScale, nyBandScale, xBarScale;
-
-        let province_name_map = {
-                "北京": "Beijing",
-                "天津": "Tianjin",
-                "河北": "Hebei",
-                "山西": "Shanxi",
-                "内蒙古": "Neimenggu",
-                "辽宁": "Liaoning",
-                "吉林": "Jilin",
-                "黑龙江": "Heilongjiang",
-                "上海": "Shanghai",
-                "江苏": "Jiangsu",
-                "浙江": "Zhejiang",
-                "安徽": "Anhui",
-                "福建": "Fujian",
-                "江西": "Jiangxi",
-                "山东": "Shandong",
-                "河南": "Henan",
-                "湖北": "Hubei",
-                "湖南": "Hunan",
-                "广东": "Guangdong",
-                "广西": "Guangxi",
-                "海南": "Hainan",
-                "重庆": "Chongqing",
-                "四川": "Sichuan",
-                "贵州": "Guizhou",
-                "云南": "Yunnan",
-                "西藏": "Xizang",
-                "陕西": "Shanxi",
-                "甘肃": "Gansu",
-                "青海": "Qinghai",
-                "宁夏": "Ningxia",
-                "新疆": "Xinjiang",
-                "香港": "Hong Kong",
-                "澳门": "Macau",
-                "台湾": "Taiwan"
-            }
 
         const renderinit = function(data, seq){ 
             // Linear Scale: Data Space -> Screen Space; 
@@ -148,7 +111,7 @@
             //.tickFormat(d3.format('.2s'))
             .tickSize(-innerHeight)
             .tickPadding(10)
-            .ticks(30);
+            .ticks(40);
 
             let yAxisGroup = g.append('g').call(yAxis).attr('id', 'yaxis')
             d3.selectAll('#yaxis .tick text').attr('transform', `translate(${0}, ${-3})`);
@@ -170,26 +133,37 @@
             .text(xAxisLabel);
             xAxisGroup.selectAll('.domain').remove();
 
-            // myticks = ["1月21日", "22日", "23日", "24日", "25日", "26日", 
-            // "27日", "28日", "29日", "30日", "31日", "2月1日", "2日", 
-            // "3日", "4日", "5日", "6日", "7日", "8日", "9日", "10日", 
-            // "11日", "12日", "13日", "14日", "15日", "16日", "17日", "18日", "19日", "20日"]
             myticks = ["1月21日", "22", "23", "24", "25", "26", 
             "27", "28", "29", "30", "31", "2月1日", "2", 
             "3", "4", "5", "6", "7", "8", "9", "10", 
-            "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27"]
+            "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"]
+            // myticks = ["1/21", "22", "23", "24", "25", "26", 
+            // "27", "28", "29", "30", "31", "2/1", "2", 
+            // "3", "4", "5", "6", "7", "8", "9", "10", 
+            // "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"]
 
             for(let tid = 0; tid < myticks.length; tid++){
                 document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             }
-            
-            // console.log(keys, keys_hubei);
-            // keysall = keys_hubei.concat(keys);
-            //keysall = ["武汉", "黄石", "十堰", "荆州", "宜昌", "襄阳", "鄂州", "荆门",
-            //    "孝感", "黄冈", "咸宁", "恩施州", "随州", "仙桃", "天门", "潜江", "神农架",
-            //]
 
-            keysall = ["湖北", "广东", "河南", "浙江", "湖南", "安徽", "江西", "江苏", "重庆", "山东", "四川", "黑龙江", "北京", "上海", "河北", "福建", "广西", "陕西", "海南", "云南", "贵州", "山西", "天津", "辽宁", "甘肃", "吉林", "宁夏", "新疆", "内蒙古", "香港", "青海", "台湾", "澳门", "西藏"]
+            var keysall = ["武汉市",
+                "黄石市",
+                "十堰市",
+                "荆州市",
+                "宜昌市",
+                "襄阳市",
+                "鄂州市",
+                "荆门市",
+                "孝感市",
+                "黄冈市",
+                "咸宁市",
+                "恩施州",
+                "随州市",
+                "仙桃市",
+                "天门市",
+                "潜江市",
+                "神农架",
+            ];
 
             // draw legend
             var legend = svg.selectAll(".legend")
@@ -206,7 +180,9 @@
             .attr("width", 30)
             .attr("height", 15)
             .style("fill", function (d,i) {
-                return province_color_themeriver[d]});
+                var tmp = d.split('市')[0];
+                console.log(tmp);
+                return city_color[tmp]});
 			
             // draw legend text
             legend.append("text")
@@ -253,7 +229,7 @@
             .attr("clip-path", "url(#rectClip)")
             // fill attrbute requires designers to assign colors for each province; 
             .attr("fill", function (d,i) {
-                return province_color_themeriver[d["key"]]; });
+                return city_color[d['key']]; });
 
             //clipedrect.transition().ease(d3.easeLinear).duration(totalduration).attr("width", innerWidth);    
         };

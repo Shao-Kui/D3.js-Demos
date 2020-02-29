@@ -90,15 +90,15 @@ const renderbarchart = function(data){
     })
     .attr('width', 15)
     .attr('height', d => barScale(d['确诊人数']))
-    // .attr('fill', d => world_color_themeriver[d['国家']])
-    .attr('fill', '#454445')
+    .attr('fill', d => world_color_themeriver[d['国家']])
+    // .attr('fill', '#454445')
     .attr('opacity', 0.)
     .transition().ease(d3.easeCubic)
     .attr('opacity', 1.);
 
     update.transition().ease(d3.easeCubic).duration(aduration)
-    .attr('fill', '#454445')
-    // .attr('fill', d => world_color_themeriver[d['国家']])
+    // .attr('fill', '#454445')
+    .attr('fill', d => world_color_themeriver[d['国家']])
     .attr('y', function (d,i) {
         return y - barScale(d['确诊人数']);
     })

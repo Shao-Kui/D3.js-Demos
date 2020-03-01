@@ -11,6 +11,11 @@ text{
     font-size: 7em;
 }
 
+.province_text {
+    fill: #cccccc;
+    font-size: 0.7em;
+}
+
 .tick text{
     font-size: 1.6em;
     fill: #cccccc;

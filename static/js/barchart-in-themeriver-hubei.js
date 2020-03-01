@@ -13,7 +13,6 @@ const toNameValue = function(data){
 }
 
 const setting_up_barchart = function(data){
-    console.log(data);
     let data_tt = data.filter(datum => {return datum[keyHint] === '总计'});
     let data_hb = data.filter(datum => {return datum[keyHint] === alone});
     data_tt = data_tt.sort(dateSort);
@@ -80,7 +79,7 @@ const renderbarchart = function(data, isTatal){
     .data(data)
     .join('rect')
     .attr('class', 'rect-barchart') // note to assgin class to it, or it will create new rect each time instead of smooth animation; 
-    .attr('x', 199)
+    .attr('x', 194)
     .attr('y', datum => yscalehere(yBarValue(datum))-10)
     .attr('height', yscalehere.bandwidth() / 2)
     .attr('fill', function(datum){return barchart_color[datum.name]})

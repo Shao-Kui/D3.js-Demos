@@ -33,10 +33,11 @@ python main.py
 * 柱状图：链接
 * 柱状图，图元可交互：链接
 * 折线图，带上下浮动动画：[链接][linechart]
-* 动态气泡图：链接
+* 动态气泡图：[链接][scatter1]
 * 静态主题河流：链接
 * 动态主题河流与柱状图，从左到右逐渐展现流动过程，柱状图同时随主题河流发生改变：链接
 
 [pythonweb]:https://www.python.org/
 [theslides]:https://github.com/Shao-Kui/D3.js-Demos/tree/master/slides
 [linechart]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/lineChart.html
+[scatter1]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/d3-tutorial/scatter.html 

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Scatter-Animation</title>
-    <script src="/static/js/d3.min.js"></script>
+    <title>Scatter-Simple</title>
+    <script src="static/js/d3.min.js"></script>
   </head>
   <body style="text-align: center">
     <svg width="1650" height="920" id="mainsvg" class="svgs" style="background-color: #ffffff;"></svg>
@@ -15,25 +15,12 @@
         const innerWidth = width - margin.left - margin.right;
         const innerHeight = height - margin.top - margin.bottom;
 
-        // it is able to modify channels of each axix by altering following code; 
-        //const xValue = (datum) => {return dates.indexOf(datum['日期'])};
-        //const yValue = (datum) => {return datum['确诊人数']};
-        //const xValue = d => d['确诊人数'];
-        //const xValue = d => d['感染率'];
-        //const yValue = d => {return Math.log(d['diffuse_smooth'] + 1)};
-        //const yValue = d => {return d['diffuse_smooth']};
-        //const yValue = d => {return Math.log(d['newinfec']+1)};
-        //const rValue = d => {return Math.sqrt(d['确诊人数']) + 6};
-
         const xValue = d => { return Math.log(d['确诊人数'] + 1) }; 
         const yValue = d => { return Math.log(d['新增确诊'] + 1) };
-        const rValue = d => { return Math.sqrt(d['感染率'] * 500) * 0.8 };
+
         const keyHint = '地区';
         let xScale, yScale;
-        let maxX, maxY;
-        let dates; 
         let aduration = 1000;
-        let metapop;
 
         const xAxisLabel = '累计确诊人数（对数）';
         const yAxisLabel = '新增人数（对数）';
@@ -58,7 +45,7 @@
             "神农架": "#7289AB"
         }
 
-        const renderinit = function(data, seq){
+        const renderinit = function(data){
             // Linear Scale: Data Space -> Screen Space; 
             xScale = d3.scaleLinear()
             .domain(d3.extent(data, xValue)) // "extent" is equivalent to [d3.min(data, xValue), d3.max(data, xValue)]; 
@@ -70,10 +57,6 @@
             .domain(d3.extent(data, yValue).reverse()) // remember to use reverse() to make y-axis start from the bottom; 
             .range([0, innerHeight])
             .nice();
-
-            // generate maxX and maxY; 
-            maxX = xScale(d3.max(data, xValue));
-            maxY = yScale(d3.max(data, yValue));
 
             // The reason of using group is that nothing is rendered outside svg, so margin of svg is always blank while margin of group is rendered inside svg; 
             const g = svg.append('g')
@@ -112,129 +95,27 @@
             .attr('fill', '#333333')
             .text(xAxisLabel);
             xAxisGroup.selectAll('.domain').remove();
-            
-            var legend_color = [
-                "#ff1c12",
-                "#de5991",
-                "#759AA0",
-                "#E69D87",
-                "#be3259",
-                "#EA7E53",
-                "#EEDD78",
-                "#9359b1",
-                "#47c0d4",
-                "#F49F42",
-                "#AA312C",
-                "#B35E45",
-                "#4B8E6F",
-                "#ff8603",
-                "#ffde1d",
-                "#1e9d95",
-                "#7289AB"
-            ]
-            
-            var legend_name = ["武汉市",
-                "黄石市",
-                "十堰市",
-                "荆州市",
-                "宜昌市",
-                "襄阳市",
-                "鄂州市",
-                "荆门市",
-                "孝感市",
-                "黄冈市",
-                "咸宁市",
-                "恩施州",
-                "随州市",
-                "仙桃市",
-                "天门市",
-                "潜江市",
-                "神农架",
-            ];
-                
-            // draw legend
-            var legend = d3.select('#maingroup').selectAll(".legend")
-                .data(legend_name)
-                .enter().append("g")
-                .attr("class", "legend")
-                .attr("transform", function(d, i) { return "translate(" + (innerWidth + 10) + "," + (i * 25 + 300) + ")"; });
-			
-            // draw legend colored rectangles
-            legend.append("rect")
-            .data(legend_name) 
-            .attr("x", 0)
-            .attr("y", 0)
-            .attr("width", 30)
-            .attr("height", 20)
-            .style("fill", function (d,i) { 
-                return legend_color[i];});
-			
-            // draw legend text
-            legend.append("text")
-            .data(legend_name) 
-            .attr('class', 'legend_text')
-            .attr("x", 40)
-            .attr("y", 9)
-            .attr("dy", ".5em")
-            .style("text-anchor", "start")
-            .text(function (d,i) {return legend_name[i];}); 
         };
         
         const renderupdate = function(seq){
             const g = d3.select('#maingroup');
-            time = seq[0]['日期'];
-            g.selectAll('.date_text').remove();
-            g.append("text")
-            .data(['seq']) 
-            .attr('class', 'date_text')
-            .attr("x", innerWidth / 4 + 30)
-            .attr("y", innerHeight / 10 - 20)
-            .attr("dy", ".5em")
-            .style("text-anchor", "end")
-            .attr("fill", "#504f4f")
-            .attr('font-size', '6em')
-            .attr('font-weight', 'bold')
-            .text(time);
 
             circleupdates = g.selectAll('circle').data(seq, d => d[keyHint]);
+
             circleenter = circleupdates.enter().append('circle')
             .attr('cy', (datum) => { return yScale(yValue(datum)) })
-            .attr('cx', (datum) => { return xScale(xValue(datum)) }) // use xSacle to re-scale data space (domain) and return the rescaled population; 
-            .attr('r', datum => rValue(datum))
+            .attr('cx', (datum) => { return xScale(xValue(datum)) })
+            .attr('r', 10)
             .attr('fill', function(d,i) { return color[d[keyHint]] })
             .attr('opacity', .8);
-            circleupdates.merge(circleenter).transition().ease(d3.easeLinear).duration(aduration)
+
+            circleupdates.merge(circleenter)
+            .transition().ease(d3.easeLinear).duration(aduration)
             .attr('cy', (datum) => { return yScale(yValue(datum)) })
-            .attr('cx', (datum) => { return xScale(xValue(datum)) }) // use xSacle to re-scale data space (domain) and return the rescaled population; 
-            .attr('r', datum => rValue(datum));
-
-            textupdates = g.selectAll('.province_text').data(seq);
-            textenter = textupdates.enter().append('text')
-            .attr("class", "province_text")
-            .attr("x", (datum) => { return xScale(xValue(datum)); })
-            .attr("y", (datum) => { return yScale(yValue(datum)); })
-            .attr("dy", "1em")
-            .style("text-anchor", "middle")
-            .attr("fill", "#333333")
-            //.attr('opacity', 0)
-            .text(function (d,i) { 
-                return d[keyHint];
-            });
-
-            textupdates.merge(textenter).transition().ease(d3.easeLinear).duration(aduration)
-            .attr('x', (datum) => { 
-                return xScale(xValue(datum)); })
-            .attr('y', (datum) => { return yScale(yValue(datum)); });
+            .attr('cx', (datum) => { return xScale(xValue(datum)) });
         };
 
-        d3.csv('./static/data/hubeipop.csv').then(data => {
-            data.forEach(datum => {
-                datum['人口（万人）'] = +(datum['人口（万人）']);
-            })
-            metapop = data;
-        });
-
-        d3.csv('./static/data/hubei_day14.csv').then(function(data){
+        d3.csv('./static/data/hubeinxt.csv').then(function(data){
             data = data.filter(datum => {return datum[keyHint] !== '总计'});
             data.forEach(datum => {
                 // pre-process the data; 
@@ -245,18 +126,15 @@
                 if(datum['新增确诊'] < 0){
                     datum['新增确诊'] = 0;
                 }
-                datum['感染率'] = datum['确诊人数'] / 
-                (metapop.find(x => x[keyHint] === datum[keyHint])['人口（万人）']);
             });
 
             // remove duplicated items; 
-            alldates = Array.from(new Set(data.map( datum => datum['日期'])));
+            alldates = Array.from(new Set(data.map( datum => datum['日期'] )));
 
             // make sure dates are listed according to real time order; 
             alldates = alldates.sort(function(a,b){
-                return new Date(b.date) - new Date(a.date);
+                return new Date(a) - new Date(b);
             });
-            dates = alldates;
 
             // re-arrange the data sequentially; 
             sequential = []; 
@@ -267,7 +145,7 @@
                 sequential[alldates.indexOf(datum['日期'])].push(datum);
             });
 
-            renderinit(data, sequential[0]);
+            renderinit(data);
 
             // set the animation interval; 
             let c = 0; 

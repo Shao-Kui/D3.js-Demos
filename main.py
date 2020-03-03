@@ -94,6 +94,10 @@ def line():
 def scatter_tutorial():
     return flask.send_from_directory('static', 'd3-tutorial/scatter.html')
 
+@app.route('/scatter-tutorial-simple')
+def scatter_tutorial_simple():
+    return flask.send_from_directory('static', 'd3-tutorial/scatter-simple.html')
+
 @app.route('/static/<fname>')
 def sendfile(fname):
     return flask.send_from_directory('static', fname)

@@ -5,9 +5,10 @@
     <link rel="stylesheet" href="/static/css/earth.css">
     <script src="/static/js/d3.min.js"></script>
     <script src="/static/js/topojson.js"></script>
+    <script src="/static/js/library/d3-tip.js"></script>
   </head>
   <body>
-    <svg width="1600" height="840" id="mainsvg" class="svgs"></svg>
+    <svg width="1600" height="800" id="mainsvg" class="svgs"></svg>
     <script>
 
     let svg = d3.select('svg');
@@ -23,7 +24,10 @@
     const projection = d3.geoNaturalEarth1();
     //const projection = d3.geoTransverseMercator();
     const pathGenerator = d3.geoPath().projection(projection);
-    
+
+    const tip = d3.tip().attr('class', 'd3-tip').html(function(d) { return 'Hahaha'; });
+    svg.call(tip);
+
     let worldmeta;
 
     d3.json('/static/data/countries-110m.json').then(
@@ -39,6 +43,22 @@
             .data(worldmeta.features)
             .enter().append('path')
             .attr('d', pathGenerator)
+            .attr('stroke', 'black')
+            .attr('stroke-width', 1)
+            .on('mouseover',function(d){
+              tip.show();
+              d3.select(this)
+              .attr("opacity", 0.5)
+              .attr("stroke","white")
+              .attr("stroke-width", 6);
+            })
+            .on('mouseout', function(d){
+              tip.hide();
+              d3.select(this)
+              .attr("opacity", 1)
+              .attr("stroke","black")
+              .attr("stroke-width",1);
+            })
         }
     );
 

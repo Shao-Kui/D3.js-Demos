@@ -46,6 +46,10 @@ def nCov():
 def nCovnxt():
     return flask.send_from_directory('static', 'nCovnxt.html')
 
+@app.route('/nCovnxt-world')
+def nCovnxtworld():
+    return flask.send_from_directory('static', 'nCovnxt-world.html')
+
 @app.route('/nCovnxt-province')
 def nCovnxtprovince():
     return flask.send_from_directory('static', 'nCovnxt-province.html')

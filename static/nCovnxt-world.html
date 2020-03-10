@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -37,32 +38,27 @@
         // }
         // const rValue = d => {return Math.sqrt(d['感染率'] * 1000) * 0.4 ;};
         const xValue = d => {
-            return Math.log(d['现有确诊'] + 1);}; 
+            return Math.log(d['确诊人数'] + 1);}; 
         const yValue = d => {
-            if (d['确诊人数'] === 0) {
-                return 0;
-            }
-            else {
-                return (d['治愈人数'] / d['确诊人数']) * 100;
-            }
-        }
-        const rValue = d => {
-            return Math.sqrt(d['新增确诊']) * 1.2 + 2;};
+            return Math.log(d['新增确诊'] + 1);}; 
+        // const yValue = d => {
+        //     return Math.sqrt(d['扩散曲线']);}; 
+        const rValue = d => {return Math.sqrt(d['感染率']) * 50 ;};
         let xScale, yScale;
         let maxX, maxY;
         let dates; 
         let keys;
-        const keys_to_color = qipao_city_color;
+        const keys_to_color = world_color_qipao;
         const offset_x = city_offset_x;
         const offset_y = city_offset_y;
         let aduration = 1000;
         let metapop;
-        let keyHint = '地区'
+        let keyHint = '国家'
 
-        const xAxisLabel = '现有确诊人数';
-        const yAxisLabel = '治愈率（%）';
+        const xAxisLabel = '累计确诊人数';
+        const yAxisLabel = '新增确诊人数';
             
-        const renderinit = function(data, seq, K){
+        const renderinit = function(data, seq){
             // Linear Scale: Data Space -> Screen Space; 
             xScale = d3.scaleLinear()
             .domain([d3.min(data, xValue), d3.max(data, xValue)]) // "extent" is equivalent to [d3.min(data, xValue), d3.max(data, xValue)]; 
@@ -88,7 +84,8 @@
             const yAxis = d3.axisLeft(yScale)
             .tickSize(-innerWidth)
             //.tickFormat(d3.format('.2s'))
-            .tickPadding(10); // .tickPadding is used to prevend intersection of ticks; 
+            .tickPadding(10)
+            .ticks(8); // .tickPadding is used to prevend intersection of ticks; 
             const xAxis = d3.axisBottom(xScale)
             .tickFormat(d3.format('.2s'))
             .tickSize(-innerHeight)
@@ -124,21 +121,29 @@
             // for(let tid = 0; tid < myticks.length; tid++){
             //     document.getElementById('yaxis').getElementsByClassName('tick')[myticks.length-1-tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             // }
+            var keys = [
+                "韩国",
+                "伊朗",
+                "意大利",
+                "日本",
+                "德国",
+                "法国",
+                "西班牙",
+                "美国",
+                "瑞士",
+                "英国",
+                "瑞典",
+                "新加坡",
+                "荷兰",
+                "挪威",
+                "比利时",
+                "马来西亚",
+                "澳大利亚",
+                "科威特",
+                "巴林",
+                "奥地利"
+            ]
             
-            // var x1 = - Math.log(K);
-            // var y2 = 11 + Math.log(K);
-            var x1 = 0;
-            var y2 = K * 11;
-
-            g.selectAll(".log_line").remove();
-            lineupdates = g.append('line').attr("x1", xScale(x1))
-            .attr("class", "log_line")
-            .attr("y1", yScale(0))
-            .attr("x2", xScale(11))
-            .attr("y2", yScale(y2))
-            .attr("stroke", "#333333")
-            .attr("stroke-width", "2px")
-            .attr("opacity", 0);
 
             var legend_color = [
                 "#ff1c12", //武汉
@@ -160,39 +165,20 @@
                 "#7289AB", //神农架
             ];
             
-            var legend_name = ["武汉市",
-                "黄石市",
-                "十堰市",
-                "荆州市",
-                "宜昌市",
-                "襄阳市",
-                "鄂州市",
-                "荆门市",
-                "孝感市",
-                "黄冈市",
-                "咸宁市",
-                "恩施州",
-                "随州市",
-                "仙桃市",
-                "天门市",
-                "潜江市",
-                "神农架",
-            ];
                 
-            //var province_name = ["北京", "天津", "河北", "山西", "内蒙古", "辽宁", "吉林", "黑龙江", "上海", "江苏", "浙江", "安徽", "福建", "江西", "山东", "河南", "湖北", "湖南", "广东", "广西", "海南", "重庆", "四川", "贵州", "云南", "西藏", "陕西", "甘肃", "青海", "宁夏", "新疆", "香港", "澳门", "台湾"]
-            keys = ["武汉", "黄石", "十堰", "荆州", "宜昌", "襄阳",
-                "鄂州",
-                "荆门",
-                "孝感",
-                "黄冈",
-                "咸宁",
-                "恩施州",
-                "随州",
-                "仙桃",
-                "天门",
-                "潜江",
-                "神农架",
-            ]
+            // keys = ["武汉", "黄石", "十堰", "荆州", "宜昌", "襄阳",
+            //     "鄂州",
+            //     "荆门",
+            //     "孝感",
+            //     "黄冈",
+            //     "咸宁",
+            //     "恩施州",
+            //     "随州",
+            //     "仙桃",
+            //     "天门",
+            //     "潜江",
+            //     "神农架",
+            // ]
             // note that keys are able to be manually replaced; 
             
             // draw legend
@@ -225,15 +211,16 @@
             .text(d => d);
 
             //document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
-            myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000, 8100, 22000, 60000]
+            myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000, 8100]
             for(let tid = 0; tid < myticks.length; tid++){
                 document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             }
 
             //document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
-            myticks = [0, 1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+            myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000]
+            // myticks = [0, 0.25, 1, 2.25, 4, 6.25, 9, 12.25]
             for(let tid = 0; tid < myticks.length; tid++){
-                // document.getElementById('yaxis').getElementsByClassName('tick')[myticks.length-1-tid].getElementsByTagName('text')[0].textContent = myticks[tid];
+                document.getElementById('yaxis').getElementsByClassName('tick')[myticks.length-1-tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             }
         };
         
@@ -246,7 +233,7 @@
             g.append("text")
             .data(['seq']) 
             .attr('class', 'date_text')
-            .attr("x", innerWidth - 20)
+            .attr("x", innerWidth / 5 + 120)
             .attr("y", innerHeight / 10 - 20)
             .attr("dy", ".5em")
             .style("text-anchor", "end")
@@ -270,8 +257,8 @@
             textupdates = g.selectAll('.province_text').data(seq);
             textenter = textupdates.enter().append('text')
             .attr("class", "province_text")
-            .attr("x", (datum) => { return xScale(xValue(datum)) + city_offset_x[datum[keyHint]]; })
-            .attr("y", (datum) => { return yScale(yValue(datum)) - 10 - rValue(datum) + city_offset_y[datum[keyHint]]; })
+            .attr("x", (datum) => { return xScale(xValue(datum)) ; })
+            .attr("y", (datum) => { return yScale(yValue(datum)) - 10 - rValue(datum); })
             .attr("dy", ".1em")
             .style("text-anchor", "middle")
             .attr("fill", "#333333")
@@ -279,23 +266,23 @@
             .text(function (d,i) { 
                 return d[keyHint];
             });
-            console.log('.....')
+
             textupdates.merge(textenter).transition().ease(d3.easeLinear).duration(aduration)
-            .attr('x', (datum) => { return xScale(xValue(datum)) + city_offset_x[datum[keyHint]]; })
-            .attr('y', (datum) => { 
-                return yScale(yValue(datum)) - 10 - rValue(datum) + city_offset_y[datum[keyHint]]; });
+            .attr('x', (datum) => { return xScale(xValue(datum)) ; })
+            .attr('y', (datum) => { return yScale(yValue(datum)) - 10 - rValue(datum); });
         };
 
-        d3.csv('./static/data/2019population.csv').then(data => {
+        d3.csv('./static/data/2019worldpopulation.csv').then(data => {
             data.forEach(datum => {
-                datum['2019年人口'] = +(datum['2019年人口']);
+                datum['2019年人口'] = +(datum['人口']);
             })
             metapop = data;
         });
 
-        d3.csv('./static/data/hubeinxt.csv').then(function(data){
+        d3.csv('./static/data/world.csv').then(function(data){
             totals = data.filter(datum => {return datum[keyHint] === '总计'});
             data = data.filter(datum => {return datum[keyHint] !== '总计'});            
+            data = data.filter(datum => {return datum[keyHint] !== '中国'});            
             // deletelist = ['澳门', '香港', '甘肃', '青海', '吉林', '内蒙古', '新疆', '台湾', '西藏'];
             // for(let di = 0; di < deletelist.length; di++){
             //     data = data.filter(datum => {return datum[keyHint] !== deletelist[di]});
@@ -308,6 +295,7 @@
                 datum['确诊人数'] = +(datum['确诊人数']);
                 datum['治愈人数'] = +(datum['治愈人数']);
                 datum['死亡人数'] = +(datum['死亡人数']);
+                datum['扩散曲线'] = +(datum['扩散曲线']);
                 if(datum['扩散指数'] === undefined){
                     let lastmoment = moment(datum['日期'], 'M月D日', 'en', true)
                     let lastdate = lastmoment.date(lastmoment.date()-1).format('M月D日');
@@ -326,6 +314,7 @@
                 }else{
                     datum['扩散指数'] = +(datum['扩散指数']);
                 }
+                console.log(datum);
                 datum['感染率'] = datum['确诊人数'] / (metapop.find(x => x[keyHint] === datum[keyHint])['2019年人口'] / 10000.0);
             });
 
@@ -382,12 +371,14 @@
             //let total_num = 0;
             //lastseq.forEach(d => {total_new += d['newinfec']; total_num += d['确诊人数'];});
             //const K = total_new / total_num;
-            const total_last = totals.find(d => {return d['日期'] === alldates[alldates.length-1]}); 
-            const total_ls = totals.find(d => {return d['日期'] === alldates[alldates.length-2]}); 
-            const K = (total_last['确诊人数'] - total_ls['确诊人数']) / total_last['确诊人数'];
+            // const total_last = totals.find(d => {return d['日期'] === alldates[alldates.length-1]}); 
+            // const total_ls = totals.find(d => {return d['日期'] === alldates[alldates.length-2]}); 
+            // const K = (total_last['确诊人数'] - total_ls['确诊人数']) / total_last['确诊人数'];
 
+            console.log(sequential);
+            console.log(data);
             // initialize the chart; 
-            renderinit(data, sequential[0], K);
+            renderinit(data, sequential[0]);
 
             // set the animation interval; 
             let c = 0; 

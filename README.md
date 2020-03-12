@@ -30,12 +30,12 @@ python main.py
  * Running on http://0.0.0.0:11666/ (Press CTRL+C to quit)
 ```
 # 示例导航
-* 柱状图：链接
+* 柱状图：[链接][barchart1]
 * 柱状图，图元可交互：链接
 * 折线图，带上下浮动动画：[链接][linechart]
 * 动态气泡图：[链接][scatter1]
-* 静态主题河流：链接
-* 动态主题河流与柱状图，从左到右逐渐展现流动过程，柱状图同时随主题河流发生改变：链接
+* 静态主题河流：[链接][themeriver]
+* 动态主题河流与柱状图，从左到右逐渐展现流动过程，柱状图同时随主题河流发生改变：[链接][themeriverlr]
 * 世界地图与交互：[链接][mapinteract]
 
 [pythonweb]:https://www.python.org/
@@ -43,3 +43,6 @@ python main.py
 [linechart]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/lineChart.html
 [scatter1]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/d3-tutorial/scatter.html 
 [mapinteract]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/renderearth.html
+[barchart1]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/d3-tutorial/barchart.html
+[themeriver]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/themeriver.html
+[themeriverlr]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/themeriver-lr.html

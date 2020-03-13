@@ -37,6 +37,7 @@ python main.py
 * 静态主题河流：[链接][themeriver]
 * 动态主题河流与柱状图，从左到右逐渐展现流动过程，柱状图同时随主题河流发生改变：[链接][themeriverlr]
 * 世界地图与交互：[链接][mapinteract]
+* 力（Force）、节点（Node）与边（Link）：[链接][force]
 
 [pythonweb]:https://www.python.org/
 [theslides]:https://github.com/Shao-Kui/D3.js-Demos/tree/master/slides
@@ -46,3 +47,4 @@ python main.py
 [barchart1]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/d3-tutorial/barchart.html
 [themeriver]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/themeriver.html
 [themeriverlr]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/themeriver-lr.html
+[force]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/force.html

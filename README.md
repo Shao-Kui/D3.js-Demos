@@ -32,8 +32,8 @@ python main.py
 # 示例导航
 * 操控SVG：[链接][control]
 * 柱状图：[链接][barchart1]
-* 柱状图，图元可交互：[链接][htmlpath]
-* Path：链接
+* 柱状图，图元可交互：链接
+* Path：[链接][htmlpath]
 * 折线图，带上下浮动动画：[链接][linechart]
 * 动态气泡图：[链接][scatter1]
 * 静态主题河流：[链接][themeriver]

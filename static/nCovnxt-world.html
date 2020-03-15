@@ -43,7 +43,7 @@
             return Math.log(d['新增确诊'] + 1);}; 
         // const yValue = d => {
         //     return Math.sqrt(d['扩散曲线']);}; 
-        const rValue = d => {return Math.sqrt(d['感染率']) * 50 ;};
+        const rValue = d => {return Math.sqrt(d['感染率']) * 20 ;};
         let xScale, yScale;
         let maxX, maxY;
         let dates; 
@@ -122,26 +122,26 @@
             //     document.getElementById('yaxis').getElementsByClassName('tick')[myticks.length-1-tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             // }
             var keys = [
-                "韩国",
-                "伊朗",
                 "意大利",
-                "日本",
-                "德国",
-                "法国",
+                "伊朗",
+                "韩国",
                 "西班牙",
+                "法国",
+                "德国",
                 "美国",
+                "日本",
                 "瑞士",
-                "英国",
-                "瑞典",
-                "新加坡",
-                "荷兰",
                 "挪威",
+                "瑞典",
+                "丹麦",
+                "荷兰",
+                "英国",
                 "比利时",
-                "马来西亚",
-                "澳大利亚",
-                "科威特",
+                "奥地利",
+                "卡塔尔",
                 "巴林",
-                "奥地利"
+                "新加坡",
+                "冰岛"
             ]
             
 
@@ -186,7 +186,7 @@
                 .data(keys)
                 .enter().append("g")
                 .attr("class", "legend")
-                .attr("transform", function(d, i) { return "translate(" + (innerWidth * 4 / 5 + 300) + "," + (i * 20 + 2) + ")"; });
+                .attr("transform", function(d, i) { return "translate(" + (innerWidth * 4 / 5 + 290) + "," + (i * 20 + 322) + ")"; });
             
                 
             // draw legend colored rectangles
@@ -211,7 +211,7 @@
             .text(d => d);
 
             //document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
-            myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000, 8100]
+            myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000, 8100, 22000]
             for(let tid = 0; tid < myticks.length; tid++){
                 document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             }

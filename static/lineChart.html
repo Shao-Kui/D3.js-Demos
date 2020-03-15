@@ -68,7 +68,9 @@
           .attr("stroke-width", 2.5)
           .attr("d", lineEmpty(data))
 
-          pathupdate.merge(pathenter).transition().duration(2000).attr("d", line(data))
+          pathupdate.merge(pathenter)
+          .transition().duration(2000).ease(d3.easeLinear)
+          .attr("d", line(data))
       }
 
       d3.csv('./static/data/province.csv')

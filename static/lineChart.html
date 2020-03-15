@@ -45,6 +45,8 @@
 
         const yAxis = d3.axisLeft(yScale).tickSize(-innerWidth);
         const yAxisGroup = g.append('g').call(yAxis);
+
+        g.append('path').attr('id', 'alterPath');
       }; 
 
       const render_update = function(data){
@@ -59,18 +61,39 @@
           .curve(d3.curveCardinal.tension(0.5))
 
           const maingroup = d3.select('#maingroup');
-          const pathupdate = maingroup.selectAll('.datacurve').data(data)
+          const pathupdate = maingroup.selectAll('.datacurve').data([data])
           
           const pathenter = pathupdate.enter().append('path')
           .attr('class', 'datacurve')
           .attr("fill", "none")
           .attr("stroke", "steelblue")
           .attr("stroke-width", 2.5)
-          .attr("d", lineEmpty(data))
+          .attr("d", lineEmpty)
 
           pathupdate.merge(pathenter)
           .transition().duration(2000).ease(d3.easeLinear)
-          .attr("d", line(data))
+          .attr("d", line)
+      };
+
+      const render_update_alter = function(data){
+          const line = d3.line()
+          .x(d => {return xScale(xValue(d))})
+          .y(d => {return yScale(yValue(d))})
+          .curve(d3.curveCardinal.tension(0.5))
+
+          const lineEmpty = d3.line()
+          .x(d => {return xScale(xValue(d))})
+          .y(d => {return yScale(0)})
+          .curve(d3.curveCardinal.tension(0.5))
+
+          d3.select('#alterPath').datum(data)
+          .attr('class', 'datacurve')
+          .attr("fill", "none")
+          .attr("stroke", "green")
+          .attr("stroke-width", 2.5)
+          .attr("d", lineEmpty)
+          .transition().duration(2000).ease(d3.easeLinear)
+          .attr("d", line)
       }
 
       d3.csv('./static/data/province.csv')
@@ -96,7 +119,7 @@
                   clearInterval(intervalId);
               }else{
                   let key = allkeys[c];
-                  render_update(provinces[key]);
+                  render_update_alter(provinces[key]);
                   c = c + 1;
               }
           }, 2000);

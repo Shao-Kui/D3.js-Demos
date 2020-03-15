@@ -36,18 +36,23 @@
         //     }
         // }
         // const rValue = d => {return Math.sqrt(d['感染率'] * 1000) * 0.4 ;};
+        // const xValue = d => {
+        //     return Math.log(d['现有确诊'] + 1);}; 
+        // const yValue = d => {
+        //     if (d['确诊人数'] === 0) {
+        //         return 0;
+        //     }
+        //     else {
+        //         return (d['治愈人数'] / d['确诊人数']) * 100;
+        //     }
+        // }
+        // const rValue = d => {
+        //     return Math.sqrt(d['新增确诊']) * 1.2 + 2;};
         const xValue = d => {
-            return Math.log(d['现有确诊'] + 1);}; 
+            return Math.log(d['确诊人数'] + 1);}; 
         const yValue = d => {
-            if (d['确诊人数'] === 0) {
-                return 0;
-            }
-            else {
-                return (d['治愈人数'] / d['确诊人数']) * 100;
-            }
-        }
-        const rValue = d => {
-            return Math.sqrt(d['新增确诊']) * 1.2 + 2;};
+            return Math.log(d['扩散指数'] * 1000 + 1);}; 
+        const rValue = d => {return Math.sqrt(d['感染率']) * 10 ;};
         let xScale, yScale;
         let maxX, maxY;
         let dates; 
@@ -60,7 +65,7 @@
         let keyHint = '地区'
 
         const xAxisLabel = '现有确诊人数';
-        const yAxisLabel = '治愈率（%）';
+        const yAxisLabel = '扩散指数';
             
         const renderinit = function(data, seq, K){
             // Linear Scale: Data Space -> Screen Space; 
@@ -231,9 +236,10 @@
             }
 
             //document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
-            myticks = [0, 1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+            myticks = [0, 0.2, 1, 2, 5, 15, 40, 110, 300, 800]
+            // myticks = [0, 1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
             for(let tid = 0; tid < myticks.length; tid++){
-                // document.getElementById('yaxis').getElementsByClassName('tick')[myticks.length-1-tid].getElementsByTagName('text')[0].textContent = myticks[tid];
+                document.getElementById('yaxis').getElementsByClassName('tick')[myticks.length-1-tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             }
         };
         

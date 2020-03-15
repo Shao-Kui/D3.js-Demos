@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>line chart</title>
+    </head>
+
+    <body>
+        <div id="linechart">
+        </div>
+    </body>
+    <script src="https://d3js.org/d3.v5.js"></script>
+    <script>
+        window.onload = function() {
+            // 数据
+            var data = [{
+                date: new Date(2019, 3, 24),
+                value: 23.24
+            }, {
+                date: new Date(2019, 3, 25),
+                value: 72.15
+            }, {
+                date: new Date(2019, 3, 26),
+                value: 38.84
+            }, {
+                date: new Date(2019, 3, 27),
+                value: 58.62
+            }, {
+                date: new Date(2019, 3, 30),
+                value: 10.80
+            }, {
+                date: new Date(2019, 4, 1),
+                value: 85.47
+            }];
+            
+            var width = 800,
+                height = 400,
+                padding = {
+                    top: 40,
+                    right: 40,
+                    bottom: 40,
+                    left: 40
+                };
+            var svg = d3.select("#linechart")
+                .append('svg')
+                .attr('width', width + 'px')
+                .attr('height', height + 'px');
+
+            // x轴:时间轴
+            var xScale = d3.scaleTime()
+                .domain(d3.extent(data, function(d) {
+                    return d.date;
+                }))
+                .range([padding.left, width - padding.right]);
+            var xAxis = d3.axisBottom()
+                .scale(xScale)
+                .tickSize(10);
+            svg.append('g')
+                .call(xAxis)
+                .attr("transform", "translate(0," + (height - padding.bottom) + ")")
+                .selectAll("text")
+                .attr("font-size", "10px")
+                .attr("dx", "50px");
+
+            // y轴
+            var yScale = d3.scaleLinear()
+                .domain([0, d3.max(data, function(d) {
+                    return d.value;
+                })])
+                .range([height - padding.bottom, padding.top]);
+            var yAxis = d3.axisLeft()
+                .scale(yScale)
+                .ticks(10);
+            svg.append('g')
+                .call(yAxis)
+                .attr("transform", "translate(" + padding.left + ",0)");
+
+            var line = d3.line()
+                .x(function(d) {
+                    return xScale(d.date);
+                })
+                .y(function(d) {
+                    return yScale(d.value);
+                });
+
+            // 生成折线
+            svg.append("path")
+                .datum(data)
+                .attr("fill", "none")
+                .attr("stroke", "steelblue")
+                .attr("stroke-width", 1.5)
+                .attr("stroke-linejoin", "round")
+                .attr("stroke-linecap", "round")
+                .attr("d", line);
+        }
+    </script>
+
+</html>

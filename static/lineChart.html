@@ -38,7 +38,7 @@
         // Adding axes
         const xAxis = d3.axisBottom(xScale)
         .ticks(alldates.length)
-        //.tickFormat(d3.timeFormat('%b-%d'));
+        //.tickFormat(d3.timeFormat('%b-%d'))
         .tickSize(-innerHeight)
         const xAxisGroup = g.append('g').call(xAxis)
         .attr('transform', `translate(0, ${innerHeight})`);
@@ -55,6 +55,7 @@
           .y(d => {return yScale(yValue(d))})
           .curve(d3.curveCardinal.tension(0.5))
 
+          // lineEmpty is typically used for the first animation that raise the line up; 
           const lineEmpty = d3.line()
           .x(d => {return xScale(xValue(d))})
           .y(d => {return yScale(0)})
@@ -79,19 +80,15 @@
           const line = d3.line()
           .x(d => {return xScale(xValue(d))})
           .y(d => {return yScale(yValue(d))})
+          //.curve(d3.curveBasis)
           .curve(d3.curveCardinal.tension(0.5))
 
-          const lineEmpty = d3.line()
-          .x(d => {return xScale(xValue(d))})
-          .y(d => {return yScale(0)})
-          .curve(d3.curveCardinal.tension(0.5))
-
+          // See https://github.com/d3/d3-shape/blob/v1.3.7/README.md#curves
           d3.select('#alterPath').datum(data)
           .attr('class', 'datacurve')
           .attr("fill", "none")
           .attr("stroke", "green")
           .attr("stroke-width", 2.5)
-          .attr("d", lineEmpty)
           .transition().duration(2000).ease(d3.easeLinear)
           .attr("d", line)
       }

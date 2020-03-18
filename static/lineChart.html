@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Data Visualization!</title>
+    <title>Line</title>
     <script src="static/js/d3.min.js"></script>
   </head>
   <body>
@@ -16,7 +16,6 @@
       const xValue = (datum) => {return datum['日期']};
       const yValue = (datum) => {return datum['现有确诊']};
       let xSacle, yScale; 
-      const keyHint = '省份'
       let alldates;
       let allkeys; 
 
@@ -89,14 +88,14 @@
           .attr("fill", "none")
           .attr("stroke", "green")
           .attr("stroke-width", 2.5)
-          .transition().duration(2000).ease(d3.easeLinear)
+          .transition().duration(2000)
           .attr("d", line)
       }
 
       d3.csv('./static/data/province.csv')
       .then(function(data){
-          data = data.filter(datum => {return datum[keyHint] !== '总计'}); 
-          data = data.filter(datum => {return datum[keyHint] !== '湖北'}); 
+          data = data.filter(datum => {return datum['省份'] !== '总计'}); 
+          data = data.filter(datum => {return datum['省份'] !== '湖北'}); 
           allkeys = Array.from(new Set( data.map( d => d['省份'] ) ))
           alldates = Array.from(new Set( data.map( d => xValue(d) ) ))
           data.forEach( datum => {

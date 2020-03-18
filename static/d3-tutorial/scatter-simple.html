@@ -18,7 +18,6 @@
         const xValue = d => { return Math.log(d['确诊人数'] + 1) }; 
         const yValue = d => { return Math.log(d['新增确诊'] + 1) };
 
-        const keyHint = '地区';
         let xScale, yScale;
         let aduration = 1000;
 
@@ -100,13 +99,13 @@
         const renderupdate = function(seq){
             const g = d3.select('#maingroup');
 
-            circleupdates = g.selectAll('circle').data(seq, d => d[keyHint]);
+            circleupdates = g.selectAll('circle').data(seq, d => d['地区']);
 
             circleenter = circleupdates.enter().append('circle')
             .attr('cy', (datum) => { return yScale(yValue(datum)) })
             .attr('cx', (datum) => { return xScale(xValue(datum)) })
             .attr('r', 10)
-            .attr('fill', function(d,i) { return color[d[keyHint]] })
+            .attr('fill', function(d,i) { return color[d['地区']] })
             .attr('opacity', .8);
 
             circleupdates.merge(circleenter)
@@ -116,7 +115,7 @@
         };
 
         d3.csv('./static/data/hubeinxt.csv').then(function(data){
-            data = data.filter(datum => {return datum[keyHint] !== '总计'});
+            data = data.filter(datum => {return datum['地区'] !== '总计'});
             data.forEach(datum => {
                 // pre-process the data; 
                 datum['确诊人数'] = +(datum['确诊人数']);

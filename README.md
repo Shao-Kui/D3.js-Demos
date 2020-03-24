@@ -33,6 +33,7 @@ python main.py
 * 操控SVG：[链接][control]
 * 柱状图：[链接][barchart1]
 * 柱状图，图元可交互：链接
+* 堆叠柱状图：[链接][stackbarchart]
 * Path：[链接][htmlpath]
 * 折线图，带上下浮动动画：[链接][linechart]
 * 动态气泡图：[链接][scatter1]
@@ -54,3 +55,4 @@ python main.py
 [themeriverlr]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/themeriver-lr.html
 [force]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/force.html
 [force-following]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/force-following.html
+[stackbarchart]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/stackbarchart.html

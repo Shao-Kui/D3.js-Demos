@@ -22,6 +22,10 @@ def barcharttutorial():
 def baraxes():
     return flask.send_from_directory('static', 'baraxes.html')
 
+@app.route('/stackbarchart')
+def stackbarchart():
+    return flask.send_from_directory('static', 'stackbarchart.html')
+
 @app.route('/scatter')
 def scatter():
     return flask.send_from_directory('static', 'scatter.html')

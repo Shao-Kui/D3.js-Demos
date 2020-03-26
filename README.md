@@ -5,6 +5,7 @@
 本代码库对应清华大学-计算机系春季学期课程《数据可视化》，由张松海老师任课。代码库中的框架可作为大作业-可视化编程的基础，同时其中的样例可供大家参考。任何同学有任何问题，欢迎在Github上issue或给我发邮件（zhangsk18@mails.tsinghua.edu.cn）。
 
 D3.js课上用幻灯片（讲义）在[slides文件夹][theslides]下。
+
 D3.js课上讲解录屏在 (comming soon)。
 
 # 先修条件（Prerequisites）

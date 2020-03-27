@@ -61,6 +61,7 @@
     .force('charge', d3.forceManyBody())
     .force('center', d3.forceCenter(width / 2, height / 2))
     .force("link", d3.forceLink(links).strength(strength).distance(distance))
+    .alphaTarget(0.1)
     .on('tick', ticked);
 
     </script>

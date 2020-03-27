@@ -12,13 +12,13 @@ text{
 }
 
 .province_text {
-    fill: #cccccc;
+    fill: #000000;
     font-size: 1em;
 }
 
 .tick text{
     font-size: 1.6em;
-    fill: #cccccc;
+    fill: #000000;
 }
 
 .tick line {

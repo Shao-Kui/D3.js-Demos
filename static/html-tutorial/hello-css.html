@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <link>
+    <title>Data Visualization!</title>
+    <link rel="stylesheet" href="../css/hello-css.css"> 
+    <style>
+        circle {
+            stroke: red;
+        }
+        rect {
+            fill: pink;
+        }
+    </style>
+  </head>
+  <body style="margin-left: 500px;">
+
+    <!-- 用了外部样式表 + 内部样式表 -->
+    <svg width="200" height="200">
+        <circle cx="100" cy="100" r="50"/>
+    </svg>
+    
+    <!-- 用了外部样式表 + 内部样式表 + 内联样式 -->
+    <svg width="200" height="200">
+        <circle cx="100" cy="100" r="50" style="fill: yellow;"  />
+    </svg>
+    <br>
+
+    <!-- 用了外部样式表 + 内部样式表 -->
+    <svg width="200" height="200">
+        <rect x="10" y="10" width="180" height="180" />
+    </svg>
+
+    <!-- 用了外部样式表 + 内部样式表 + 内联样式 -->
+    <svg width="200" height="200">
+        <rect x="10" y="10" width="180" height="180" style="fill: red"/>
+    </svg>
+    
+  </body>
+</html>

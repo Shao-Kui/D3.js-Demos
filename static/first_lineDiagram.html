@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Data Visualization!</title>
+    <script src="static/js/d3.min.js"></script>
+    <script src="/static/js/color-strategies.js"></script>
+</head>
+<style type="text/css">
+    body {
+        height: 100%;
+        background-color: #333333;
+    }
+    .inner_line path,
+    .inner_line line {
+        fill: none;
+        stroke: #E7E7E7;
+        shape-rendering: crispEdges;
+    }
+    .tick text {
+        font-size: 20px;
+        color: #ffffff;
+        text-anchor: right;
+        font-family: sans-serif;
+    }
+    .tick line {
+        opacity: 0.5;
+    }
+</style>
+<body>
+    <svg width="2000" height="1000" id="mainsvg" class="svgs"></svg>
+    <script>
+        
+        const comparekeys = ["美国","意大利","德国","法国","韩国","荷兰","瑞士","西班牙","伊朗","英国","中国"];
+        const yAxisKey = "确诊人数";
+        const xAxisKey = "首例确诊时间";
+        const linecolor = world_color_line;
+        const keyHint = '国家';
+        let alldates;
+        let allkeys;
+
+       
+        function init(xAxisKey,yAxisKey,ckeys){
+            // data contains only data[comparekeys]
+            const svg = d3.select('#mainsvg');
+            const width = +svg.attr('width');
+            const height = +svg.attr('height');
+            const margin = {
+                top: 120,
+                right: 30,
+                bottom: 30,
+                left: 120
+            };
+
+            const innerWidth = width - margin.left - margin.right;
+            const innerHeight = height - margin.top - margin.bottom;
+            const xValue = (datum) => {return datum[xAxisKey]};
+            const yValue = (datum) => {return datum[yAxisKey]};
+            let xScale,yScale;            
+            const Line = d3.line()
+                .x(d => {return margin.left+xScale(xValue(d))})
+                .y(d => {return yScale(yValue(d))+margin.top})
+                .curve(d3.curveCardinal.tension(0.5));
+            const circleCx = (d) => (margin.left+xScale(xValue(d)));
+            const circleCy = (d) => (yScale(yValue(d))+margin.top);
+
+            let legend = svg.append("g");
+            let lines = [];
+            
+            //data //all datas to present// keyid keys order in comparekeys.
+            const LineObject = function(data,keyid) {
+                this.data = data[ckeys[keyid]];
+                this.group=null;
+                this.path = null;
+                this.dataKeyId = keyid;
+                this.oldData = [];
+
+                this.init = function(){
+                    this.group = svg.append("g");
+                    const pathOri = this.group.selectAll(".datacurve").data(this.data);
+                    this.path = pathOri.enter()
+                        .append("path")
+                        .attr("class","datacurve")
+                        .attr("d",Line(this.data))
+                        .style("fill","none")
+                        .style("stroke-width",0.8)
+                        .style("stroke",linecolor[ckeys[keyid]])
+                        .style("stroke-opacity",0.9);      
+                    this.group.selectAll("circle")
+                        .data(this.data)
+                        .enter()
+                        .append("circle")
+                        .attr("cx",circleCx)
+                        .attr("cy",circleCy)
+                        .attr("r",3)
+                        .attr("fill","#ffffff")
+                        .style("stroke-width",0.8)
+                        .style("stroke",linecolor[ckeys[keyid]])
+                        .style("stroke-opacity",0.9)     
+                    this.oldData = this.data;
+                }
+                
+                this.BeginDraw = function(){
+                    this.path.attr("d",Line(this.data));
+                    let tempData = this.oldData.slice(0,this.data.length);
+                    let circle = this.group.selectAll("circle").data(tempData);
+                    circle.exit().remove();
+                    this.group.selectAll("circle")
+                        .data(this.data)
+                        .enter()
+                        .append("circle")
+                        .attr("cx",circleCx)
+                        .attr("cy",circleCy)
+                        .attr("r",3)
+                        .attr("fill","#ffffff")
+                        .style("stroke-width",0.8)
+                        .style("stroke",linecolor[ckeys[keyid]])
+                        .style("stroke-opacity",0.9);
+                    this.group.selectAll(".datacurve").data(this.data);
+                    this.oldData = this.data;
+                }                
+                
+                this.remove = function(){
+                    this.group.remove();
+                }
+            }
+            
+            //
+            const addLegend = function(){
+                let textGroup = legend.selectAll("text")
+                    .data(ckeys);
+                
+                textGroup.exit().remove();
+                legend.selectAll("text")
+                    .data(ckeys)
+                    .enter()
+                    .append("text")
+                    .text(d=>d)
+                    .attr("class","legend")
+                    .attr("x",(d,i)=>(i*100-20))
+                    .attr("y",margin.top-height-10)
+                    .attr("fill",(d,i)=>linecolor[ckeys[i]])
+                let rectGroup = legend.selectAll("rect")
+                    .data(ckeys);
+                rectGroup.exit().remove();
+                legend.selectAll("rect")
+                    .data(ckeys)
+                    .enter()
+                    .append("rect")
+                    .attr("x",(d,i)=>(i*100-20))
+                    .attr("y",margin.top-height-10)
+                    .attr("width",20)
+                    .attr("height",12)
+                    .attr("fill",(d,i)=>linecolor[ckeys[i]]);
+                legend.attr("transform", "translate(" + ((width - ckeys.length * 100) / 2) + "," + (height - 10) + ")");    
+            }
+
+            const renderInit = function(data,seq){
+                // xScale = d3.scaleTime()
+                //     .domain(d3.extent(data,xValue))
+                //     .range([0, innerWidth])
+                //     .nice();
+                xScale = d3.scaleLinear()
+                    .domain([0,d3.max(data,xValue)])
+                    // .domain([0,45])
+                    .range([0, innerWidth])
+                    .nice();
+ ;
+                yScale = d3.scaleLinear()
+                    .domain([d3.max(data,yValue), d3.min(data, yValue)])
+                    .range([0, innerHeight])
+
+                const g = svg.append('g').attr('id', 'maingroup')
+                    .attr('transform', `translate(${margin.left}, ${margin.top})`);
+                
+                // const xAxis = d3.axisBottom(xScale)
+                //     .ticks(alldates.length)
+                //     //.tickFormat(d3.timeFormat('%b-%d'));
+                //     .tickSize(-innerHeight)
+                let xInner = d3.axisBottom(xScale).tickSize(-innerHeight);
+                let yInner = d3.axisLeft(yScale).tickSize(-innerWidth);
+                const xAxis = d3.axisBottom(xScale).tickSize(-innerHeight);
+                const yAxis = d3.axisLeft(yScale).tickSize(-innerWidth);
+
+                // const xAxisGroup = g.append('g')
+                //     .call(xAxis)
+                //     .attr("class","axis")
+                //     .attr('transform', `translate(0, ${innerHeight})`);
+                // const yAxisGroup = g.append('g').call(yAxis)
+                //     .attr("class","axis")
+
+                const xInnerBar = g.append('g')
+                    .attr('transform', `translate(0, ${innerHeight})`)
+                    .attr("class","inner_line")
+                    .call(xInner)
+                const yInnerGroup = g.append('g')
+                    .attr("class","inner_line")
+                    .call(yAxis)
+                
+
+                // addLegend(ckeys);
+                for(let i=0;i<ckeys.length;i++){
+                    let newLine = new LineObject(seq,i);
+                    newLine.init();
+                    newLine.BeginDraw();
+                    lines.push(newLine);
+                }
+            }
+
+            const renderUpdate = function(){
+
+            }
+
+            d3.csv('./static/data/totalby0325_100_new.csv')
+            .then(function(data) {
+                console.log(data);
+                data = data.filter(datum => {
+                    return datum[keyHint] !== '总计'
+                });
+                data = data.filter(datum=>{
+                    return ckeys.includes(datum[keyHint]);
+                })
+                //   data = data.filter(datum => {return datum[keyHint] !== '湖北'}); 
+                allkeys = Array.from(new Set(data.map(d => d['国家'])))
+                console.log("allkeys", allkeys);
+                alldates = Array.from(new Set(data.map(d => xValue(d))))
+                console.log("alldates:", alldates);
+                data.forEach(datum => {
+                    datum['现有确诊'] = +(datum['现有确诊']);
+                    datum["确诊人数"] = +(datum['确诊人数']);
+                    datum['日期'] = new Date(datum['日期']);
+                    datum[yAxisKey] =+(datum[yAxisKey]);
+                    datum[xAxisKey] = +(datum[xAxisKey]);
+                });
+                let provinces = {};
+                console.log("provs0000", provinces);
+                allkeys.forEach(key => {
+                    provinces[key] = []
+                });
+                console.log("provs1111", provinces);
+                data.forEach(d => {
+                    provinces[d['国家']].push(d)
+                })
+                allkeys.forEach(key => provinces[key].sort(function(a, b) {
+                    return new Date(b.date) - new Date(a.date);
+                }));
+                console.log("data:",data);
+                console.log("seq:",provinces);
+                renderInit(data,provinces,ckeys);
+                let c = 0;
+                let intervalId = setInterval(() => {
+                    if (c >= allkeys.length) {
+                        clearInterval(intervalId);
+                    } else {
+                        let key = allkeys[c];
+                        c = c + 1;
+                    }
+                }, 2000);
+            });
+        }
+        init(xAxisKey,yAxisKey,comparekeys);
+    </script>
+</body>
+
+</html>

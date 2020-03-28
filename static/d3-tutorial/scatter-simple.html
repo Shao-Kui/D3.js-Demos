@@ -17,10 +17,11 @@
         let xScale, yScale;
         const xAxisLabel = '累计确诊人数（对数）';
         const yAxisLabel = '新增人数（对数）';
-
-        const xValue = d => { return Math.log(d['确诊人数'] + 1) }; 
-        const yValue = d => { return Math.log(d['新增确诊'] + 1) };
+        let alldates;
+        let sequantial;
         let aduration = 1000;
+        let xValue = d => Math.log(d['确诊人数'] + 1);
+        let yValue = d => Math.log(d['新增确诊'] + 1); 
 
         var color = {
             "武汉":"#ff1c12",
@@ -45,7 +46,7 @@
         const renderinit = function(data){
             // Linear Scale: Data Space -> Screen Space; 
             xScale = d3.scaleLinear()
-            .domain(d3.extent(data, xValue)) // "extent" is equivalent to [d3.min(data, xValue), d3.max(data, xValue)]; 
+            .domain([d3.min(data, xValue), d3.max(data, xValue)]) // "extent" is equivalent to ; 
             .range([0, innerWidth])
             .nice();
 
@@ -93,69 +94,63 @@
             .text(xAxisLabel);
             xAxisGroup.selectAll('.domain').remove();
         };
-        
-        const renderupdate = function(seq){
+
+        const renderUpdate = function(seq){
             const g = d3.select('#maingroup');
 
-            circleupdates = g.selectAll('circle').data(seq, d => d['地区']);
+            let circleupdates = g.selectAll('circle').data(seq, d => d['地区']);
 
-            circleenter = circleupdates.enter().append('circle')
-            .attr('cy', (datum) => { return yScale(yValue(datum)) })
-            .attr('cx', (datum) => { return xScale(xValue(datum)) })
+            let circleenter = circleupdates.enter().append('circle')
+            .attr('cx', d => xScale(xValue(d)))
+            .attr('cy', d => yScale(yValue(d)))
             .attr('r', 10)
-            .attr('fill', function(d,i) { return color[d['地区']] })
-            .attr('opacity', .8);
+            .attr('fill', d => color[d['地区']])
+            .attr('opacity', 0.8)
 
             circleupdates.merge(circleenter)
             .transition().ease(d3.easeLinear).duration(aduration)
-            .attr('cy', (datum) => { return yScale(yValue(datum)) })
-            .attr('cx', (datum) => { return xScale(xValue(datum)) });
-        };
+            .attr('cx', d => xScale(xValue(d)))
+            .attr('cy', d => yScale(yValue(d)));
+        }
 
-        d3.csv('./static/data/hubeinxt.csv').then(function(data){
-            data = data.filter(datum => {return datum['地区'] !== '总计'});
-            data.forEach(datum => {
-                // pre-process the data; 
-                datum['确诊人数'] = +(datum['确诊人数']);
-                datum['治愈人数'] = +(datum['治愈人数']);
-                datum['死亡人数'] = +(datum['死亡人数']);
-                datum['新增确诊'] = +(datum['新增确诊']);
-                if(datum['新增确诊'] < 0){
-                    datum['新增确诊'] = 0;
+        d3.csv('./static/data/hubeinxt.csv').then( data => {
+            data = data.filter( d => d['地区'] !== '总计' );
+            data.forEach( d => {
+                d['确诊人数'] = +(d['确诊人数']);
+                d['新增确诊'] = +(d['新增确诊']);
+                if( d['新增确诊'] < 0 ){
+                    d['新增确诊'] = 0;
                 }
-            });
+            } );
 
-            // remove duplicated items; 
-            alldates = Array.from(new Set(data.map( datum => datum['日期'] )));
+            alldates = Array.from( new Set(data.map( d => d['日期']) )); 
 
-            // make sure dates are listed according to real time order; 
-            alldates = alldates.sort(function(a,b){
+            alldates = alldates.sort( (a,b) => {
                 return new Date(a) - new Date(b);
-            });
+            } );
 
-            // re-arrange the data sequentially; 
-            sequential = []; 
-            alldates.forEach(datum => {
-                sequential.push([]);
-            });
-            data.forEach(datum => {
-                sequential[alldates.indexOf(datum['日期'])].push(datum);
-            });
-
+            sequantial = []; 
+            alldates.forEach( d => {
+                sequantial.push([])
+            } );
+            data.forEach( d => {
+                sequantial[ alldates.indexOf(d['日期']) ].push(d);
+            } );
             renderinit(data);
 
-            // set the animation interval; 
-            let c = 0; 
-            intervalId = setInterval(function(){
-                if(c >= alldates.length){
-                    console.log('time to close this animation');
-                    clearInterval(intervalId); 
+            let c = 0;
+            let intervalId = setInterval( () => {
+                if( c >= alldates.length ){
+                    clearInterval(intervalId);
                 }else{
-                    renderupdate(sequential[c]);
+                    renderUpdate(sequantial[c]);
                     c = c + 1;
                 }
-            }, aduration); 
-        });
+            }, aduration)
+
+            console.log(sequantial);
+        } )
+
     </script>
   </body>
 </html>

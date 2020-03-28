@@ -18,6 +18,8 @@
         const margin = {top: 100, right: 120, bottom: 100, left: 120};
         const innerWidth = width - margin.left - margin.right;
         const innerHeight = height - margin.top - margin.bottom;
+        const offset_x = world_offset_x;
+        const offset_y = world_offset_y;
         //const xValue = (datum) => {return dates.indexOf(datum['日期'])};
         //const yValue = (datum) => {return datum['确诊人数']};
         //const xValue = d => d['确诊人数'];
@@ -38,20 +40,18 @@
         // }
         // const rValue = d => {return Math.sqrt(d['感染率'] * 1000) * 0.4 ;};
         const xValue = d => {
-            return Math.log(d['确诊人数'] + 1);}; 
+            return Math.log2(d['确诊人数'] / 50 + 1);}; 
         const yValue = d => {
-            return Math.log(d['新增确诊'] + 1);}; 
+            return Math.log2(d['新增确诊'] / 10 + 1);}; 
         // const yValue = d => {
         //     return Math.sqrt(d['扩散曲线']);}; 
-        const rValue = d => {return Math.sqrt(d['感染率']) * 20 ;};
+        const rValue = d => {return Math.sqrt(d['感染率']) * 10 ;};
         let xScale, yScale;
         let maxX, maxY;
         let dates; 
         let keys;
         const keys_to_color = world_color_qipao;
-        const offset_x = city_offset_x;
-        const offset_y = city_offset_y;
-        let aduration = 1000;
+        let aduration = 500;
         let metapop;
         let keyHint = '国家'
 
@@ -84,12 +84,13 @@
             const yAxis = d3.axisLeft(yScale)
             .tickSize(-innerWidth)
             //.tickFormat(d3.format('.2s'))
-            .tickPadding(10)
-            .ticks(8); // .tickPadding is used to prevend intersection of ticks; 
+            .tickPadding(10);
+            // .ticks(8); // .tickPadding is used to prevend intersection of ticks; 
             const xAxis = d3.axisBottom(xScale)
             .tickFormat(d3.format('.2s'))
             .tickSize(-innerHeight)
             .tickPadding(10);
+            // .ticks(20);
 
             let yAxisGroup = g.append('g').call(yAxis)
             .attr('id', 'yaxis');
@@ -123,24 +124,29 @@
             // }
             var keys = [
                 "意大利",
-                "伊朗",
-                "韩国",
-                "西班牙",
-                "法国",
-                "德国",
                 "美国",
-                "日本",
+                "西班牙",
+                "德国",
+                "伊朗",
+                "法国",
+                "韩国",
                 "瑞士",
-                "挪威",
-                "瑞典",
-                "丹麦",
-                "荷兰",
                 "英国",
+                "荷兰",
                 "比利时",
                 "奥地利",
-                "卡塔尔",
-                "巴林",
-                "新加坡",
+                "挪威",
+                "加拿大",
+                "葡萄牙",
+                "瑞典",
+                "澳大利亚",
+                "巴西",
+                "以色列",
+                "丹麦",
+                "捷克",
+                "爱尔兰",
+                "日本",
+                "芬兰",
                 "冰岛"
             ]
             
@@ -186,7 +192,7 @@
                 .data(keys)
                 .enter().append("g")
                 .attr("class", "legend")
-                .attr("transform", function(d, i) { return "translate(" + (innerWidth * 4 / 5 + 290) + "," + (i * 20 + 322) + ")"; });
+                .attr("transform", function(d, i) { return "translate(" + (innerWidth * 4 / 5 + 290) + "," + (i * 20 + 222) + ")"; });
             
                 
             // draw legend colored rectangles
@@ -211,13 +217,15 @@
             .text(d => d);
 
             //document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
-            myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000, 8100, 22000]
+            // myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000, 8100, 22000, 60000]
+            myticks = [0, 100, 200, 400, 800, 1600, 3200, 6400, 12800, 25600, 51200, 102400]
             for(let tid = 0; tid < myticks.length; tid++){
                 document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
             }
 
             //document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
-            myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000]
+            // myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000]
+            myticks = [0, 20, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240, 20480]
             // myticks = [0, 0.25, 1, 2.25, 4, 6.25, 9, 12.25]
             for(let tid = 0; tid < myticks.length; tid++){
                 document.getElementById('yaxis').getElementsByClassName('tick')[myticks.length-1-tid].getElementsByTagName('text')[0].textContent = myticks[tid];
@@ -257,8 +265,8 @@
             textupdates = g.selectAll('.province_text').data(seq);
             textenter = textupdates.enter().append('text')
             .attr("class", "province_text")
-            .attr("x", (datum) => { return xScale(xValue(datum)) ; })
-            .attr("y", (datum) => { return yScale(yValue(datum)) - 10 - rValue(datum); })
+            .attr("x", (datum) => { return xScale(xValue(datum)) + offset_x[datum[keyHint]]; })
+            .attr("y", (datum) => { return yScale(yValue(datum)) - 10 - rValue(datum) + offset_y[datum[keyHint]]; })
             .attr("dy", ".1em")
             .style("text-anchor", "middle")
             .attr("fill", "#333333")
@@ -268,8 +276,8 @@
             });
 
             textupdates.merge(textenter).transition().ease(d3.easeLinear).duration(aduration)
-            .attr('x', (datum) => { return xScale(xValue(datum)) ; })
-            .attr('y', (datum) => { return yScale(yValue(datum)) - 10 - rValue(datum); });
+            .attr('x', (datum) => { return xScale(xValue(datum)) + offset_x[datum[keyHint]]; })
+            .attr('y', (datum) => { return yScale(yValue(datum)) - 10 - rValue(datum) + offset_y[datum[keyHint]] ; });
         };
 
         d3.csv('./static/data/2019worldpopulation.csv').then(data => {

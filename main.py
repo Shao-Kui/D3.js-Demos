@@ -54,6 +54,10 @@ def nCov():
 def nCovnxt():
     return flask.send_from_directory('static', 'nCovnxt.html')
 
+@app.route('/lineDiagram')
+def lineDiagram():
+    return flask.send_from_directory('static', 'first_lineDiagram.html')
+
 @app.route('/nCovnxt-world')
 def nCovnxtworld():
     return flask.send_from_directory('static', 'nCovnxt-world.html')

@@ -6,7 +6,7 @@
 
 D3.js课上用幻灯片（讲义）在[slides文件夹][theslides]下。
 
-D3.js课上录屏:[BiliBili][recordvideo]
+D3.js课上录屏: [BiliBili][recordvideo]。
 
 # 先修条件（Prerequisites）
 课程希望各位同学可以有编程基础，这里编程基础不限制哪门具体的语言，虽然更希望是JavaScript与Python。关于可视化编程需要用到的编程语言（JavaScript），在D3.js介绍的时候，会一并为大家介绍。如果没有编程基础，也完全可以参与课程学习，但需要无编程基础的同学课下用额外的时间补习JavaScript的基础知识。

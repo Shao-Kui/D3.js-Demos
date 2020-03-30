@@ -1,11 +1,11 @@
-const naiveAxes = function(g, innerWidth, innerHeight, xScale, yScale){
+const naiveAxes = function(){
 
     const xAxis = d3.axisBottom(xScale).tickSize(-innerHeight)
-    const xAxisGroup = g.append('g').call(xAxis)
+    const xAxisGroup = g.append('g').attr('id', 'xaxis').call(xAxis)
     .attr('transform', `translate(0, ${innerHeight})`);
 
     const yAxis = d3.axisLeft(yScale).tickSize(-innerWidth);
-    const yAxisGroup = g.append('g').call(yAxis);
+    const yAxisGroup = g.append('g').attr('id', 'yaxis').call(yAxis);
 
     return {'xAxisGroup': xAxisGroup, 'yAxisGroup': yAxisGroup}; 
 }

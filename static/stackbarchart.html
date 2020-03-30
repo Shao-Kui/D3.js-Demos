@@ -35,7 +35,7 @@
         .nice();
 
         xScale = d3.scaleLinear()
-        .domain([-0, d3.max(data, d => d3.max(d, subd => subd.data.x1)) + 0])
+        .domain([-0, d3.max(data, d => d3.max(d, subd => subd.data.x1))])
         .range([0, innerWidth])
         .nice();
 
@@ -52,18 +52,18 @@
         d3.selectAll('.tick text').attr('font-size', '1.8em');
 
         let cg = svg.append('g').attr('id', 'captionsgroup')
-        .attr('transform', `translate(${width - margin.right + 5}, ${margin.top})`);
+        .attr('transform', `translate(${width - margin.right + 5}, ${margin.top+3})`);
         
         cg.selectAll('.captionrect').data(selectSemantics).join('rect')
         .attr('class', 'captionsgroup')
-        .attr('y', (d, i) => i * 25 )
+        .attr('y', (d, i) => i * 32 )
         .attr('width', 40)
         .attr('height', 20)
         .attr('fill', d => color_caiyun(d))
 
         cg.selectAll('.captiontext').data(selectSemantics).join('text')
         .attr('class', 'captiontext')
-        .attr('y', (d, i) => i * 25 + 15)
+        .attr('y', (d, i) => i * 32 + 15)
         .attr('x', 42)
         .attr('width', 40)
         .attr('height', 20)

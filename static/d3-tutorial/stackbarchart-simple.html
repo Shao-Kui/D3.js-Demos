@@ -46,7 +46,8 @@
       .domain(naiveKeys)
       .range(d3.schemeSet3)
 
-      naiveAxes(g, innerWidth, innerHeight);
+      naiveAxes();
+      d3.selectAll('#xaxis text').attr('y', '10')
 
       // start to do data-join; 
       g.selectAll('.datagroup').data(naiveStack).join('g')

@@ -58,6 +58,10 @@ def lineDiagram():
 def nCovnxtworld():
     return flask.send_from_directory('static', 'nCovnxt-world.html')
 
+@app.route('/pie-world')
+def pieworld():
+    return flask.send_from_directory('static', 'Pie-world.html')
+
 @app.route('/nCovnxt-province')
 def nCovnxtprovince():
     return flask.send_from_directory('static', 'nCovnxt-province.html')

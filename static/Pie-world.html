@@ -1,0 +1,438 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>nCov-Province</title>
+    <link rel="stylesheet" href="/static/css/nCovnxt.css"> 
+    <script src="/static/js/d3.min.js"></script>
+    <script src="/static/js/library/moment.min.js"></script>
+    <script src="/static/js/color-strategies.js"></script>
+  </head>
+  <body style="text-align: center">
+    <svg width="1650" height="920" id="mainsvg" class="svgs" style="background-color: #333333;"></svg>
+    <script>
+        // get main SVG and its attributes & setting hyper-parameters; 
+        const svg = d3.select('#mainsvg');
+        const width = +svg.attr('width');
+        const height = +svg.attr('height');
+        const margin = {top: 100, right: 120, bottom: 100, left: 120};
+        const innerWidth = width - margin.left - margin.right;
+        const innerHeight = height - margin.top - margin.bottom;
+        const offset_x = world_offset_x;
+        const offset_y = world_offset_y;
+        //const xValue = (datum) => {return dates.indexOf(datum['日期'])};
+        //const yValue = (datum) => {return datum['确诊人数']};
+        //const xValue = d => d['确诊人数'];
+        //const xValue = d => d['感染率'];
+        //const yValue = d => {return Math.log(d['diffuse_smooth'] + 1)};
+        //const yValue = d => {return d['diffuse_smooth']};
+        //const yValue = d => {return Math.log(d['newinfec']+1)};
+        //const rValue = d => {return Math.sqrt(d['确诊人数']) + 6};
+        // const xValue = d => {
+        //     return Math.log(d['确诊人数'] + 1);}; 
+        // const yValue = d => {
+        //     if (d['确诊人数'] === 0) {
+        //         return 0;
+        //     }
+        //     else {
+        //         return Math.sqrt(d['治愈人数'] / d['确诊人数']);
+        //     }
+        // }
+        // const rValue = d => {return Math.sqrt(d['感染率'] * 1000) * 0.4 ;};
+        const xValue = d => {
+            return Math.log2(d['确诊人数'] / 50 + 1);}; 
+        const yValue = d => {
+            return Math.log2(d['新增确诊'] / 10 + 1);}; 
+        // const yValue = d => {
+        //     return Math.sqrt(d['扩散曲线']);}; 
+        const rValue = d => {return Math.log2(d['治愈人数'] + d['死亡人数'] + 1);};
+        // const rValue = d => {return Math.sqrt(d['感染率']) * 10 ;};
+        let xScale, yScale;
+        let maxX, maxY;
+        let dates; 
+        let keys;
+        const keys_to_color = world_color_qipao;
+        let aduration = 500;
+        let metapop;
+        let keyHint = '国家'
+
+        const xAxisLabel = '累计确诊人数';
+        const yAxisLabel = '新增确诊人数';
+            
+        const renderinit = function(data, seq){
+            // Linear Scale: Data Space -> Screen Space; 
+            xScale = d3.scaleLinear()
+            .domain([d3.min(data, xValue), d3.max(data, xValue)]) // "extent" is equivalent to [d3.min(data, xValue), d3.max(data, xValue)]; 
+            .range([0, innerWidth])
+            .nice();
+            // Introducing y-Scale; 
+            yScale = d3.scaleLinear()
+            .domain(d3.extent(data, yValue).reverse()) // remember to use reverse() to make y-axis start from the bottom; 
+            .range([0, innerHeight])
+            .nice();
+
+            // generate maxX and maxY; 
+            maxX = xScale(d3.max(data, xValue));
+            maxY = yScale(d3.max(data, yValue));
+
+            // The reason of using group is that nothing is rendered outside svg, so margin of svg is always blank while margin of group is rendered inside svg; 
+            const g = svg.append('g')
+            .attr('transform', `translate(${margin.left}, ${margin.top})`)
+            .attr('id', 'maingroup');
+
+            // Adding axes; 
+            const yAxis = d3.axisLeft(yScale)
+            .tickSize(-innerWidth)
+            //.tickFormat(d3.format('.2s'))
+            .tickPadding(10);
+            // .ticks(8); // .tickPadding is used to prevend intersection of ticks; 
+            const xAxis = d3.axisBottom(xScale)
+            .tickFormat(d3.format('.2s'))
+            .tickSize(-innerHeight)
+            .tickPadding(10);
+            // .ticks(20);
+
+            let yAxisGroup = g.append('g').call(yAxis)
+            .attr('id', 'yaxis');
+            yAxisGroup.append('text')
+            .attr('transform', `rotate(-90)`)
+            .attr('x', -innerHeight / 2)
+            .attr('y', -60)
+            .attr('fill', 'white')
+            .text(yAxisLabel)
+            .attr('text-anchor', 'middle') // Make label at the middle of axis. 
+            yAxisGroup.selectAll('.domain').remove(); // we can select multiple tags using comma to seperate them and we can use space to signify nesting; 
+            
+            let xAxisGroup = g.append('g').call(xAxis)
+            .attr('transform', `translate(${0}, ${innerHeight})`)
+            .attr('id', 'xaxis');
+            xAxisGroup.append('text')
+            .attr('y', 60)
+            .attr('x', innerWidth / 2)
+            .attr('fill', 'white')
+            .text(xAxisLabel);
+            xAxisGroup.selectAll('.domain').remove();
+            
+            // myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000, 8100, 22000, 60000].reverse()
+            // for(let tid = 0; tid < myticks.length; tid++){
+            //     document.getElementById('xaxis').getElementsByClassName('tick')[myticks.length-1-tid].getElementsByTagName('text')[0].textContent = myticks[tid];
+            // }
+
+            // myticks = [0, 0.2, 1.0, 2.0, 5.0, 15, 40, 110, 300, 800]
+            // for(let tid = 0; tid < myticks.length; tid++){
+            //     document.getElementById('yaxis').getElementsByClassName('tick')[myticks.length-1-tid].getElementsByTagName('text')[0].textContent = myticks[tid];
+            // }
+            var keys = [
+                "意大利",
+                "美国",
+                "西班牙",
+                "德国",
+                "伊朗",
+                "法国",
+                "韩国",
+                "瑞士",
+                "英国",
+                "荷兰",
+                "比利时",
+                "奥地利",
+                "挪威",
+                "加拿大",
+                "葡萄牙",
+                "瑞典",
+                "澳大利亚",
+                "巴西",
+                "以色列",
+                "丹麦",
+                "捷克",
+                "爱尔兰",
+                "日本",
+                "芬兰",
+                "冰岛"
+            ]
+            
+
+            var legend_color = [
+                "#ff1c12", //武汉
+                "#EA7E53", //黄石
+                "#E69D87", //十堰
+                "#759AA0", //荆州
+                "#386F38", //宜昌
+                "#ff6131", //襄阳
+                "#DD6B66", //鄂州
+                "#EEDD78", //荆门
+                "#ffde1d", //孝感
+                "#52f3a9", //黄冈
+                "#4B8E6F", //咸宁
+                "#73A373", //恩施州
+                "#47c0d4", //随州
+                "#ff8603", //仙桃
+                "#d54873", //天门
+                "#1e9d95", //潜江
+                "#7289AB", //神农架
+            ];
+            
+            // draw legend
+            // var legend = d3.select('#maingroup').selectAll(".legend")
+            //     .data(keys)
+            //     .enter().append("g")
+            //     .attr("class", "legend")
+            //     .attr("transform", function(d, i) { return "translate(" + (innerWidth * 4 / 5 + 290) + "," + (i * 20 + 222) + ")"; });
+            
+                
+            // // draw legend colored rectangles
+            // legend.append("rect")
+            // .data(keys)
+            // .attr("x", 0)
+            // .attr("y", 0)
+            // .attr("width", 30)
+            // .attr("height", 15)
+            // .style("fill", function (d,i) {
+            //     return keys_to_color[d]});
+			
+            // // draw legend text
+            // legend.append("text")
+            // .data(keys)
+            // .attr("class", "legend_text")
+            // .attr("x", 40)
+            // .attr("y", 9)
+            // .attr("dy", ".2em")
+            // .attr("fill", 'white')
+            // .style("text-anchor", "start")
+            // .text(d => d);
+
+            //document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
+            // myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000, 8100, 22000, 60000]
+            myticks = [0, 100, 200, 400, 800, 1600, 3200, 6400, 12800, 25600, 51200, 102400, 204800]
+            for(let tid = 0; tid < myticks.length; tid++){
+                document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
+            }
+
+            //document.getElementById('yaxis').getElementsByClassName('tick')[1].getElementsByTagName('text')[0].textContent = 'shaokui'
+            // myticks = [0, 2, 10, 20, 50, 150, 400, 1100, 3000]
+            myticks = [0, 20, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240, 20480]
+            // myticks = [0, 0.25, 1, 2.25, 4, 6.25, 9, 12.25]
+            for(let tid = 0; tid < myticks.length; tid++){
+                document.getElementById('yaxis').getElementsByClassName('tick')[myticks.length-1-tid].getElementsByTagName('text')[0].textContent = myticks[tid];
+            }
+        };
+        
+        const renderupdate = function(seq){
+            const g = d3.select('#maingroup');
+            time = seq[0]['日期'];
+            split_time  = time.split('/');
+            time = split_time[1] + "月" + split_time[2] + "日";
+            g.selectAll('.date_text').remove();
+            g.append("text")
+            .data(['seq']) 
+            .attr('class', 'date_text')
+            .attr("x", innerWidth / 5 + 120)
+            .attr("y", innerHeight / 10 - 20)
+            .attr("dy", ".5em")
+            .style("text-anchor", "end")
+            .attr("fill", "#a6a5a5")
+            .text(time);
+
+            var color = ["#55BEC1", "#DB5C5C"];
+            for (let i=0;i<seq.length;++i) {
+                save_people_nums = seq[i]['治愈人数'];
+                dead_people_nums = seq[i]['死亡人数'];
+                var per = save_people_nums * 100 / (save_people_nums + dead_people_nums + 1);
+                if (per == 0) { per = 1;}
+                var cx = xScale(xValue(seq[i]));
+                var cy = yScale(yValue(seq[i]));
+                var r = rValue(seq[i]);
+                var arc_generator  = d3.arc().innerRadius([r+2]).outerRadius([r+10]);
+                var pieDate = [
+                    {data: per
+                    ,endAngle: 2 * Math.PI * per / 100
+                    ,index: 0
+                    ,padAngle: 0
+                    ,startAngle: 0.
+                    ,value: per},
+                    {data: 100 - per
+                    ,endAngle: 2 * Math.PI
+                    ,index: 1
+                    ,padAngle: 0
+                    ,startAngle: 2 * Math.PI * (per / 100)
+                    ,value: 100 - per}
+                ];
+                gsupdates = g.selectAll(`.pie-${i}`).data(pieDate);
+                gsenter = gsupdates.enter().append("g").attr('class', `pie-${i}`).attr("transform","translate(" + cx + "," + cy + ")");
+                gsupdates.merge(gsenter).transition().ease(d3.easeLinear).duration(aduration)
+                .attr("transform","translate(" + cx + "," + cy + ")");
+                
+                pathupdates = gsupdates.selectAll('path').data(pieDate);
+                pathupenters = pathupdates.enter().append('path')
+                .attr("fill", function(d,i) {
+                    return color[i];
+                })
+                .attr("d", function (d) {
+                    return arc_generator(d);
+                });
+
+                pathupdates.merge(pathupenters)
+                .attr("d", function (d) {
+                    return arc_generator(d);
+                });
+                
+            }
+
+            // circleupdates = g.selectAll('circle').data(seq, d => d[keyHint]);
+            // circleenter = circleupdates.enter().append('circle')
+            // .attr('cy', (datum) => { 
+            //     console.log(datum);
+            //     return yScale(yValue(datum)) }
+            // )
+            // .attr('cx', (datum) => { return xScale(xValue(datum)) }) // use xSacle to re-scale data space (domain) and return the rescaled population; 
+            // .attr('r', datum => rValue(datum))
+            // .attr('stroke-width', 2)
+            // .attr('stroke', '#cccccc')
+            // .attr('fill', function(d,i) {return keys_to_color[d[keyHint]]}) // #3fd4c5
+            // .attr('opacity', .85);
+
+            // circleupdates.merge(circleenter).transition().ease(d3.easeLinear).duration(aduration)
+            // .attr('cy', (datum) => { return yScale(yValue(datum)) })
+            // .attr('cx', (datum) => { return xScale(xValue(datum)) }) // use xSacle to re-scale data space (domain) and return the rescaled population; 
+            // .attr('r', datum => rValue(datum));
+
+            textupdates = g.selectAll('.province_text').data(seq);
+            textenter = textupdates.enter().append('text')
+            .attr("class", "province_text")
+            .attr("x", (datum) => { return xScale(xValue(datum)) + offset_x[datum[keyHint]]; })
+            // .attr("y", (datum) => { return yScale(yValue(datum)) + 4 + offset_y[datum[keyHint]]; })
+            .attr("y", (datum) => { return yScale(yValue(datum)) + 25 + rValue(datum) + offset_y[datum[keyHint]]; })
+            .attr("dy", ".1em")
+            .style("text-anchor", "middle")
+            .attr("fill", "#333333")
+            .text(function (d,i) { 
+                return d[keyHint];
+            });
+
+            textupdates.merge(textenter).transition().ease(d3.easeLinear).duration(aduration)
+            .attr('x', (datum) => { return xScale(xValue(datum)) + offset_x[datum[keyHint]]; })
+            .attr('y', (datum) => { return yScale(yValue(datum)) + 25 + rValue(datum) + offset_y[datum[keyHint]] ; });
+        };
+
+        d3.csv('./static/data/2019worldpopulation.csv').then(data => {
+            data.forEach(datum => {
+                datum['2019年人口'] = +(datum['人口']);
+            })
+            metapop = data;
+        });
+
+        d3.csv('./static/data/world.csv').then(function(data){
+            totals = data.filter(datum => {return datum[keyHint] === '总计'});
+            data = data.filter(datum => {return datum[keyHint] !== '总计'});            
+            data = data.filter(datum => {return datum[keyHint] !== '中国'});            
+            // deletelist = ['澳门', '香港', '甘肃', '青海', '吉林', '内蒙古', '新疆', '台湾', '西藏'];
+            // for(let di = 0; di < deletelist.length; di++){
+            //     data = data.filter(datum => {return datum[keyHint] !== deletelist[di]});
+            // }
+
+            data.forEach(datum => {
+                // pre-process the data; 
+                datum['新增确诊'] = +(datum['新增确诊']);
+                datum['现有确诊'] = +(datum['现有确诊']);
+                datum['确诊人数'] = +(datum['确诊人数']);
+                datum['治愈人数'] = +(datum['治愈人数']);
+                datum['死亡人数'] = +(datum['死亡人数']);
+                datum['扩散曲线'] = +(datum['扩散曲线']);
+                if(datum['扩散指数'] === undefined){
+                    let lastmoment = moment(datum['日期'], 'M月D日', 'en', true)
+                    let lastdate = lastmoment.date(lastmoment.date()-1).format('M月D日');
+                    datum_last_day = data.find(x => {
+                        return x[keyHint] === datum[keyHint] && lastdate === x['日期'];
+                    }); 
+                    if(datum_last_day === undefined || datum_last_day['确诊人数'] === 0){
+                        datum['扩散指数'] = 0.0;
+                    }else{
+                        datum['扩散指数'] = datum['新增确诊'] / datum_last_day['确诊人数'];
+                    }
+                }
+                if(isNaN(datum['扩散指数'])){
+                    datum['扩散指数'] = 0.0;
+                }else{
+                    datum['扩散指数'] = +(datum['扩散指数']);
+                }
+                datum['感染率'] = datum['确诊人数'] / (metapop.find(x => x[keyHint] === datum[keyHint])['2019年人口'] / 10000.0);
+                datum['死亡率'] = datum['死亡人数'] / datum['确诊人数'] * 100.;
+                datum['瞎试'] = datum['死亡人数'] / datum['治愈人数'];
+            });
+
+            // remove duplicated items;
+            data = data.filter(datum => {
+                var delete_dates = [];// '2020/1/21', '2020/1/22', '2020/1/23', '2020/1/24'];
+                //  '2020/1/25', '2020/1/26', '2020/1/27', '2020/1/28', '2020/1/29', '2020/1/30', '2020/1/31'];
+                var flag = true;
+                for(var i=0; i<delete_dates.length; ++i) {
+                    if(datum['日期'] == delete_dates[i]){
+                        flag = false;
+                        break;
+                    }
+                }
+                return flag;}) // delete first day data; 
+            alldates = Array.from(new Set(data.map( datum => datum['日期'])));
+            keys = Array.from(new Set(data.map( datum => datum[keyHint])));
+
+            // make sure dates are listed according to real time order; 
+            alldates = alldates.sort(function(a,b){
+                // turn your strings into dates, and then subtract them
+                // to get a value that is either negative, positive, or zero.
+                return new Date(b.date) - new Date(a.date);
+            });
+            dates = alldates;
+
+            // re-arrange the data sequentially; 
+            sequential = []; 
+            alldates.forEach(datum => {
+                sequential.push([]);
+            });
+            data.forEach(datum => {
+                sequential[alldates.indexOf(datum['日期'])].push(datum);
+            });
+            
+            // calculate 'newinfec' (新增确诊数); 
+            let t = 0;
+            for(; t < sequential.length; t++){
+                sequential[t].forEach(datum => {
+                    if(t == 0){
+                        datum['newinfec'] = 0;
+                    }else{
+                        datum['newinfec'] = datum['确诊人数'] - sequential[t-1].find(x => x[keyHint] === datum[keyHint])['确诊人数']
+                        if(datum['newinfec'] < 0){
+                            datum['newinfec'] = 0;
+                        }
+                    }
+                })
+            }
+
+            // 'K' for Wen-Yang; 
+            //const lastseq = sequential[sequential.length-1];
+            //let total_new = 0;
+            //let total_num = 0;
+            //lastseq.forEach(d => {total_new += d['newinfec']; total_num += d['确诊人数'];});
+            //const K = total_new / total_num;
+            // const total_last = totals.find(d => {return d['日期'] === alldates[alldates.length-1]}); 
+            // const total_ls = totals.find(d => {return d['日期'] === alldates[alldates.length-2]}); 
+            // const K = (total_last['确诊人数'] - total_ls['确诊人数']) / total_last['确诊人数'];
+
+            // initialize the chart; 
+            renderinit(data, sequential[0]);
+
+            // set the animation interval; 
+            let c = 0; 
+            intervalId = setInterval(function(){
+                if(c >= alldates.length){
+                    console.log('time to close this animation');
+                    clearInterval(intervalId); 
+                }else{
+                    // c = 40;
+                    // c = alldates.length - 2;
+                    renderupdate(sequential[c]);
+                    c = c + 1;
+                }
+            }, aduration); 
+        });
+    </script>
+  </body>
+</html>

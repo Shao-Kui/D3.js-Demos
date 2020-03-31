@@ -35,6 +35,16 @@ var province_color = {
     "湖北":"#FF190F"
 }
 
+const caiyun1 = [
+    "#DD6B66", "#759AA0", "#E69D87", "#8DC1A9", "#EA7E53",
+    "#EEDD78", "#73A373", "#73B9BC", "#7289AB", "#91CA8C",
+    "#F49F42", "#AA312C", "#39656D", "#B35E45", "#4B8E6F",
+    "#B6481C", "#BBA838", "#386F38", "#388589", "#385177",
+    "#50964A", "#C16B0D", "#FF8500", "#45BFD3", "#FF5F2F",
+    "#50F3A8", "#FF4800", "#FFDE1A", "#41D541", "#32E7EF",
+    "#ef638e", "#3B7CDE", "#58FD4A", "#FF190F"
+]
+
 var province_color_themeriver = {
     "湖北":"#ffb79f",
     "广东":"#ffc9b3",

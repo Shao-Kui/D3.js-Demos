@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Line</title>
+    <title>StackedHistogram</title>
     <script src="static/js/d3.min.js"></script>
     <script src="static/js/axes.js"></script>
+    <script src="static/js/color-strategies.js"></script>
     <script src="static/js/library/moment.min.js"></script>
   </head>
   <body>
@@ -12,54 +13,163 @@
       const svg = d3.select('#mainsvg');
       const width = +svg.attr('width');
       const height = +svg.attr('height');
-      const margin = {top: 120, right: 200, bottom: 100, left: 200};
+      const margin = {top: 60, right: 200, bottom: 100, left: 120};
       const innerWidth = width - margin.left - margin.right;
       const innerHeight = height - margin.top - margin.bottom;
-      const xValue = d => moment(d.month.toISOString()).format('YYYY-M-D');
-
-      const naiveData = [
-        {month: new Date(2015, 0, 1), apples: 3840, bananas: 1920, cherries: 960, dates: 400},
-        {month: new Date(2015, 1, 1), apples: 1600, bananas: 1440, cherries: 960, dates: 400},
-        {month: new Date(2015, 2, 1), apples:  640, bananas:  960, cherries: 640, dates: 400},
-        {month: new Date(2015, 3, 1), apples:  320, bananas:  480, cherries: 640, dates: 400}
-      ];
-      const naiveKeys = ["apples", "bananas", "cherries", "dates"]; 
-      var naiveStack = d3.stack()
-      .keys(["apples", "bananas", "cherries", "dates"])
-      .order(d3.stackOrderNone)
-      .offset(d3.stackOffsetNone) (naiveData) ;
-
       const g = svg.append('g').attr('id', 'maingroup')
       .attr('transform', `translate(${margin.left}, ${margin.top})`); 
+      // const xValue = d => moment(d.month.toISOString()).format('YYYY-M-D');
+      const yValue = d => d.occur;
+      let xScale, yScale, color, color_caiyun; 
+      let allsemantics;
+      let selectSemantics;
+      let alloccur = {};
+      const xAxisLabel = 'Occurrence';
+      const yAxisLabel = 'Count (Log)';
 
-      const yScale = d3.scaleLinear()
-      .domain([0, d3.max(naiveStack, d => d3.max(d, subd => subd[1]))])
-      .range([innerHeight, 0])
-      .nice();
+      const renderInit = function(data){
 
-      const xScale = d3.scaleBand()
-      .domain(naiveData.map( d => xValue(d) ))
-      .range([0, innerWidth])
-      .padding(0.5);
+        yScale = d3.scaleLinear()
+        .domain([0, d3.max(data, d => d3.max(d, subd => subd[1]))])
+        .range([innerHeight, 0])
+        .nice();
 
-      const color = d3.scaleOrdinal()
-      .domain(naiveKeys)
-      .range(d3.schemeSet3)
+        xScale = d3.scaleLinear()
+        .domain([-0, d3.max(data, d => d3.max(d, subd => subd.data.x1))])
+        .range([0, innerWidth])
+        .nice();
 
-      naiveAxes(g, innerWidth, innerHeight);
+        color = d3.scaleBand()
+        .domain(selectSemantics)
+        .range([0, 1]);
 
-      // start to do data-join; 
-      g.selectAll('.datagroup').data(naiveStack).join('g')
-      .attr('class', 'datagroup')
-      .attr('fill', d => color(d.key))
-      .selectAll('.datarect').data(d => d).join('rect')
-      .attr('class', 'datarect')
-      .attr('y', d => yScale(d[1]))
-      .attr('x', d => xScale(xValue(d.data)))
-      .attr('height', d => yScale(d[0]) - yScale(d[1]))
-      .attr('width', xScale.bandwidth()); 
+        color_caiyun = d3.scaleOrdinal()
+        .domain(selectSemantics)
+        .range(caiyun1);
 
-      d3.selectAll('.tick text').attr('font-size', '2em');
+        //naiveAxes(g, innerWidth, innerHeight, xScale, yScale);
+        fullAxes();
+        d3.selectAll('.tick text').attr('font-size', '1.8em');
+
+        let cg = svg.append('g').attr('id', 'captionsgroup')
+        .attr('transform', `translate(${width - margin.right + 5}, ${margin.top+3})`);
+        
+        cg.selectAll('.captionrect').data(selectSemantics).join('rect')
+        .attr('class', 'captionsgroup')
+        .attr('y', (d, i) => i * 32 )
+        .attr('width', 40)
+        .attr('height', 20)
+        .attr('fill', d => color_caiyun(d))
+
+        cg.selectAll('.captiontext').data(selectSemantics).join('text')
+        .attr('class', 'captiontext')
+        .attr('y', (d, i) => i * 32 + 15)
+        .attr('x', 42)
+        .attr('width', 40)
+        .attr('height', 20)
+        .text(d => d)
+      }
+
+      const render = function(data){
+        // use d3.interpolateRainbow(t) to set colors; 
+        // start to do data-join; 
+        d3.select('#maingroup').selectAll('.datagroup').data(data).join('g')
+        .attr('class', 'datagroup')
+        .attr('fill', d => color_caiyun(d.key))
+        .selectAll('.datarect').data(d => d).join('rect')
+        .attr('class', 'datarect')
+        .attr('y', d => yScale(d[1]))
+        .attr('x', d => xScale(d.data.x0))
+        .attr('height', d => yScale(d[0]) - yScale(d[1]))
+        .attr('width', d => xScale(d.data.x1) - xScale(d.data.x0)); 
+      }
+
+      d3.csv('./static/data/suncg_occur.csv').then( data=> {
+        data = data.filter( d => {
+          return d.semantic !== 'person' 
+          && d.semantic !== 'chandelier'
+          && d.semantic !== 'curtain'
+          && d.semantic !== 'wall_lamp'
+          && d.semantic !== 'partition'
+          && d.semantic !== 'unknown'
+          && d.semantic !== 'switch'
+          && d.semantic !== 'hanging_kitchen_cabinet'
+          && d.semantic !== 'fence'
+          && d.semantic !== 'column'
+          && d.semantic !== 'picture_frame'
+          && d.semantic !== 'outdoor_lamp';
+        } )
+        data.forEach( d => {
+          d.occur = +(d.occur);
+        });
+
+        allsemantics = data.map( d => d.semantic );
+        allsemantics = Array.from( new Set(allsemantics) );
+
+        allsemantics.forEach( s => {
+          alloccur[s] = 0;
+        } );
+        data.forEach( d => {
+          alloccur[d.semantic] += d.occur; 
+        } );
+        
+        alloccurlist = []
+        allsemantics.forEach( s => {
+          alloccurlist.push({'semantic': s, 'occur': alloccur[s]})
+        } );
+        alloccurlist = alloccurlist.sort( (b,a) => {
+          return a.occur - b.occur;
+        } );
+        console.log('alloccurlist', alloccurlist)
+        selectSemantics = alloccurlist.slice(0, 20).map( d => d.semantic );
+        console.log(selectSemantics);
+
+        let histogram = d3.histogram()
+        .value(yValue)
+        .domain([0, d3.max(data, yValue)])
+
+        // re-arrange the "historgramed" data
+
+        var stack = d3.stack()
+        .keys(selectSemantics)
+        .order(d3.stackOrderNone)
+        .offset(d3.stackOffsetNone)
+
+        let bins = histogram(data)
+        
+        // start to prepare the stack-histogram data; 
+        hist = []
+        bins.forEach( b => {
+          let h = {}
+          allsemantics.forEach( s => {
+            h[s] = 0;
+          } )
+          hist.push(h)
+        } ); 
+        bins.forEach( (b, i) => {
+          b.forEach( item => {
+            hist[i][item.semantic] += 1;
+          } );
+          hist[i].x0 = b.x0;
+          hist[i].x1 = b.x1;
+        } );
+
+        // change occurrence to log; 
+        hist.forEach( h => {
+          allsemantics.forEach( s => {
+            h[s] = Math.log(h[s]+1);
+          } )
+        } )
+        
+        stackedHist = stack(hist);
+        console.log('bins: ', bins)
+        console.log('hist: ', hist)
+        console.log('stackedHist: ', stackedHist);
+
+        renderInit(stackedHist);
+        render(stackedHist);
+      } )
+
     </script>
   </body>
 </html>

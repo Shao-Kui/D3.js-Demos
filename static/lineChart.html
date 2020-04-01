@@ -104,7 +104,7 @@
           allkeys.forEach( key => {provinces[key] = []} );
           data.forEach( d => { provinces[d['省份']].push(d) } )
           allkeys.forEach( key => provinces[key].sort(function(a,b){
-                return new Date(b.date) - new Date(a.date);
+                return new Date(b['日期']) - new Date(a['日期']);
           })); 
           render_init(data);
           let c = 0;

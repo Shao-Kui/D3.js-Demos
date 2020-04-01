@@ -10,7 +10,7 @@
       const svg = d3.select('#mainsvg');
       const width = +svg.attr('width');
       const height = +svg.attr('height');
-      const margin = {top: 120, right: 10, bottom: 10, left: 120};
+      const margin = {top: 120, right: 50, bottom: 50, left: 120};
       const innerWidth = width - margin.left - margin.right;
       const innerHeight = height - margin.top - margin.bottom;
       const g = svg.append('g').attr('id', 'maingroup')
@@ -34,7 +34,7 @@
 
         // Adding axes
         const xAxis = d3.axisBottom(xScale)
-        .ticks(alldates.length)
+        .ticks(Math.floor(alldates.length) / 4)
         //.tickFormat(d3.timeFormat('%b-%d'))
         .tickSize(-innerHeight)
         const xAxisGroup = g.append('g').call(xAxis)
@@ -43,6 +43,7 @@
         const yAxis = d3.axisLeft(yScale).tickSize(-innerWidth);
         const yAxisGroup = g.append('g').call(yAxis);
 
+        g.selectAll('.tick text').attr('font-size', '2em');
         g.append('path').attr('id', 'alterPath');
       }; 
 
@@ -90,17 +91,16 @@
           .attr("d", line)
       }
 
-      d3.csv('./static/data/province.csv')
-      .then(function(data){
+      d3.csv('./static/data/province.csv').then(function(data){
           data = data.filter(datum => {return datum['省份'] !== '总计'}); 
           data = data.filter(datum => {return datum['省份'] !== '湖北'}); 
-          allkeys = Array.from(new Set( data.map( d => d['省份'] ) ))
-          alldates = Array.from(new Set( data.map( d => xValue(d) ) ))
+          alldates = Array.from(new Set( data.map( d => xValue(d) ) ));
           data.forEach( datum => {
             datum['现有确诊'] = +(datum['现有确诊']);
             datum['日期'] = new Date(datum['日期']);
           } ); 
           let provinces = {}; 
+          allkeys = Array.from(new Set( data.map( d => d['省份'] ) ))
           allkeys.forEach( key => {provinces[key] = []} );
           data.forEach( d => { provinces[d['省份']].push(d) } )
           allkeys.forEach( key => provinces[key].sort(function(a,b){

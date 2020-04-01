@@ -30,7 +30,8 @@ const fullAxes = function(){
     .attr('fill', '#333333')
     .text(yAxisLabel)
     .attr('text-anchor', 'middle') // Make label at the middle of axis. 
-    .attr('font-size', '3em')
+    .attr('font-size', '3.5em')
+    .attr('font-weight', 'bold')
     yAxisGroup.selectAll('.domain').remove(); // we can select multiple tags using comma to seperate them and we can use space to signify nesting; 
     
     let xAxisGroup = g.append('g').call(xAxis)
@@ -40,8 +41,9 @@ const fullAxes = function(){
     .attr('y', 60)
     .attr('x', innerWidth / 2)
     .attr('fill', '#333333')
-    .attr('font-size', '3em')
+    .attr('font-size', '3.5em')
     .attr('text-anchor', 'middle')
+    .attr('font-weight', 'bold')
     .text(xAxisLabel);
     xAxisGroup.selectAll('.domain').remove();
 }

@@ -13,6 +13,8 @@
       const margin = {top: 120, right: 10, bottom: 10, left: 120};
       const innerWidth = width - margin.left - margin.right;
       const innerHeight = height - margin.top - margin.bottom;
+      const g = svg.append('g').attr('id', 'maingroup')
+      .attr('transform', `translate(${margin.left}, ${margin.top})`);
       const xValue = (datum) => {return datum['日期']};
       const yValue = (datum) => {return datum['现有确诊']};
       let xSacle, yScale; 
@@ -29,10 +31,6 @@
         .domain([d3.max(data, yValue), d3.min(data, yValue)])
         .range([0, innerHeight])
         .nice();
-
-        // The reason of using group is that nothing is rendered outside svg, so margin of svg is always blank while margin of group is rendered inside svg; 
-        const g = svg.append('g').attr('id', 'maingroup')
-        .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
         // Adding axes
         const xAxis = d3.axisBottom(xScale)

@@ -24,10 +24,12 @@
         {month: new Date(2015, 3, 1), apples:  320, bananas:  480, cherries: 640, dates: 400}
       ];
       const naiveKeys = ["apples", "bananas", "cherries", "dates"]; 
+      // remember the following apis are able to modify the 'offset' the data; 
+      //.offset(d3.stackOffsetNone) 
+      //.offset(d3.stackOffsetWiggle)
       var naiveStack = d3.stack()
       .keys(naiveKeys)
-      .order(d3.stackOrderNone)
-      .offset(d3.stackOffsetNone) (naiveData) ;
+      .order(d3.stackOrderNone)(naiveData);
 
       const g = svg.append('g').attr('id', 'maingroup')
       .attr('transform', `translate(${margin.left}, ${margin.top})`); 

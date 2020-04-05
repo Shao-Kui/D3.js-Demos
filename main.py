@@ -1,8 +1,10 @@
 import flask
 from flask_cors import CORS
 from flask import Flask
+from main_hw import app_hw
 
 app = Flask(__name__)
+app.register_blueprint(app_hw)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 CORS(app)
 
@@ -37,6 +39,10 @@ def scatter():
 @app.route('/scatternxt')
 def scatternxt():
     return flask.send_from_directory('static', 'scatternxt.html')
+
+@app.route('/simpleearth')
+def simpleearth():
+    return flask.send_from_directory('static', 'd3-tutorial/simpleearth.html')
 
 @app.route('/renderearth')
 def renderearth():

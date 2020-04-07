@@ -1,9 +1,9 @@
 body {
-    background-color: #8686ff;
+    background-color: #d3d3e2;
 }
 
 path {
-    fill: green;
+    fill: rgb(110, 149, 221);
     stroke: rgb(29, 25, 25);
     stroke-opacity: 0.1;
 }

@@ -16,7 +16,6 @@
       const innerWidth = width - margin.left - margin.right;
       const innerHeight = height - margin.top - margin.bottom;
       const xValue = d => moment(d.month.toISOString()).format('YYYY-M-D');
-
       const naiveData = [
         {month: new Date(2015, 0, 1), apples: 3840, bananas: 1920, cherries: 960, dates: 400},
         {month: new Date(2015, 1, 1), apples: 1600, bananas: 1440, cherries: 960, dates: 400},
@@ -36,8 +35,7 @@
 
       const yScale = d3.scaleLinear()
       .domain([0, d3.max(naiveStack, d => d3.max(d, subd => subd[1]))])
-      .range([innerHeight, 0])
-      .nice();
+      .range([innerHeight, 0]).nice();
 
       const xScale = d3.scaleBand()
       .domain(naiveData.map( d => xValue(d) ))

@@ -11,6 +11,16 @@ D3.js课上录屏: [BiliBili][recordvideo]。
 # 先修条件（Prerequisites）
 课程希望各位同学可以有编程基础，这里编程基础不限制哪门具体的语言，虽然更希望是JavaScript与Python。关于可视化编程需要用到的编程语言（JavaScript），在D3.js介绍的时候，会一并为大家介绍。如果没有编程基础，也完全可以参与课程学习，但需要无编程基础的同学课下用额外的时间补习JavaScript的基础知识。
 
+# D3.js讲解大纲
+* Introduction
+
+引言会为大家介绍D3周边的知识。
+* Manipulation
+* Data-Join
+* Path
+* Interaction
+coming soon...    
+
 # 安装Python-Flask
 为大家提供的框架本身搭建非常简单，即使用Python-Flask构建，其中的主要内容是我们课上会用到的Demo与一些我们制作的可视化展示。Python的安装请参考[官方网站][pythonweb]，安装后请打开命令行，输入如下命令安装服务器端需要的flask库：
 ```

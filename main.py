@@ -24,13 +24,9 @@ def barcharttutorial():
 def baraxes():
     return flask.send_from_directory('static', 'baraxes.html')
 
-@app.route('/stackbarchart')
-def stackbarchart():
-    return flask.send_from_directory('static', 'stackbarchart.html')
-
-@app.route('/stackbarchart-simple')
-def stackbarchart_simple():
-    return flask.send_from_directory('static', 'd3-tutorial/stackbarchart-simple.html')
+@app.route('/stack_histogram')
+def stack_histogram():
+    return flask.send_from_directory('static', 'stack_histogram.html')
 
 @app.route('/scatter')
 def scatter():

@@ -36,10 +36,6 @@ def scatter():
 def scatternxt():
     return flask.send_from_directory('static', 'scatternxt.html')
 
-@app.route('/simpleearth')
-def simpleearth():
-    return flask.send_from_directory('static', 'd3-tutorial/simpleearth.html')
-
 @app.route('/renderearth')
 def renderearth():
     return flask.send_from_directory('static', 'renderearth.html')

@@ -39,7 +39,7 @@
     let worldmeta;
     let lastid = undefined;
 
-    d3.json('./path/to/your/data').then(
+    d3.json('./static/data/countries-110m.json').then(
         function(data){
             // convert topo-json to geo-json; 
             worldmeta = topojson.feature(data, data.objects.countries);

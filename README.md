@@ -1,5 +1,5 @@
 # 欢迎大家选修并加入数据可视化！
-本代码库对应清华大学-计算机系春季学期课程《数据可视化》，由张松海老师任课。代码库内容主要围绕2020年开始新加入的D3.js编程讲解，其中的框架可作为大作业与其他可视化编程的基础，同时所有样例可供大家参考。任何同学有任何问题，欢迎在Github上issue或给我发邮件（zhangsk18@mails.tsinghua.edu.cn）。
+本代码库对应清华大学-计算机系春季学期课程《数据可视化》，由张松海老师任课。代码库内容主要围绕2020年开始新加入的[D3.js][d3web]编程讲解，其中的框架可作为大作业与其他可视化编程的基础，同时所有样例可供大家参考。任何同学有任何问题，欢迎在Github上issue或给我发邮件（zhangsk18@mails.tsinghua.edu.cn）。
 
 D3.js课上用幻灯片（讲义）：[slides文件夹][theslides]；
 
@@ -94,3 +94,4 @@ python main.py
 [force-following]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/force-following.html
 [stackbarchart]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/stackbarchart.html
 [recordvideo]:https://www.bilibili.com/video/BV1HK411L72d
+[d3web]:https://d3js.org/

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>BarChart! </title>
+    <script src="../js/d3.min.js"></script>
+  </head>
+  <body>
+    <svg width="1600" height="800" id="mainsvg" class="svgs"></svg>
+    <script>
+        const data = [{name: 'Shao-Kui', value:6},
+        {name:'Wen-Yang', value:6}, {name:'Cai Yun', value:16}, {name:'Liang Yuan', value: 10}, 
+        {name:'Yuan-Chen', value:6}, {name:'Rui-Long', value:10}, {name:'Dong Xin', value:12}, 
+        {name:'He Yu', value:20}, {name:'Xiang-Li', value:12}, {name:'Godness', value:20}, 
+        {name:'Wei-Yu', value:15}, {name:'Chen Zheng', value:14}, 
+        {name:'Yu Peng', value:15}, {name:'Li Jian', value:18}]; 
+
+        const svg = d3.select('#mainsvg');
+        const width = +svg.attr('width');
+        const height = +svg.attr('height');
+        const margin = {top: 60, right: 30, bottom: 60, left: 150};
+        const innerWidth = width - margin.left - margin.right;
+        const innerHeight = height - margin.top - margin.bottom;
+
+        const g = svg.append('g').attr('id', 'maingroup')
+        .attr('transform', `translate(${margin.left}, ${margin.top})`);
+
+        const xScale = d3.scaleLinear().
+        domain([0, d3.max(data, datum=>datum.value)]).
+        range([0, innerWidth])
+        .nice(); 
+
+        const yScale = d3.scaleBand().
+        domain(data.map(datum => datum.name)).
+        range([0, innerHeight])
+        .padding(0.1);
+
+        g.selectAll('.datarect').data(data).enter().append('rect')
+        .attr('class', 'datarect')
+        .attr('width', d =>  xScale(d.value))
+        .attr('height', yScale.bandwidth())
+        .attr('y', datum => yScale(datum.name))
+        .attr('fill', 'green')
+        .attr('opacity', '0.8')
+
+        // the following four lines of code is the simplest pattern of adding axis; 
+        const yAxis = d3.axisLeft(yScale);
+        const xAxis = d3.axisBottom(xScale);
+        g.append('g').call(yAxis);
+        g.append('g').call(xAxis).attr('id', 'xaxis')
+        .attr('transform', `translate(0, ${innerHeight})`);
+
+        d3.selectAll('.tick text').attr('font-size', '2em');
+
+        g.append('text').text('Members of CSCG').attr('font-size', '3em')
+        .attr('x', innerWidth / 2 - 200).attr('y', -10)
+
+    		d3.interval(() => {
+          console.log('Change The Axis. ');
+          xScale.domain([0, Math.random() * 30 + 20]).nice();
+          d3.select('#xaxis').transition().duration(2000).call(xAxis);
+          d3.selectAll('.tick text').transition().duration(2000).attr('font-size', '2em');
+
+          d3.selectAll('.datarect').transition().duration(2000)
+          .attr('width', d => xScale(d.value))
+        }, 3000);
+    </script>
+  </body>
+</html>

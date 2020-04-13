@@ -108,6 +108,22 @@ def multichanneltexture():
 def line():
     return flask.send_from_directory('static', 'lineChart.html')
 
+@app.route('/sunburst')
+def sunburst():
+    return flask.send_from_directory('static', 'Sunburst.html')
+
+@app.route('/icicle')
+def icicle():
+    return flask.send_from_directory('static', 'icicle.html')
+
+@app.route('/tree')
+def tree():
+    return flask.send_from_directory('static', 'tree.html')
+
+@app.route('/graph')
+def graph():
+    return flask.send_from_directory('static', 'graph.html')
+
 @app.route('/scatter-tutorial')
 def scatter_tutorial():
     return flask.send_from_directory('static', 'd3-tutorial/scatter.html')

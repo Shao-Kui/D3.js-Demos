@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Hierarchy</title>
+    <title>Icicle</title>
     <script src="static/js/d3.min.js"></script>
     <link rel="icon" href="static/pinkheart.ico">
   </head>
   <body>
-    <svg width="2000" height="6000" id="mainsvg" class="svgs" 
+    <svg width="1000" height="3000" id="mainsvg" class="svgs" 
     style="display: block; margin: auto;"></svg>
     <script>
       const svg = d3.select('#mainsvg');
@@ -24,7 +24,13 @@
         // the scale a new value from the range. 
         const color = d3.scaleOrdinal(d3.schemeCategory10)
         //.domain( data.descendants().filter( d => d.depth !== 1 ).map( d => d.data.name ) );
-        
+        const fill = d => { 
+          if (!d.depth) return "#666666";
+          while (d.depth > 1) 
+            d = d.parent; 
+          return color(d.data.name); 
+        };
+
         g.selectAll('.datarect')
         .data(root.descendants())
         .join('rect')
@@ -33,12 +39,7 @@
         .attr('y', d => d.x0)
         .attr('height', d => d.x1 - d.x0)
         .attr('width', d => d.y1 - d.y0)
-        .attr("fill", d => { 
-          if (!d.depth) return "#666666";
-          while (d.depth > 1) 
-            d = d.parent; 
-          return color(d.data.name); 
-        });
+        .attr("fill", fill);
 
         g.selectAll('.datatext')
         .data(root.descendants().filter( d => (d.x1 - d.x0) > 50 ))
@@ -48,13 +49,14 @@
         .attr('x', d => (d.y0 + d.y1)/2)
         .attr('y', d => (d.x0 + d.x1)/2)
         .attr('dy', '0.35em')
-        .attr('font-size', '2em')
+        .attr('font-size', '1em')
         .text(d => d.data.name)
       }
 
       d3.json('static/data/games.json').then( data => {
         root = d3.partition().size([height, width])
-        (d3.hierarchy(data).sum(d => d.popularity).sort((a, b) => b.popularity - a.popularity));
+        (d3.hierarchy(data).sum(d => d.popularity)
+        .sort((a, b) => b.popularity - a.popularity));
         render(root);
       });
       

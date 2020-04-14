@@ -36,19 +36,13 @@
         .enter().append('line')
         .attr('stroke', 'black')
         .attr('opacity', 0.8)
-        .attr('stroke-width', .5)
-        .attr('x1', d => d.source.x)
-        .attr('y1', d => d.source.y)
-        .attr('x2', d => d.target.x)
-        .attr('y2', d => d.target.y);
+        .attr('stroke-width', .5);
 
         circles = svg.selectAll('circle').data(nodes)
         .enter().append('circle')
         .attr('r', 5)
-        .call(drag)
-        .attr('cx', d => d.x)
-        .attr('cy', d => d.y)
         .attr('fill', d => color(d.index))
+        .call(drag);
     }
 
     function ticked() {
@@ -57,18 +51,9 @@
         .attr('y1', d => d.source.y)
         .attr('x2', d => d.target.x)
         .attr('y2', d => d.target.y);
-
         circles
         .attr('cx', d => d.x)
         .attr('cy', d => d.y)
-    }
-
-    function strength(link) {
-        return 0.1;
-    }
-
-    function distance(link) {
-        return 20;
     }
 
     // the data is from http://networkrepository.com/socfb-Caltech36.php; 
@@ -84,11 +69,11 @@
 
         render_init();
 
-        simulation = d3.forceSimulation(nodes);
-        simulation.force('manyBody', d3.forceManyBody())
+        simulation = d3.forceSimulation(nodes)
+        .force('manyBody', d3.forceManyBody().strength(-30))
         .force('center', d3.forceCenter(width / 2, height / 2))
-        .force("link", d3.forceLink(links).strength(strength).distance(distance))
-        .alphaTarget(0.1)
+        .force("link", d3.forceLink(links).strength(0.1).distance(100))
+        //.alphaTarget(0.1)
         .on('tick', ticked);
     })
 

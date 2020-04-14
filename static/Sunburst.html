@@ -29,16 +29,18 @@
 
       const render = function(data){
         const color = d3.scaleOrdinal(d3.schemeCategory10)
+        const fill = d => { 
+          while (d.depth > 1) 
+            d = d.parent; 
+          return color(d.data.name); 
+        };
+
         g.selectAll('.datapath')
         // this can be simplified as .data(root.descendants().filter(d => d.depth))
         .data(root.descendants().filter(d => d.depth !== 0))
         .join('path')
         .attr('class', 'datapath')
-        .attr("fill", d => { 
-          while (d.depth > 1) 
-            d = d.parent; 
-          return color(d.data.name); 
-        })
+        .attr("fill", fill)
         .attr("d", arc)
 
         g.selectAll('.datatext')
@@ -64,7 +66,8 @@
 
       d3.json('static/data/games.json').then( data => {
         root = d3.partition().size([2 * Math.PI, height / 1.6])
-        (d3.hierarchy(data).sum(d => d.popularity).sort((a, b) => b.popularity - a.popularity));
+        (d3.hierarchy(data).sum(d => d.popularity)
+        .sort((a, b) => b.popularity - a.popularity));
         render(root);
       });
       

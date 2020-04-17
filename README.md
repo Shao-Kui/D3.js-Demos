@@ -33,9 +33,9 @@ D3.js课上录屏: [哔哩哔哩-BiliBili][recordvideo]；
 
 第六章节将介绍D3中的一个数据预处理机制：堆叠数据。D3中提供了很多方便、易用的数据预处理接口，本章节将会围绕其中一个来展开。实例会应用D3.js中的数据预处理机制，来完成一个堆叠的柱状图。
 
-## Graph
+## Tree & Graph
 
-... ... ...
+第七章：树与图，即对层级数据与网络数据的可视化，尽管在数据结构上前者是后者的特殊形式，但在可视化的实现上其实差别较大。本章将会介绍层级与网络数据的常见形式、常见的预处理形式、D3中提供的对于二者处理的接口。同时，本章节的实例将会是目前课程中最多的一次，首先有二者的直观可视化，同时也有两个带有属性值的层级数据可视化实例。
 
 ## ToBeContinued
 
@@ -79,6 +79,10 @@ python main.py
 * 世界地图与交互：[链接][mapinteract]
 * 力（Force）、节点（Node）与边（Link）：[链接][force]
 * 力跟随：[链接][force-following]
+
+# Acknowledgement
+
+首先，非常感谢我的导师张松海教授对于D3.js讲解的支持与指导！同时，感谢周文洋同（shuai）学（ge）与蔡韵同（jie）学（jie）的共同合作！也要感谢梁缘学长曾经的指导与帮助，和学长真的学习到了很多。虽然尽全力控制自己的发音，但我的中文还是带了些许东北的感觉、我的英文还是带着口音，还请大家包涵。当然，最要感谢的还是一起学习D3.js的每一名同学，希望大家都能有所收获，对课程有更多的意见与反馈，多批评、多指正！
 
 [control]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/d3-tutorial/manipulation.html
 [htmlpath]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/html-tutorial/hello-path.html

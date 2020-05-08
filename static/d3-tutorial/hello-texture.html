@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>BarChart! </title>
+    <script src="../js/d3.min.js"></script>
+    <script src="../js/library/textures.js"></script>
+  </head>
+  <body style="margin-left: 500px;">
+    <svg width="10" height="10" id="mainsvg" class="svgs" style="display: inline-block; margin: auto;"></svg><br>
+    
+    <svg width="200" height="200" style="display: inline-block; margin: auto;">
+        <circle cx="100" cy="100" r="50" id="c1"/>
+    </svg>
+    
+    <svg width="200" height="200" style="display: inline-block; margin: auto;">
+        <circle cx="100" cy="100" r="50" id="c2"/>
+    </svg>
+    <br>
+
+    <svg width="200" height="200" style="display: inline-block; margin: auto;">
+        <rect x="10" y="10" width="180" height="180" id="c3"/>
+    </svg>
+
+    <svg width="200" height="200" style="display: inline-block; margin: auto;">
+        <rect x="10" y="10" width="180" height="180" id="c4"/>
+    </svg>
+    <script>
+        const svg = d3.select('#mainsvg');
+
+        // the following code partially comes from 
+        // https://riccardoscalco.it/textures/
+        let t1 = textures.lines()
+        .thicker()
+        .stroke('black');
+        svg.call(t1);
+
+        let t2 = textures.circles()
+        .heavier()
+        .fill(d3.schemeSet3[0]);
+        svg.call(t2)
+
+        let t3 = textures.circles()
+        .radius(4)
+        .fill("darkorange")
+        .strokeWidth(2)
+        .stroke("firebrick")
+        .complement();
+        svg.call(t3);
+
+        let t4 = textures.paths()
+        .d("hexagons")
+        .size(8)
+        .strokeWidth(2)
+        .stroke(d3.schemeSet3[6]);
+        svg.call(t4);
+
+        d3.select('#c1').attr('fill', t1.url());
+        d3.select('#c2').attr('fill', t2.url());
+        d3.select('#c3').attr('fill', t3.url());
+        d3.select('#c4').attr('fill', t4.url());
+
+    </script>
+  </body>
+</html>

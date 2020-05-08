@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <link>
+    <title>Data Visualization!</title>
+    <script src='../js/d3.min.js'></script>
+  </head>
+  <body style="margin-left: 500px;">
+
+    <svg width="200" height="0">  
+        <defs>
+        <linearGradient id="linearGrad">
+            <stop offset="0%" stop-color="#8dd3c7" stop-opacity="1"></stop>
+            <stop offset="100%" stop-color="#ffffb3" stop-opacity="1"></stop>
+        </linearGradient>
+        <linearGradient id="linearGrad_v" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#8dd3c7" stop-opacity="1"></stop>
+            <stop offset="100%" stop-color="#ffffb3" stop-opacity="1"></stop>
+        </linearGradient>
+        <radialGradient id="radialGrad" r="0.5" cx="50%" cy="50%">
+            <stop offset="0%" stop-color="#fdb462"></stop>
+            <stop offset="50%" stop-color="#fb8072"></stop>
+            <stop offset="100%" stop-color="#b3de69"></stop>
+        </radialGradient>
+        <radialGradient id="radialGrad_o" r="0.5" cx="90%" cy="60%">
+            <stop offset="0%" stop-color="#fdb462"></stop>
+            <stop offset="50%" stop-color="#fb8072"></stop>
+            <stop offset="100%" stop-color="#b3de69"></stop>
+        </radialGradient>
+        </defs>
+    </svg>
+    <br>
+
+    <svg width="200" height="200">
+        <circle cx="100" cy="100" r="50" fill="url(#linearGrad)"/>
+    </svg>
+    
+    <svg width="200" height="200">
+        <circle cx="100" cy="100" r="50" fill="url(#radialGrad)"/>
+    </svg>
+    <br>
+
+    <svg width="200" height="200">
+        <rect x="10" y="10" width="180" height="180" fill="url(#linearGrad_v)"/>
+    </svg>
+
+    <svg width="200" height="200">
+        <rect x="10" y="10" width="180" height="180" fill="url(#radialGrad_o)"/>
+    </svg>
+    
+  </body>
+</html>

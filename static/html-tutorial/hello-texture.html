@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/textures.js"></script>
+<script src="../js/d3.min.js"></script>
+<meta charset="utf-8">
+<title>Texture Test</title>
+</head>
+<body>
+<svg width="960" height="500" id="mainsvg"></svg>
+<script>
+    let mainsvg = d3.select('#mainsvg');
+    let maingroup = mainsvg.append('g').attr('transform', 'translate(100,100)');
+    textureGenerators = [
+        function(){
+            return textures.lines().thicker(1);
+        },
+        function(){
+            return textures.circles().size(20);
+        },
+        function(){
+            return textures.paths().d("squares").size(8);
+        }
+    ];
+    function colorizeTexture(texture, color){
+        var texture = texture.stroke(color);
+            if(texture.fill){
+                texture.fill(color);
+        }
+        return texture;
+    }
+
+    let tex1 = colorizeTexture(textureGenerators[0](), "blue");
+    maingroup.call(tex1);
+    let rect = maingroup.append('rect')
+        .attr("class", "mark")
+        .attr("x", 0)
+        .attr("y", -50)
+        .attr("width", 200)
+        .attr("height", 200)
+        .style('stroke', 'black')
+        .style('fill', tex1.url());
+
+    let tex2 = colorizeTexture(textureGenerators[1](), "green");
+    maingroup.call(tex2);
+    let circle = maingroup.append('circle')
+        .attr("class", "mark")
+        .attr("cx", 400)
+        .attr("cy", 50)
+        .attr('r', '100')
+        .style('stroke', 'black')
+        .style('fill', tex2.url());
+
+    let tex3 = colorizeTexture(textureGenerators[2](), "red");
+    maingroup.call(tex3);
+    let rect1 = maingroup.append('rect')
+        .attr("class", "mark")
+        .attr("x", 600)
+        .attr("y", -50)
+        .attr("width", 200)
+        .attr("height", 200)
+        .style('stroke', 'black')
+        .style('fill', tex3.url());
+</script>
+</body>
+</html>

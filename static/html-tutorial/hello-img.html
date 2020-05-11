@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="../js/d3.min.js"></script>
+	<title>Hello-Image</title>
+</head>
+<body>
+	<svg width="2030" height="950" id="mainsvg" class="svgs"></svg>
+	<script>
+		let svg = d3.select("#mainsvg")
+		const width = +svg.attr('width');
+      	const height = +svg.attr('height');
+		let imgdir = '../data/subnautica.jpg';
+		
+		let ratioImg = ['none', 'xMidYMid slice', 'xMidYMid meet', 
+					'xMinYMin slice', 'xMaxYMax meet'];
+
+		svg.selectAll('.priimage').data(ratioImg).join('image')
+		.attr('class', 'priimage')
+		.attr('id', 'myimg')
+		.attr("x", (d, i) => i * 360 + 180)
+		.attr("y", 100)
+		.attr('width', 250)
+		.attr('height', 250)
+		.attr('preserveAspectRatio', d => d)
+		.attr("xlink:href", imgdir);
+
+		let ratiocircle = 
+		[{patternUnits: "objectBoundingBox", r: 'none', id: 'thenone'}, 
+		 {patternUnits: "objectBoundingBox", r: 'xMidYMid meet', id: 'themeetmid'}, 
+		 {patternUnits: "objectBoundingBox", r: 'xMidYMid slice', id: 'theslice'}, 
+		 {patternUnits: "objectBoundingBox", r: 'xMinYMin meet', id: 'themeetmin'}, 
+		 {patternUnits: "userSpaceOnUse", r: 'none', id: 'userspace'}];
+
+		var defs = svg.append('defs');
+		defs.selectAll('.mypattern').data(ratiocircle).join('pattern')
+		.attr('class', 'mypattern')
+		.attr("id", d => d.id)
+		.attr("width", d => d.patternUnits === 'objectBoundingBox'? 1 : 300)
+		.attr("height", d => d.patternUnits === 'objectBoundingBox'? 1 : 300)
+		.attr("patternUnits", d => d.patternUnits)
+		.append("svg:image")
+		.attr("xlink:href", imgdir)
+		.attr('preserveAspectRatio', d => d.r)
+		.attr("width", 300)
+		.attr("height", 300)
+		.attr("x", 0)
+		.attr("y", 0);
+
+		svg.selectAll(".mycircle").data(ratiocircle).join('circle')
+		.attr('class', 'mycircle')
+		.attr("cx", (d, i) => i * 360 + 180 + 125)
+		.attr("cy", 600)
+		.attr("r", 150)
+		.attr('stroke', 'black').attr('stroke-width', '2px')
+		.style("fill", d => `url(#${d.id})`);
+
+		/*defs.append("pattern")
+			.attr("id", "thenone")
+			.attr("x", 0)
+			.attr("y", 0)
+			.attr("width", 1)
+			.attr("height", 1)
+			.attr("patternUnits", "objectBoundingBox")
+			.append("svg:image")
+			.attr("xlink:href", imgdir)
+			.attr('preserveAspectRatio', 'none')
+			.attr("width", 200)
+			.attr("height", 200)
+			.attr("x", 0)
+			.attr("y", 0);
+
+		defs.append("pattern")
+			.attr("id", "grump_avatar1_1")
+			.attr("x", 0)
+			.attr("y", 0)
+			.attr("width", 1)
+			.attr("height", 1)
+			.attr("patternUnits", "objectBoundingBox")
+			.append("svg:image")
+			.attr("xlink:href", imgdir)
+			.attr('preserveAspectRatio', 'xMidYMid meet')
+			.attr("width", 200)
+			.attr("height", 200)
+			.attr("x", 0)
+			.attr("y", 0);
+
+		defs.append("pattern")
+			.attr("id", "grump_avatar1_2")
+			.attr("x", 0)
+			.attr("y", 0)
+			.attr("width", 1)
+			.attr("height", 1)
+			.attr("patternUnits", "objectBoundingBox")
+			.append("svg:image")
+			.attr("xlink:href", imgdir)
+			.attr('preserveAspectRatio', 'xMidYMid slice')
+			.attr("width", 200)
+			.attr("height", 200)
+			.attr("x", 0)
+			.attr("y", 0);
+
+		defs.append("pattern")
+			.attr("id", "grump_avatar1_3")
+			.attr("x", 0)
+			.attr("y", 0)
+			.attr("width", 1)
+			.attr("height", 1)
+			.attr("patternUnits", "objectBoundingBox")
+			.append("svg:image")
+			.attr("xlink:href", imgdir)
+			.attr('preserveAspectRatio', 'xMinYMin meet')
+			.attr("width", 200)
+			.attr("height", 200)
+			.attr("x", 0)
+			.attr("y", 0);
+
+		defs.append("svg:pattern")
+			.attr("id", "userspace")
+			.attr("width", config.avatar_size)
+			.attr("height", config.avatar_size)
+			.attr("patternUnits", "userSpaceOnUse")
+			.append("svg:image")
+			.attr("xlink:href", imgdir)
+			.attr("width", config.avatar_size)
+			.attr("height", config.avatar_size)
+			.attr("x", 0)
+			.attr("y", 0);
+
+		defs.append("svg:pattern")
+			.attr("id", "grump_avatarrect")
+			.attr("width", rectwidth)
+			.attr("height", rectHeight)
+			.attr("patternUnits", "userSpaceOnUse")
+			.append("svg:image")
+			.attr("xlink:href", imgdir)
+			.attr("width", rectwidth)
+			.attr("height", rectHeight)
+			.attr("x", 100)
+			.attr("y", 0);
+
+		svg.append("circle")
+			.attr("cx", config.avatar_size/2)
+			.attr("cy", config.avatar_size/2)
+			.attr("r", config.avatar_size/2)
+			.style("fill", "#000000")
+			//.attr("xlink:href", 'ff7.jpg');
+			.style("fill", "url(#thenone)");
+		
+		svg.append("circle")
+			.attr("cx", config.avatar_size * 3 / 2)
+			.attr("cy", config.avatar_size/2)
+			.attr("r", config.avatar_size/2)
+			.style("fill", "#fff")
+			.style("fill", "url(#grump_avatar1_1)");
+		
+        svg.append("circle")
+			.attr("cx", config.avatar_size * 5 / 2)
+			.attr("cy", config.avatar_size/2)
+			.attr("r", config.avatar_size/2)
+			.style("fill", "#fff")
+			.style("fill", "url(#grump_avatar1_2)");
+		
+		svg.append("circle")
+			.attr("cx", config.avatar_size * 7 / 2)
+			.attr("cy", config.avatar_size/2)
+			.attr("r", config.avatar_size/2)
+			.style("fill", "#fff")
+			.style("fill", "url(#grump_avatar1_3)");
+		
+		svg.append("circle")
+			.attr("cx", config.avatar_size * 9 / 2)
+			.attr("cy", config.avatar_size/2)
+			.attr("r", config.avatar_size/2)
+			.style("fill", "url(#userspace)");*/
+	</script>
+</body>
+</html>

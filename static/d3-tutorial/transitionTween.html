@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Animation Loop</title>
+    <title>Tween Texts</title>
     <script src="../js/d3.min.js"></script>
   </head>
   <body>
@@ -48,17 +48,43 @@
         .attr('fill', 'green').attr('opacity', 0.8)
         .attr('y', d => yScale(d.name)).attr('height', yScale.bandwidth());
 
+        const texts = g.selectAll('.datatext').data(data).join('text')
+        .attr('class', 'datatext').text(d => d.value)
+        .attr('y', d => yScale(d.name) + 5 + yScale.bandwidth() / 2)
+
+        var formatPercent = d3.format(".2f");
+
         let f = async () => {
           //let counter = 0;
-          //while(counter < 5){
+          //while(counter < 2){
           while(true){
             //counter++;
-            await rects.transition().duration(1000)
-            .attr('width', () => xScale(Math.random() * 20))
-            .attr('fill', () => d3.interpolateRainbow(Math.random()))
-            .end();
+            data.forEach(d => {
+                d.prevalue = d.value;
+                d.value = Math.random() * 20;
+            });
+            
+            // note that this should be 'd3.transition()'; 
+            let transition = d3.transition()//.ease(d3.easeLinear) // we can optionally alter 'ease'; 
+            .duration(1000);
+
+            rects.transition(transition) 
+            .attr('width', d => xScale(d.value))
+            .attr('fill', () => d3.interpolateRainbow(Math.random()));
+
+            texts.transition(transition)
+            .attr('x', d => xScale(d.value))
+            .tween("text", function(d) {
+                var i = d3.interpolate(this.textContent, d.value);
+                return function(t) {
+                    this.textContent = formatPercent(i(t));
+                };
+            });
+
+            await transition.end();
           }
         };
+
         f();
     </script>
   </body>

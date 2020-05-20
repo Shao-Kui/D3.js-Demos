@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>DiffTimeScale</title>
+    <script src="../js/d3.min.js"></script>
+  </head>
+  <body>
+    <svg width="1600" height="800" id="mainsvg" class="svgs"></svg>
+    <script>
+        const data = [{name: 'Shao-Kui', value:'2020/1/1'},
+        {name:'Wen-Yang', value:'2020/1/3'}, {name:'Cai Yun', value:'2020/1/5'}, 
+        {name:'Liang Yuan', value: '2020/1/7'}, 
+        {name:'Yuan-Chen', value:'2020/1/9'}, {name:'Rui-Long', value:'2020/1/11'}, 
+        {name:'Dong Xin', value:'2020/1/13'}, 
+        {name:'He Yu', value:'2020/1/15'}, {name:'Xiang-Li', value:'2020/1/17'}, 
+        {name:'Godness', value:'2020/1/19'}, 
+        {name:'Wei-Yu', value:'2020/1/21'}, {name:'Chen Zheng', value:'2020/1/23'}, 
+        {name:'Yu Peng', value:'2020/1/25'}, {name:'Li Jian', value:'2020/1/27'}]; 
+
+        data.forEach(d => {
+          d.value = new Date(d.value);
+        })
+
+        const svg = d3.select('#mainsvg');
+        const width = +svg.attr('width');
+        const height = +svg.attr('height');
+        const margin = {top: 60, right: 50, bottom: 60, left: 150};
+        const innerWidth = width - margin.left - margin.right;
+        const innerHeight = height - margin.top - margin.bottom;
+
+        const xScale = d3.scaleTime()
+        //.domain(d3.extent(data, d => d.value))
+        //.range([0, innerWidth])
+        .domain([new Date('2020/1/1'), new Date('2020/1/15'), new Date('2020/1/27')])
+        .range([0, innerWidth/3, innerWidth])
+        .nice();
+
+        const yScale = d3.scaleBand()
+        .domain( data.map(d => d.name) )
+        .range([0, innerHeight])
+        .padding(0.1);
+
+        const g = svg.append('g').attr('id', 'maingroup')
+        .attr('transform', `translate(${margin.left}, ${margin.top})`);
+
+        const xAxis = d3.axisBottom(xScale);
+        g.append('g').call(xAxis).attr('transform', `translate(${0}, ${innerHeight})`);
+
+        const yAxis = d3.axisLeft(yScale);
+        g.append('g').call(yAxis);
+
+        data.forEach( d => {
+          g.append('rect')
+          .attr('width', xScale(d.value))
+          .attr('height', yScale.bandwidth())
+          .attr('fill', 'green')
+          .attr('y', yScale(d.name))
+        } );
+
+        d3.selectAll('.tick text').attr('font-size', '1.5em');
+        g.append('text').text('Members of CSCG').attr('font-size', '3em')
+        .attr('transform', `translate(${innerWidth/2}, ${0})`)
+        .attr('text-anchor', 'middle');
+
+    </script>
+  </body>
+</html>

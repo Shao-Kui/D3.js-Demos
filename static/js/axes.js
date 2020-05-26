@@ -4,7 +4,12 @@ const naiveAxes = function(){
     const xAxisGroup = g.append('g').attr('id', 'xaxis').call(xAxis)
     .attr('transform', `translate(0, ${innerHeight})`);
 
-    const yAxis = d3.axisLeft(yScale).tickSize(-innerWidth);
+    const yAxis = d3.axisLeft(yScale)
+    //.tickFormat(d3.format('.2r'))
+    .tickFormat(d3.format('.1s'))
+    //.tickFormat(d3.format('.2s'))
+    //.tickFormat(d3.format('.2f'))
+    .tickSize(-innerWidth);
     const yAxisGroup = g.append('g').attr('id', 'yaxis').call(yAxis);
 
     return {'xAxisGroup': xAxisGroup, 'yAxisGroup': yAxisGroup}; 

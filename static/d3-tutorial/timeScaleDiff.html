@@ -13,9 +13,10 @@
         {name:'Yuan-Chen', value:'2020/1/9'}, {name:'Rui-Long', value:'2020/1/11'}, 
         {name:'Dong Xin', value:'2020/1/13'}, 
         {name:'He Yu', value:'2020/1/15'}, {name:'Xiang-Li', value:'2020/1/17'}, 
-        {name:'Godness', value:'2020/1/19'}, 
+        {name:'Liu Lan', value:'2020/1/19'}, 
         {name:'Wei-Yu', value:'2020/1/21'}, {name:'Chen Zheng', value:'2020/1/23'}, 
-        {name:'Yu Peng', value:'2020/1/25'}, {name:'Li Jian', value:'2020/1/27'}]; 
+        {name:'Yu Peng', value:'2020/1/25'}, {name:'Li Jian', value:'2020/1/27'},
+        {name:'Chen Huang ^_^', value:'2020/1/29'}]; 
 
         data.forEach(d => {
           d.value = new Date(d.value);
@@ -31,7 +32,7 @@
         const xScale = d3.scaleTime()
         //.domain(d3.extent(data, d => d.value))
         //.range([0, innerWidth])
-        .domain([new Date('2020/1/1'), new Date('2020/1/15'), new Date('2020/1/27')])
+        .domain([new Date('2020/1/1'), new Date('2020/1/15'), new Date('2020/1/29')])
         .range([0, innerWidth/3, innerWidth])
         .nice();
 
@@ -58,7 +59,7 @@
         } );
 
         d3.selectAll('.tick text').attr('font-size', '1.5em');
-        g.append('text').text('Members of CSCG').attr('font-size', '3em')
+        g.append('text').text('Members of Vis').attr('font-size', '3em')
         .attr('transform', `translate(${innerWidth/2}, ${0})`)
         .attr('text-anchor', 'middle');
 

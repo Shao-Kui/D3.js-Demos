@@ -39,7 +39,7 @@ D3.js课上录屏: [哔哩哔哩-BiliBili][recordvideo]；
 
 ## ToBeContinued
 
-... ... ...
+D3.js讲解2020年的最后一部分，会为大家介绍一些比较零散的知识点。比如让可视化更fancy、更实用的color-gradient、图片图元、自定义纹理、主题河流（技术路线简介）、坐标轴的Piecewise Scale、数字格式化等。同时，最后一章会为大家带入JavaScript中异步机制的使用！进而，将异步机制与D3.js中的transition结合，可以有更灵活的编程风格。最后的最后，会介绍渐变动画的自定义：transition.tween。
 
 # 安装Python-Flask
 为大家提供的框架本身搭建非常简单，即使用Python-Flask构建，其中的主要内容是我们课上会用到的Demo与一些我们制作的可视化展示。Python的安装请参考[官方网站][pythonweb]，安装后请打开命令行，输入如下命令安装服务器端需要的flask库：

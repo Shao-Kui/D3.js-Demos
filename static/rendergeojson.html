@@ -41,8 +41,7 @@
 
     d3.json('./static/data/liaoninggeo.json').then(
         function(data){
-            // convert topo-json to geo-json; 
-            // worldmeta = topojson.feature(data, data.objects.countries);
+          
             worldmeta = data;
             // this code is really important if you want to fit your geoPaths (map) in your SVG element; 
             projection.fitSize([innerWidth, innerHeight], worldmeta);

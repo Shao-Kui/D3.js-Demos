@@ -40,6 +40,10 @@ def scatternxt():
 def renderearth():
     return flask.send_from_directory('static', 'renderearth.html')
 
+@app.route('/rendergeojson')
+def rendergeojson():
+    return flask.send_from_directory('static', 'rendergeojson.html')
+
 @app.route('/barcscginteraction')
 def barcscginteraction():
     return flask.send_from_directory('static', 'barcscginteraction.html')

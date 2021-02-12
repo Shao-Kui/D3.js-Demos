@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Assignment2</title>
+  <script src="d3.min.js"></script>
+</head>
+
+<body>
+  <svg width="1600" height="800" id="mainsvg" class="svgs"></svg>
+  <script>
+      // The following code is the typical routine of my d3.js code. 
+      const svg = d3.select('svg');
+      const width = svg.attr('width');
+      const height = svg.attr('height');
+      const margin = {top: 60, right: 30, bottom: 60, left: 150};
+      const innerWidth = width - margin.left - margin.right;
+      const innerHeight = height - margin.top - margin.bottom;
+      const mainGroup = svg.append('g')
+      .attr('transform', `translate(${margin.left}, ${margin.top})`)
+      const xValue = d => d.year;
+      const yValue = d => d.globalsale;
+      const xScale = d3.scaleLinear();
+      const yScale = d3.scaleLinear();
+      let yearsData; 
+      let pgyData; 
+
+      /* 
+        Loading data and preprocessing data. 
+        Note that you can also preprocessing data in your own way using your prefered language, e.g., Python. 
+      */
+      d3.csv('years.csv').then(data => { yearsData = data; d3.csv('pgyline.csv').then(data => {
+          // cleaning data; 
+          yearsData.sort((a, b) => {
+              return b.year - a.year;
+          });
+          yearsData.forEach(d => {
+              d.year = +(d.year);
+              d.globalsale = +(d.globalsale);
+          });
+          pgyData = data; 
+
+          // scales and axes; 
+          xScale.domain(d3.extent(yearsData, xValue)).range([0, innerWidth]);
+          yScale.domain(d3.extent(yearsData, yValue)).range([innerHeight, 0]);
+          const xAxis = d3.axisBottom(xScale);
+          const yAxis = d3.axisLeft(yScale);
+          const xAxisGroup = mainGroup.append('g').attr('id', 'xAxisGroup').call(xAxis)
+          .attr('transform', `translate(0, ${innerHeight})`);
+          const yAxisGroup = mainGroup.append('g').attr('id', 'yAxisGroup').call(yAxis);
+          xAxisGroup.attr('transform', `translate(${0}, ${innerHeight})`);
+          // font-size of texts of axes: 
+          d3.selectAll('.tick text').attr('font-size', '1.2em')
+          // titles of axes: 
+          xAxisGroup.append('text').attr('class', 'axisTitle').text('Year')
+          .attr('x', innerWidth/2).attr('y', 60);
+          yAxisGroup.append('text').attr('class', 'axisTitle').text('Global Sale')
+          .attr('transform', 'rotate(-90)').attr('x', -innerHeight/2).attr('y', -60);
+          d3.selectAll('.axisTitle').attr('text-anchor', "middle").attr('fill', 'black').attr('font-size', '2em');
+      })})
+
+  </script> 
+</body>
+
+</html>

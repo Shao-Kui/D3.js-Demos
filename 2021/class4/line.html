@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Line Chart</title>
+    <script src="d3.min.js"></script>
+</head>
+
+<body>
+    <svg width="1600" height="800" id="mainsvg" class="svgs" style='display: block; margin: 0 auto;'></svg>
+    <script>
+        // The following code is the typical routine of my d3.js code. 
+        const svg = d3.select('svg');
+        const width = svg.attr('width');
+        const height = svg.attr('height');
+        const margin = { top: 60, right: 30, bottom: 60, left: 150 };
+        const innerWidth = width - margin.left - margin.right;
+        const innerHeight = height - margin.top - margin.bottom;
+        const mainGroup = svg.append('g')
+            .attr('transform', `translate(${margin.left}, ${margin.top})`)
+        const xScale = d3.scaleTime();
+        const yScale = d3.scaleLinear();
+
+        /* 
+          Loading data and preprocessing data. 
+          Note that you can also preprocessing data in your own way using your prefered language, e.g., Python. 
+        */
+        d3.csv('shampoo_sales.csv').then(data => {
+            data.forEach(d => {
+                d.day = new Date(d.day);
+                d.sale = +(d.sale);
+            })
+            xScale.domain(d3.extent(data.map(d => d.day))).range([0, innerWidth]).nice();
+            yScale.domain(d3.extent(data.map(d => d.sale))).range([innerHeight, 0]).nice();
+            const timeFormat = d3.timeFormat('%b-%d')
+            const xAxis = d3.axisBottom(xScale).ticks(15).tickFormat(timeFormat);
+            const yAxis = d3.axisLeft(yScale);
+            const xAxisGroup = mainGroup.append('g').attr('id', 'xAxisGroup').call(xAxis).attr('transform', `translate(0, ${innerHeight})`);
+            const yAxisGroup = mainGroup.append('g').attr('id', 'yAxisGroup').call(yAxis);
+            
+            const line = d3.line().x(d => xScale(d.day)).y(d => yScale(d.sale));
+            // line.curve(d3.curveCardinal.tension(0.5)); // the line is guaranteed to pass through points; 
+            // line.curve(d3.curveBasis); // the line is NOT guaranteed to pass through points; 
+            // line.curve(d3.curveStep); 
+            // line.curve(d3.curveNatural); 
+            line.curve(d3.curveLinear); // default
+            mainGroup.append('path').datum(data).attr('fill', 'none')
+            .attr('d', line).attr('stroke', 'black');
+        })
+
+    </script>
+</body>
+
+</html>

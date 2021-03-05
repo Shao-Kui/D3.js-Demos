@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>D3Path</title>
+    <script src="d3.min.js"></script>
+</head>
+
+<body>
+    <svg width="1600" height="800" id="mainsvg" class="svgs" style='display: block; margin: 0 auto;'></svg>
+    <script>
+        const svg = d3.select('svg');
+        const width = svg.attr('width');
+        const height = svg.attr('height');
+
+        const myArray = [
+            {'x': 100, 'y': 100},{'x': 200, 'y': 300},
+            {'x': 300, 'y': 50},{'x': 400, 'y': 600}
+        ];
+        const pathLine = d3.line().x(d => d.x).y(d => d.y)
+        // .curve(d3.curveCardinal.tension(0.5)); // the line is guaranteed to pass through points; 
+        // .curve(d3.curveBasis); // the line is NOT guaranteed to pass through points; 
+        // .curve(d3.curveStep); 
+        //.curve(d3.curveNatural); 
+        // .curve(d3.curveLinear); // default
+        svg.append('path').attr('stroke', 'black').attr('fill', 'none')
+        .attr('d', pathLine(myArray));
+
+        const part1 = {'startAngle': 0, 'endAngle': 1.1855848768577961};
+        const pathArc1 = d3.arc().innerRadius(100).outerRadius(200);
+        svg.append('path').attr('stroke', 'black').attr('fill', 'green').attr('transform', 'translate(800, 400)')
+        .attr('d', pathArc1(part1));
+
+        console.log(pathArc1(part1));
+
+        const part2 = {'startAngle': 3.0, 'endAngle': 4.34};
+        const pathArc2 = d3.arc().innerRadius(0).outerRadius(200);
+        svg.append('path').attr('stroke', 'black').attr('fill', 'red').attr('transform', 'translate(800, 400)')
+        .attr('d', pathArc2(part2));
+
+        const part3 = {'startAngle': 4.34, 'endAngle': 6.283185307179586};
+        const pathArc3 = d3.arc().innerRadius(0).outerRadius(160).padAngle(0.1);
+        svg.append('path').attr('stroke', 'black').attr('fill', 'steelblue').attr('transform', 'translate(800, 400)')
+        .attr('d', pathArc3(part3));
+
+    </script>
+</body>
+
+</html>

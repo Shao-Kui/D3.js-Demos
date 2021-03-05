@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Data Visualization</title>
+    <script src="d3.min.js"></script>
+  </head>
+  <body>
+    <svg width="1600" height="800" id="mainsvg" class="svgs" style='display: block; margin: 0 auto;'>
+        <g id='maingroup' transform='translate(100, 100)'>
+            <circle id='circle1' 
+            stroke='black' r='66' fill='#4B8E6F' cx='0'></circle>
+            <rect id='rect1' class='class2' 
+            stroke='black' height='200' width='66' fill='#ff8603' x='100' y='-100'></rect>
+            <rect id='rect2' class='class1' 
+            stroke='black' height='200' width='66' fill='#ffde1d' x='200' y='-100'></rect>
+            <rect id='rect3' class='class1' 
+            stroke='black' height='200' width='66' fill='#7289AB' x='300' y='-100'></rect>
+            <text id='myText' class='class2' 
+            stroke='yellow' font-size='2em' x='400' fill='#1e9d95'>Hey D3! </text>
+        </g>
+        <g id='secondgroup' transform='translate(550, 100)'>
+            <rect id='rect4' class='class2' 
+            stroke='black' height='200' width='66' fill='#DD6B66' x='100' y='-100'></rect>
+            <rect id='rect5' class='class1' 
+            stroke='black' height='200' width='66' fill='#759AA0' x='200' y='-100'></rect>
+            <rect id='rect6' class='class1' 
+            stroke='black' height='200' width='66' fill='#E69D87' x='300' y='-100'></rect>
+        </g>
+    </svg>
+    <script>
+        d3.select('#rect3').attr('height', '300');
+        d3.selectAll('.class1').attr('fill', 'steelblue');
+        d3.selectAll('text').attr('y', '300').attr('font-size', '3em');
+        d3.select('#maingroup').append('circle')
+        .attr('cx', 200).attr('cy', 200).attr('r', '50').attr('fill', 'green');
+        d3.select('#rect6').remove();
+        d3.select('#secondgroup').attr('transform', 'translate(550, 200)')
+    </script>
+  </body>
+</html>

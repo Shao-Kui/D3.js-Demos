@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Ease</title>
+  <script src="d3.min.js"></script>
+</head>
+
+<body>
+  <svg width="1600" height="800" id="mainsvg" class="svgs" style='display: block; margin: 0 auto;'></svg>
+  <script>
+    // This code is derived from https://bl.ocks.org/d3noob/1ea51d03775b9650e8dfd03474e202fe 
+    const svg = d3.select('svg');
+
+    var easing = [
+      "easeElastic",
+      "easeBounce",
+      "easeLinear",
+      "easeSin",
+      "easeQuad",
+      "easeCubic",
+      "easePoly",
+      "easeCircle",
+      "easeExp",
+      "easeBack"
+    ];
+
+    function circleTransition(easement, yPos) {
+
+      var timeCircle = svg.append("circle")
+        .attr("fill", "steelblue")
+        .attr("r", 20);
+      repeat();
+
+      function repeat() {
+        timeCircle
+          .attr('cx', 210)          // position the circle at 40 on the x axis
+          .attr('cy', (yPos * 45) + 25) // position the circle at 250 on the y axis
+          .transition()             // apply a transition
+          .ease(easement)           // control the speed of the transition
+          .duration(4000)           // apply it over 2000 milliseconds
+          .attr('cx', 720)          // move the circle to 920 on the x axis
+          .transition()             // apply a transition
+          .ease(easement)           // control the speed of the transition
+          .duration(4000)           // apply it over 2000 milliseconds
+          .attr('cx', 210)          // return the circle to 40 on the x axis
+          .on("end", repeat);       // when the transition finishes start again
+      };
+
+      var easeType = svg.append("text")
+        .attr("dy", ".35em") // set offset y position
+        .attr("x", 475)
+        .attr("text-anchor", "middle") // set anchor x justification
+        .attr("y", (yPos * 45) + 25)
+        .text(easing[yPos]);
+    };
+
+    circleTransition(d3.easeElastic, 0);
+    circleTransition(d3.easeBounce, 1);
+    circleTransition(d3.easeLinear, 2);
+    circleTransition(d3.easeSin, 3);
+    circleTransition(d3.easeQuad, 4);
+    circleTransition(d3.easeCubic, 5);
+    circleTransition(d3.easePoly, 6);
+    circleTransition(d3.easeCircle, 7);
+    circleTransition(d3.easeExp, 8);
+    circleTransition(d3.easeBack, 9);
+
+  </script>
+</body>
+
+</html>

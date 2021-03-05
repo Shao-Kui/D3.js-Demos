@@ -1,0 +1,40 @@
+text{
+    font-size: 2em;
+}
+
+.text-barchart {
+    font-size: 1em;
+}
+
+.legend_text{
+    font-size: 1em;
+}
+
+.path_text{
+    font-size: 0.5em;
+}
+
+.date_text {
+    font-weight: bold;
+    font-size: 7em;
+}
+
+.tick text{
+    font-size: 1.6em;
+    fill: #333333;
+}
+
+
+.tick line {
+    stroke: #cccccc;
+}
+
+#population{
+    font-size: 3em;
+    stroke: #333333
+}
+
+#horsepower{
+    font-size: 3em;
+    stroke: #333333
+}

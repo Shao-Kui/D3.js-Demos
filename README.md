@@ -84,7 +84,7 @@ python main.py
 
 # Acknowledgement
 
-首先，非常感谢我的导师张松海教授对于D3.js讲解的支持与指导！同时，感谢周文洋同学与蔡韵同学的共同合作！也要感谢梁缘学长曾经的指导与帮助，和学长真的学习到了很多。当然，最要感谢的还是一起学习D3.js的每一名同学，希望大家都能有所收获，对课程有更多的意见与反馈，多批评、多指正！
+首先，非常感谢我的导师张松海教授对于D3.js讲解的支持与指导！同时，感谢周文洋同学共同合作、也要感谢梁缘学长曾经的指导与帮助，和学长真的学习到了很多。当然，最要感谢的还是一起学习D3.js的每一名同学，希望大家都能有所收获，对课程有更多的意见与反馈，多批评、多指正！
 
 [control]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/d3-tutorial/manipulation.html
 [htmlpath]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/html-tutorial/hello-path.html

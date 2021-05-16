@@ -49,7 +49,8 @@
         .attr('transform', 'rotate(-90)') // y-axis label needs an additional transform; 
         .attr('x', -innerHeight / 2)
         .attr('y', -120)
-        .attr('fill', 'black')
+        .attr('text-anchor', 'middle')
+        .attr('fill', 'black');
         const xAxisGroup = g.append('g').call(xAxis)
         .attr('transform', `translate(${0}, ${innerHeight})`)
         .append('text') // ----------
@@ -57,6 +58,7 @@
         .attr('font-size', '3em')
         .attr('x', innerWidth / 2)
         .attr('y', 50)
+        .attr('text-anchor', 'middle')
         .attr('fill', 'black');
 
         d3.selectAll('.tick text').attr('font-size', '2em');

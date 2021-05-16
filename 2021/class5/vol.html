@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Volcano</title>
+    <script src="d3.min.js"></script>
+</head>
+
+<body>
+    <svg width="1600" height="800" id="mainsvg" class="svgs" style='display: block; margin: 0 auto;'></svg>
+    <script>
+        // The following code is the typical routine of my d3.js code. 
+        const svg = d3.select('svg');
+        const width = svg.attr('width');
+        const height = svg.attr('height');
+
+        d3.json('John.json').then( data => {
+            console.log(data);
+        });
+
+        d3.json('volcano.json').then(async data => {
+            let color = d3.scaleSequential(d3.interpolatePlasma).domain(d3.extent(data.values));          
+            const thresholds = color.ticks(20);
+            console.log(color.domain());
+            console.log(color(150));
+            console.log(color(195));
+            console.log(color(300));
+
+            // 构造等值线生成函数;
+            const contours = d3.contours()
+            .size([data.width, data.height]).thresholds(thresholds).smooth(true);
+            const geoPolygons = contours(data.values);
+            console.log(geoPolygons);
+            console.log(thresholds);
+
+            // 构造GeoJson并FitSize。
+            const geoJson = { "type": "FeatureCollection", "features": [] };
+            const path = d3.geoPath();
+            // const projection = d3.geoNaturalEarth1();
+            const projection = d3.geoIdentity();
+            for (const geoPolygon of geoPolygons) {
+                geoJson.features.push({ 'geometry': geoPolygon });
+            }
+            projection.fitSize([width, height], geoJson);
+            path.projection(projection);
+
+            // Data-Join; 
+            svg.selectAll('.myPath').data(geoPolygons).join('path')
+            .attr('class', 'myPath')
+            .attr("fill", d => color(d.value))
+            .attr("stroke", "white")
+            .attr("stroke-width", 1)
+            .attr('opacity', 0.3)
+            .attr('d', d => path(d));
+
+            // svg.selectAll('.myPoint').data(data.values).join('circle')
+            // .attr('class', 'myPoint')
+            // .attr('fill', 'black')
+            // .attr('r', 3)
+            // .attr('fill', d => color(d))
+            // .attr('cx', (d,i) => 3+projection([i % data.width, Math.floor(i / data.width)])[0])
+            // .attr('cy', (d,i) => 3+projection([i % data.width, Math.floor(i / data.width)])[1]); 
+        })
+
+    </script>
+</body>
+
+</html>

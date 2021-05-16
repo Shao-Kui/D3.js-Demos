@@ -18,8 +18,6 @@
       const innerHeight = height - margin.top - margin.bottom;
       const mainGroup = svg.append('g')
       .attr('transform', `translate(${margin.left}, ${margin.top})`)
-      const xValue = d => d.globalsale;
-      const yValue = d => d.platform;
       const xScale = d3.scaleLinear();
       const yScale = d3.scaleBand();
 
@@ -30,12 +28,12 @@
       d3.csv('platform_globalsale.csv').then(data => {
           console.log(data);
           // calculationg scales: 
-          yScale.domain(data.map(yValue)).range([0, innerHeight]).padding(0.1);
-          xScale.domain([0, d3.max(data, xValue)]).range([0, innerWidth]);   
+          yScale.domain(data.map(d => d.platform)).range([0, innerHeight]).padding(0.1);
+          xScale.domain([0, d3.max(data, d => d.globalsale)]).range([0, innerWidth]);   
           // data-join for rectangles: 
           mainGroup.selectAll('rect').data(data).join('rect')
-          .attr('height', yScale.bandwidth()).attr('width', d => xScale(xValue(d)))
-          .attr('x', 0).attr('y', d => yScale(yValue(d)));
+          .attr('height', yScale.bandwidth()).attr('width', d => xScale(d.globalsale))
+          .attr('x', 0).attr('y', d => yScale(d.platform));
           // adding axes: 
           const xAxisMethod = d3.axisBottom(xScale);
           const yAxisMethod = d3.axisLeft(yScale);

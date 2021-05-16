@@ -1,0 +1,504 @@
+{
+    "name": "新疆",
+    "population": 22834600,
+    "children": [
+        {
+            "name": "乌鲁木齐",
+            "population": 2222600,
+            "children": [
+                {
+                    "name": "天山区",
+                    "population": 460494
+                },
+                {
+                    "name": "沙依巴克区",
+                    "population": 467109
+                },
+                {
+                    "name": "新市区(乌鲁木齐)",
+                    "population": 505313
+                },
+                {
+                    "name": "水磨沟区",
+                    "population": 232544
+                },
+                {
+                    "name": "头屯河区",
+                    "population": 196177
+                },
+                {
+                    "name": "达坂城区",
+                    "population": 32518
+                },
+                {
+                    "name": "米东区",
+                    "population": 275640
+                },
+                {
+                    "name": "乌鲁木齐县",
+                    "population": 52763
+                }
+            ]
+        },
+        {
+            "name": "克拉玛依",
+            "population": 307743,
+            "children": [
+                {
+                    "name": "独山子区",
+                    "population": 58512
+                },
+                {
+                    "name": "克拉玛依区",
+                    "population": 210582
+                },
+                {
+                    "name": "白碱滩区",
+                    "population": 36405
+                },
+                {
+                    "name": "乌尔禾区",
+                    "population": 2244
+                }
+            ]
+        },
+        {
+            "name": "吐鲁番",
+            "population": 633416,
+            "children": [
+                {
+                    "name": "高昌区",
+                    "population": 290302
+                },
+                {
+                    "name": "鄯善县",
+                    "population": 223431
+                },
+                {
+                    "name": "托克逊县",
+                    "population": 119683
+                }
+            ]
+        },
+        {
+            "name": "哈密",
+            "population": 559352,
+            "children": [
+                {
+                    "name": "伊州区",
+                    "population": 432166
+                },
+                {
+                    "name": "巴里坤县",
+                    "population": 105968
+                },
+                {
+                    "name": "伊吾县",
+                    "population": 21218
+                }
+            ]
+        },
+        {
+            "name": "昌吉州",
+            "population": 1393718,
+            "children": [
+                {
+                    "name": "昌吉市",
+                    "population": 387977
+                },
+                {
+                    "name": "阜康市",
+                    "population": 163961
+                },
+                {
+                    "name": "呼图壁县",
+                    "population": 210618
+                },
+                {
+                    "name": "玛纳斯县",
+                    "population": 170178
+                },
+                {
+                    "name": "奇台县",
+                    "population": 236572
+                },
+                {
+                    "name": "吉木萨尔县",
+                    "population": 137445
+                },
+                {
+                    "name": "木垒县",
+                    "population": 86967
+                }
+            ]
+        },
+        {
+            "name": "博尔塔拉州",
+            "population": 478509,
+            "children": [
+                {
+                    "name": "博乐市",
+                    "population": 260314
+                },
+                {
+                    "name": "阿拉山口市",
+                    "population": 1878
+                },
+                {
+                    "name": "精河县",
+                    "population": 143346
+                },
+                {
+                    "name": "温泉县",
+                    "population": 72971
+                }
+            ]
+        },
+        {
+            "name": "巴音郭楞州",
+            "population": 1242125,
+            "children": [
+                {
+                    "name": "库尔勒市",
+                    "population": 472645
+                },
+                {
+                    "name": "轮台县",
+                    "population": 116228
+                },
+                {
+                    "name": "尉犁县",
+                    "population": 106857
+                },
+                {
+                    "name": "若羌县",
+                    "population": 34355
+                },
+                {
+                    "name": "且末县",
+                    "population": 70991
+                },
+                {
+                    "name": "焉耆县",
+                    "population": 131240
+                },
+                {
+                    "name": "和静县",
+                    "population": 184647
+                },
+                {
+                    "name": "和硕县",
+                    "population": 66233
+                },
+                {
+                    "name": "博湖县",
+                    "population": 58929
+                }
+            ]
+        },
+        {
+            "name": "阿克苏地区",
+            "population": 2561674,
+            "children": [
+                {
+                    "name": "阿克苏市",
+                    "population": 551112
+                },
+                {
+                    "name": "库车市",
+                    "population": 488627
+                },
+                {
+                    "name": "温宿县",
+                    "population": 266514
+                },
+                {
+                    "name": "沙雅县",
+                    "population": 264139
+                },
+                {
+                    "name": "新和县",
+                    "population": 194200
+                },
+                {
+                    "name": "拜城县",
+                    "population": 240339
+                },
+                {
+                    "name": "乌什县",
+                    "population": 233034
+                },
+                {
+                    "name": "阿瓦提县",
+                    "population": 268397
+                },
+                {
+                    "name": "柯坪县",
+                    "population": 55312
+                }
+            ]
+        },
+        {
+            "name": "克孜勒苏州",
+            "population": 624496,
+            "children": [
+                {
+                    "name": "阿图什市",
+                    "population": 285507
+                },
+                {
+                    "name": "阿克陶县",
+                    "population": 234125
+                },
+                {
+                    "name": "阿合奇县",
+                    "population": 45977
+                },
+                {
+                    "name": "乌恰县",
+                    "population": 58887
+                }
+            ]
+        },
+        {
+            "name": "喀什地区",
+            "population": 4633781,
+            "children": [
+                {
+                    "name": "喀什市",
+                    "population": 651477
+                },
+                {
+                    "name": "疏附县",
+                    "population": 284134
+                },
+                {
+                    "name": "疏勒县",
+                    "population": 382163
+                },
+                {
+                    "name": "英吉沙县",
+                    "population": 309522
+                },
+                {
+                    "name": "泽普县",
+                    "population": 223623
+                },
+                {
+                    "name": "莎车县",
+                    "population": 892015
+                },
+                {
+                    "name": "叶城县",
+                    "population": 552263
+                },
+                {
+                    "name": "麦盖提县",
+                    "population": 272424
+                },
+                {
+                    "name": "岳普湖县",
+                    "population": 179665
+                },
+                {
+                    "name": "伽师县",
+                    "population": 460961
+                },
+                {
+                    "name": "巴楚县",
+                    "population": 384535
+                },
+                {
+                    "name": "塔什库尔干县",
+                    "population": 40999
+                }
+            ]
+        },
+        {
+            "name": "和田地区",
+            "population": 2530562,
+            "children": [
+                {
+                    "name": "和田市",
+                    "population": 408894
+                },
+                {
+                    "name": "和田县",
+                    "population": 356116
+                },
+                {
+                    "name": "墨玉县",
+                    "population": 648995
+                },
+                {
+                    "name": "皮山县",
+                    "population": 322161
+                },
+                {
+                    "name": "洛浦县",
+                    "population": 297056
+                },
+                {
+                    "name": "策勒县",
+                    "population": 169206
+                },
+                {
+                    "name": "于田县",
+                    "population": 289688
+                },
+                {
+                    "name": "民丰县",
+                    "population": 38446
+                }
+            ]
+        },
+        {
+            "name": "伊犁州",
+            "population": 4582562,
+            "children": [
+                {
+                    "name": "伊宁市",
+                    "population": 571122
+                },
+                {
+                    "name": "奎屯市",
+                    "population": 290990
+                },
+                {
+                    "name": "霍尔果斯市",
+                    "population": 64800
+                },
+                {
+                    "name": "伊宁县",
+                    "population": 425365
+                },
+                {
+                    "name": "察布查尔县",
+                    "population": 194416
+                },
+                {
+                    "name": "霍城县",
+                    "population": 337972
+                },
+                {
+                    "name": "巩留县",
+                    "population": 195937
+                },
+                {
+                    "name": "新源县",
+                    "population": 317596
+                },
+                {
+                    "name": "昭苏县",
+                    "population": 181541
+                },
+                {
+                    "name": "特克斯县",
+                    "population": 169009
+                },
+                {
+                    "name": "尼勒克县",
+                    "population": 181847
+                },
+                {
+                    "name": "伊犁哈萨克自治州(直管县市)",
+                    "population": 2930616
+                }
+            ]
+        },
+        {
+            "name": "塔城地区",
+            "population": 992444,
+            "children": [
+                {
+                    "name": "塔城市",
+                    "population": 163732
+                },
+                {
+                    "name": "乌苏市",
+                    "population": 216381
+                },
+                {
+                    "name": "额敏县",
+                    "population": 205428
+                },
+                {
+                    "name": "沙湾县",
+                    "population": 202460
+                },
+                {
+                    "name": "托里县",
+                    "population": 94857
+                },
+                {
+                    "name": "裕民县",
+                    "population": 57236
+                },
+                {
+                    "name": "和布克赛尔县",
+                    "population": 52350
+                }
+            ]
+        },
+        {
+            "name": "阿勒泰地区",
+            "population": 659502,
+            "children": [
+                {
+                    "name": "阿勒泰市",
+                    "population": 231167
+                },
+                {
+                    "name": "布尔津县",
+                    "population": 71561
+                },
+                {
+                    "name": "富蕴县",
+                    "population": 96444
+                },
+                {
+                    "name": "福海县",
+                    "population": 74237
+                },
+                {
+                    "name": "哈巴河县",
+                    "population": 85106
+                },
+                {
+                    "name": "青河县",
+                    "population": 63077
+                },
+                {
+                    "name": "吉木乃县",
+                    "population": 37910
+                }
+            ]
+        },
+        {
+            "name": "自治区直辖县级行政区划",
+            "population": 1064100,
+            "children": [
+                {
+                    "name": "石河子市",
+                    "population": 592954
+                },
+                {
+                    "name": "阿拉尔市",
+                    "population": 170040
+                },
+                {
+                    "name": "图木舒克市",
+                    "population": 165850
+                },
+                {
+                    "name": "五家渠市",
+                    "population": 96788
+                },
+                {
+                    "name": "铁门关市",
+                    "population": 38448
+                }
+            ]
+        }
+    ]
+}

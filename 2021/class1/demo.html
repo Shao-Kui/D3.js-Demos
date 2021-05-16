@@ -302,6 +302,7 @@
 
             // delete '总计'; 
             data = data.filter(datum => {return datum[keyHint] !== '总计'});
+            data = data.filter(datum => {return datum.age === '15-19' || datum.marrage === '未婚'});
             keysall = Array.from(new Set(data.map( datum => datum[keyHint])));
 
             // generate sequential data; 

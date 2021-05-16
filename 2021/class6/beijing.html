@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>BeiJing</title>
+    <script src="d3.min.js"></script>
+    <script src="d3-v6-tip.js"></script>
+    <link rel="stylesheet" href="d3-tip.css">
+</head>
+
+<body>
+    <svg width="1600" height="800" id="mainsvg" class="svgs" style='display: block; margin: 0 auto;'></svg>
+    <script>
+        const svg = d3.select('svg');
+        const width = svg.attr('width');
+        const height = svg.attr('height');
+        const margin = { top: 60, right: 0, bottom: 0, left: 0 };
+        const innerWidth = width - margin.left - margin.right;
+        const innerHeight = height - margin.top - margin.bottom;
+        const mainGroup = svg.append('g')
+        .attr('transform', `translate(${margin.left}, ${margin.top})`);
+        const tip = d3.tip().html((event, d) => d.properties.name);
+        svg.call(tip);
+        tip.attr('class', 'd3-tip');
+
+        d3.json('beijing.json').then(async data => {
+            const projection = d3.geoNaturalEarth1();
+            projection.fitSize([innerWidth, innerHeight], data);
+            const path = d3.geoPath().projection(projection);
+            console.log(path(data.features))
+            mainGroup.selectAll('path').data(data.features).join('path')
+                .attr('stroke', 'black').attr('fill', 'white')
+                .attr('d', path)
+                .attr('id', d => d.properties.name)
+                .on('mouseover', tip.show)
+                .on('mouseout', tip.hide);
+        });
+
+    </script>
+</body>
+
+</html>

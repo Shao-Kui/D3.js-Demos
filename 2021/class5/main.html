@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Contour</title>
+  <script src="d3.min.js"></script>
+  <script src="topojson.min.js"></script>
+  <script src="d3-geo-voronoi.js"></script>
+  <style>
+    path {
+      stroke: black;
+    }
+  </style>
+</head>
+
+<body>
+  <svg width="1600" height="800" id="mainsvg" class="svgs" style='display: block; margin: 0 auto;'></svg>
+  <script>
+    // The following code is the typical routine of my d3.js code. 
+    const svg = d3.select('svg');
+    const width = svg.attr('width');
+    const height = svg.attr('height');
+    const margin = { top: 60, right: 30, bottom: 60, left: 150 };
+    const innerWidth = width - margin.left - margin.right;
+    const innerHeight = height - margin.top - margin.bottom;
+    const mainGroup = svg.append('g')
+      .attr('transform', `translate(${margin.left}, ${margin.top})`);
+    const colors = ["#023858", "#045a8d", "#0570b0", "#3690c0", "#74a9cf", "#a6bddb", "#d0d1e6", "#fff", "#fed976", "#feb24c", "#fd8d3c", "#fc4e2a", "#e31a1c", "#bd0026", "#800026"]
+    let climate, climateDiv, climateFeatures, climateVoronoi, states,
+      continental_us, statesOuter, statesInner, temp_change, tempChangeLookup, statesGeo, bufferGeo;
+    let projection, path, contours;
+    let pointScale, thresholdColorScale;
+    const linearColorScale = d3.scaleLinear()
+      .domain(d3.range(0, 1, 1 / colors.length))
+      .range(colors)
+      .interpolate(d3.interpolateLab);
+    const lons = d3.range(10, 55, 2).reverse();
+    const lats = d3.range(-130, -60, 2);
+    const rawPoints = lons.map((lon, i) => lats.map(lat => [lat, lon])).flat();
+    const geojson = rawPoints.map((d, i) => {
+      return {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": d
+        },
+        "properties": {
+          "index": i
+        }
+      }
+    });
+
+    const dataLoadandSetup = async function () {
+      climate = await d3.json('climate_divisions.topojson.json');
+      climateDiv = topojson.mesh(climate);
+      climateFeatures = topojson.feature(climate, climate.objects.GIS).features;
+      climateVoronoi = d3.geoVoronoi(climateFeatures);
+
+      const voronoiPoints = rawPoints.map(d => climateFeatures[climateVoronoi.find(...d)].properties.CLIMDIV);
+      voronoiLookup = new Map(voronoiPoints.map((d, i) => [i, d]))
+
+      states = await d3.json('states.json');
+      continental_us = ({
+        ...states,
+        objects: {
+          states: {
+            ...states.objects.states,
+            geometries: states.objects.states.geometries.filter(d => d.properties.STATEFP !== '02' && d.properties.STATEFP !== '15')
+          }
+        }
+      });
+      statesInner = topojson.mesh(states, states.objects.states, (a, b) => a !== b);
+      statesOuter = topojson.mesh(continental_us, continental_us.objects.states, (a, b) => a === b);
+      statesGeo = topojson.feature(states, states.objects.states);
+      // This is a geojson of the buffer space around the US, created with qgis. 
+      bufferGeo = await d3.json("states_buffer.geojson.json");
+
+      temp_change = await d3.csv("temp_change.csv");
+      tempChangeLookup = new Map(temp_change.map(d => [+d["Climate Division"], d["Temperature Change"]]));
+      temp_values_domain = d3.extent(temp_change.map(d => +d['Temperature Change'] * 10));
+      pointScale = d3.scaleLinear()
+        .domain(temp_values_domain)
+        .range([0, 1]);
+
+      projection = d3.geoAlbersUsa().fitSize([width, height], statesOuter);
+
+      path = d3.geoPath()
+        .projection(projection)
+        .pointRadius(2);
+
+      // contour: 
+      contour = d3.contourDensity()
+        .x(d => d[0])
+        .y(d => d[1])
+        .size([width, height])
+        .cellSize(2)
+
+      const gridPoints = rawPoints.map((point, i) => ({
+        'centroid': projection(point),
+        'data': get_point_data(point, i)
+      })).filter(d => d.centroid !== null && d.data !== null)
+
+      // we'd like the valleys of the contours (and, the other end of the color scale) to be the minimum number in the data rather than 0, since some regions have negative values. 
+      const offset = Math.abs(d3.min(temp_change.map(d => +d['Temperature Change']))) * 10;
+
+      contour_data = gridPoints.reduce((acc, climdiv) => {
+
+        // calculate the number of points based on the temp change value, down to 0.1.
+        const num_points = Math.floor(Math.abs(climdiv.data + offset))
+
+        // create an array of that same value repeated to create stacked points tied to the data value
+        const array = new Array(num_points).fill(climdiv.centroid, 0, num_points)
+
+        return [...acc, ...array]
+      }, []);
+
+      contours = contour(contour_data);
+      
+      density_thresholds = contours.map(d => Math.floor(+d.value * 100000) / 100000)
+      bins = d3.range(
+        ...temp_values_domain, // it should span the entire domain
+        (temp_values_domain[1] - temp_values_domain[0]) / density_thresholds.length)
+      zero_estimation_index = d3.bisect(bins, 0)
+      quantz = d3.quantize(linearColorScale, (density_thresholds.length - zero_estimation_index) * 2)
+      threshold_index_domain = d3.range(-zero_estimation_index, density_thresholds.length - zero_estimation_index, 1)
+      thresholdColorScale = d3.scaleOrdinal()
+        .domain(density_thresholds)
+        .range(quantz.slice(-threshold_index_domain.length));
+    }
+
+    const get_point_data = (d, i) => {
+      let data = null
+
+      // this limits the data to the regions in or close to the US. 
+      if (d3.geoContains(statesGeo, d) || d3.geoContains(bufferGeo, d)) {
+        data = +tempChangeLookup.get(voronoiLookup.get(i)) * 10
+      }
+
+      return data
+    }
+
+
+    const render = async function () {
+      await dataLoadandSetup();
+
+      const outer = svg.append("path")
+        .datum(statesOuter)
+        .attr('id', "usPath")
+        .attr("class", "outer")
+        .attr("d", path).attr('fill', 'none');
+
+      svg.append('defs').append('clipPath').attr('id', 'usClipPath')
+      .append('use').attr('xlink:href', "#usPath");
+
+      const g = svg.append("g")
+        .selectAll(".contour")
+        .data(contours)
+        .join("g");
+
+      g.append("path")
+        .attr("clip-path", "url(#usClipPath)")
+        .attr("class", d => `contour ${(d.value)}`)
+        .attr("d", d3.geoPath())
+        //.attr("stroke-width", (d, i) => i % 5 && hover !== d.value ? 0.25 : 1)
+        .attr("stroke-width", 1)
+        .style("stroke", "black")
+        .attr("fill", d => thresholdColorScale(d.value));
+
+      outer.raise();
+
+      // svg.selectAll(".point")
+      //   .data(geojson)
+      //   .enter().append("path")
+      //   .attr("d", path)
+      //   .style('fill', (d, i) => {
+      //     const value = get_point_data(d.geometry.coordinates, i)
+      //     // if the point isn't within our bounds, don't color it
+      //     if (value === null) return "none"
+      //     // otherwise, fill with the colorScale (but first, convert to [0,1] through a pointScale)
+      //     return linearColorScale(pointScale(value))
+      //   });
+
+      svg.append("path")
+        .datum(statesInner)
+        .attr("class", "inner")
+        .attr("d", path).attr('fill', 'none');
+
+      svg.append("path")
+        .datum(climateDiv)
+        .attr("class", "climate")
+        .attr('stroke-dasharray', '5,5')
+        .attr("d", path).attr('fill', 'none');
+
+      return svg.node();
+    }
+    render();
+
+
+  </script>
+</body>
+
+</html>

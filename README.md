@@ -1,12 +1,11 @@
 # 欢迎大家选修并加入数据可视化！
-本代码库对应清华大学-计算机系春季学期课程《数据可视化》，由张松海老师任课。代码库内容主要围绕2020年、2021年开始新加入的[D3.js][d3web]编程讲解，其中的框架可作为大作业与其他可视化编程的基础，同时所有样例可供大家参考。任何同学有任何问题，欢迎在Github上issue或给我发邮件（zhangsk18@mails.tsinghua.edu.cn）。2021年开始，每节讲解的代码按照课程分别保存，代码也不再基于Flask，而是VSCODE Live Server、SimpleHTTPServer等。同时，2021年的D3.js课件进行了完全翻新、大量补充，和2020年有较大区别。目前2021的课件、源代码已经大量上传至这个代码库，请参考根目录下的‘2021’文件夹，本文档待完善。
+本代码库对应清华大学-计算机系春季学期课程《数据可视化》，由张松海老师任课。代码库内容主要围绕2020年、2021年开始新加入的[D3.js][d3web]编程讲解，其中的框架可作为大作业与其他可视化编程的基础，同时所有样例可供大家参考。任何同学有任何问题，欢迎在Github上issue或给我发邮件（zhangsk18@mails.tsinghua.edu.cn）。2021年开始，每节讲解的代码按照课程章节分别保存，框架也不再基于Flask，而是[VSCode Live Server][vscodeliveserver]、SimpleHTTPServer等。请注意：2021年的D3.js课件进行了完全翻新、大量补充，和2020年有较大区别。目前2021的课件、源代码已经大量上传至这个代码库，请参考根目录下的‘[2021][the2021]’文件夹，本文档待完善。
 
 D3.js课上用幻灯片（讲义）：[slides文件夹][theslides]；
 
-D3.js课上录屏（2020年线上）: [哔哩哔哩-BiliBili][recordvideo]；
-2021年课程恢复线下，暂无录屏，但课件已经更新。
+D3.js课上录屏（2020年线上）: [哔哩哔哩-BiliBili][recordvideo]；**2021年课程恢复线下，暂无录屏，但课件已经更新**。
 
-数据可视化[课程主页][coursevis]；
+数据可视化[课程主页][coursevis]。
 
 # 先修条件（Prerequisites）
 课程希望各位同学可以有编程基础，这里编程基础不限制哪门具体的语言（虽然更希望是JavaScript与Python）。关于可视化编程需要用到的编程语言（JavaScript），在D3.js介绍的时候，会一并为大家介绍。如果没有编程基础，也完全可以参与课程学习，但需要无编程基础的同学课下用额外的时间补习JavaScript的基础知识。
@@ -22,27 +21,27 @@ D3.js课上录屏（2020年线上）: [哔哩哔哩-BiliBili][recordvideo]；
 
 ## Path
 
-第四章节的主要内容围绕<path>图元，也是SVG中最常见的图元之一，仅凭这一种图元就可以实现线段、圆弧、地图、主题河流等多种可视化方案。<path>的多用途在于其'd'属性，而在HTML中，'d'属性的设置又略微复杂，我们会使用D3.js来帮助我们设置‘d’属性。实例为一个折线图与一个饼图。
+第四部分的主要内容围绕<path>图元，也是SVG中最常见的图元之一，仅凭这一种图元就可以实现线段、圆弧、地图、主题河流等多种可视化方案。<path>的多用途在于其'd'属性，而在HTML中，'d'属性的设置又略微复杂，我们会使用D3.js来帮助我们设置‘d’属性。实例为一个折线图与一个饼图。
 
 ## Map & Contour
 
-地图与地形数据可视化。
+地图与地形数据可视化。本部分包括地理数据的基本格式，即geojson，同时包括基于geojson的‘d’属性生成函数‘d3.geoPath’、地图的投影函数‘d3-projection’。我们会首先基于这些内容实现简易的地图可视化。轮廓线的生成同样会在本部分引入，其核心在于基于矩阵拟合轮廓线的geojson数据，进而绘制方式同地图可视化。
 
 ## Interaction
 
-第六部分介绍D3.js的交互机制，本质上也是Web前端的交互机制在D3.js与SVG中的实例。
+第六部分介绍D3.js的交互机制，本质上也是Web前端的交互机制在D3.js与SVG中的实例。我们会先引入各种交互的类型与样例，然后将上一部分的地图数据可视化拓展为交互式地图。一些进阶的交互接口与原理也会简单引入（但对于本讲解不做要求）。
 
 ## Stack
 
-这一部分主要围绕D3.js的堆叠机制，会实现一个堆叠的柱状图与主题河流。
+这一部分主要围绕D3.js的堆叠机制，主要介绍d3.stack接口，包括其调用方式与返回数据的结构。其中，理解D3堆叠数据后的结构最为重要，因为之后的操作就是基于堆叠数据的‘Data-Join’。进而，样例会实现一个堆叠的柱状图与主题河流。
 
 ## Hierarchy
 
-层次数据可视化。
+层次数据可视化。这一部分主要围绕D3.js的层级处理机制，主要介绍d3.hierarchy接口，包括其调用方式与返回的数据接口。层级数据本身只是一个逻辑概念，将其赋予位置信息仍需要d3.tree与d3.partition的支撑。理解这三者后，我们会基于d3.hierarchy分别实现树状图、冰锥图、日晕图（径向冰锥图）。
 
 ## Network
 
-网络数据可视化。
+网络数据可视化。这一部分围绕D3.js的网络数据可视化，尽管D3.js并没有成型的网络数据处理机制（并不类似上一部分）。因此，我们介绍三种不同的网络数据可视化形式，包括弧长连接图、基于d3.chord的弦图、力导图。其中，力导图是一个独立于D3-Transition的机制，我们会单独介绍该模块。
 
 # 安装Python-Flask
 2021年起，课程不再基于Flask框架。2021年起，我们每节课都单独拆分了需要用到的代码，请使用VSCode Live Server、SimpleHTTPServer来运行Demo。若需要后端逻辑，可安装Flask并运行2020年的DEMO，主要包含我们课上用到的Demo、一些我们制作的可视化展示。Python的安装请参考[官方网站][pythonweb]，安装后请打开命令行，输入如下命令安装服务器端需要的flask库：
@@ -51,7 +50,10 @@ pip install flask flask_cors
 ```
 如果安装成功，即可直接运行服务器。
 
-# 启动服务器
+# 启动服务器（已暂停维护）
+   
+**2021年课程开始暂停维护，2021年开始，所有课上Demo基于[VSCode Live Server][vscodeliveserver]、SimpleHTTPServer等。**
+
 进入项目根目录（包含main.py的目录），打开命令行并输入如下指令：
 ```
 python main.py
@@ -69,7 +71,10 @@ python main.py
  * Running on http://0.0.0.0:11666/ (Press CTRL+C to quit)
 ```
 
-# 示例导航
+# 示例导航（已暂停维护）
+
+**2021年课程开始暂停维护，2021年开始，所有课上Demo按照各章节整理到了各个文件夹，详情参考[2021][the2021]。**
+   
 * 操控SVG：[链接][control]
 * 柱状图：[链接][barchart1]
 * 柱状图，图元可交互：链接
@@ -85,7 +90,7 @@ python main.py
 
 # Acknowledgement
 
-首先，非常感谢我的导师张松海教授对于D3.js讲解的支持与指导！同时，感谢周文洋同学共同合作、也要感谢梁缘学长曾经的指导与帮助，和学长真的学习到了很多。当然，最要感谢的还是一起学习D3.js的每一名同学，希望大家都能有所收获，对课程有更多的意见与反馈，多批评、多指正！
+希望大家对课程内容多提意见、多批评、多指正！感谢张松海教授的指导、感谢梁缘学长、周文洋同学的支持！
 
 [control]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/d3-tutorial/manipulation.html
 [htmlpath]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/html-tutorial/hello-path.html
@@ -103,3 +108,5 @@ python main.py
 [recordvideo]:https://www.bilibili.com/video/BV1HK411L72d
 [d3web]:https://d3js.org/
 [coursevis]:https://cg.cs.tsinghua.edu.cn/course/vis/
+[the2021]:https://github.com/Shao-Kui/D3.js-Demos/tree/master/2021
+[vscodeliveserver]:https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer

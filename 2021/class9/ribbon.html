@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Ribbon</title>
+    <script src="d3.min.js"></script>
+</head>
+
+<body>
+    <svg width="1600" height="800" id="mainsvg" class="svgs" style='display: block; margin: 0 auto;'></svg>
+    <script>
+        // The following code is the typical routine of my d3.js code. 
+        const svg = d3.select('svg');
+        const width = svg.attr('width');
+        const height = svg.attr('height');
+
+        const angle = 30;
+        const endPoint = '400 300';
+        const radii = '300 200';
+        
+        const ribbon = d3.ribbon();
+
+        const path1 = svg.append('path')
+        .attr('d', ribbon({
+            source: {startAngle: 0.7524114, endAngle: 1.1212972, radius: 400},
+            target: {startAngle: 1.8617078, endAngle: 1.9842927, radius: 500}
+        }))
+        .attr('fill', d3.schemeSet3[0])
+
+        const path2 = svg.append('path')
+        .attr('d', ribbon({
+            source: {startAngle: 0.1524114, endAngle: 0.1912972, radius: 400},
+            target: {startAngle: 1.2617078, endAngle: 1.5842927, radius: 400}
+        }))
+        .attr('fill', d3.schemeSet3[6])
+
+        const path3 = svg.append('path')
+        .attr('d', ribbon({
+            source: {startAngle: 0.2524114, endAngle: 0.912972, radius: 400},
+            target: {startAngle: 3.217078, endAngle: 3.9842927, radius: 400}
+        }))
+        .attr('fill', d3.schemeSet3[2])
+
+        const path4 = svg.append('path')
+        .attr('d', ribbon({
+            source: {startAngle: 2.7524114, endAngle: 3.1212972, radius: 400},
+            target: {startAngle: 4.8617078, endAngle: 4.9842927, radius: 400}
+        }))
+        .attr('fill', d3.schemeSet3[3])
+
+        const path5 = svg.append('path')
+        .attr('d', ribbon({
+            source: {startAngle: 2.15, endAngle: 2.1612972, radius: 400},
+            target: {startAngle: 5.6617078, endAngle: 6.0842927, radius: 400}
+        }))
+        .attr('fill', d3.schemeSet3[5])
+        
+        d3.selectAll('path').attr('opacity', 0.8)
+        .attr('transform', `translate(${800}, ${400})`);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Assignment1</title>
+  <script src="d3.min.js"></script>
+</head>
+
+<body>
+  <svg width="1600" height="800" id="mainsvg" class="svgs"></svg>
+  <script>
+      // The following code is the typical routine of my d3.js code. 
+      const svg = d3.select('svg');
+      const width = svg.attr('width');
+      const height = svg.attr('height');
+      const margin = {top: 60, right: 30, bottom: 60, left: 150};
+      const innerWidth = width - margin.left - margin.right;
+      const innerHeight = height - margin.top - margin.bottom;
+      const mainGroup = svg.append('g')
+      .attr('transform', `translate(${margin.left}, ${margin.top})`)
+      const xScale = d3.scaleLinear();
+      const yScale = d3.scaleBand();
+
+      /* 
+        Loading data and preprocessing data. 
+        Note that you can also preprocessing data in your own way using your prefered language, e.g., Python. 
+      */
+      d3.csv('platform_globalsale.csv').then(data => {
+          console.log(data);
+          // calculationg scales: 
+          yScale.domain(data.map(d => d.platform)).range([0, innerHeight]).padding(0.1);
+          xScale.domain([0, d3.max(data, d => d.globalsale)]).range([0, innerWidth]);   
+          // data-join for rectangles: 
+          mainGroup.selectAll('rect').data(data).join('rect')
+          .attr('height', yScale.bandwidth()).attr('width', d => xScale(d.globalsale))
+          .attr('x', 0).attr('y', d => yScale(d.platform));
+          // adding axes: 
+          const xAxisMethod = d3.axisBottom(xScale);
+          const yAxisMethod = d3.axisLeft(yScale);
+          const xAxisGroup = mainGroup.append('g').call(xAxisMethod);
+          const yAxisGroup = mainGroup.append('g').call(yAxisMethod);
+          xAxisGroup.attr('transform', `translate(${0}, ${innerHeight})`);
+      });
+
+  </script> 
+</body>
+
+</html>

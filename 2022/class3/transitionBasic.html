@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>TransitionBasic</title>
+  <script src="d3.min.js"></script>
+</head>
+
+<body>
+  <svg width="960" height="400" id="mainsvg" 
+  class="svgs" style='display: block; margin: 0 auto;'>
+      <rect id="my_rect" 
+      x="10" y="200" width="200" height="30" 
+      stroke="black" fill="#69b3a2" stroke-width="1"
+      />
+  </svg>
+  <script>
+      d3.select("#my_rect")
+      .transition().duration(2000)
+      .attr("width", "400"); 
+  </script> 
+</body>
+
+</html>

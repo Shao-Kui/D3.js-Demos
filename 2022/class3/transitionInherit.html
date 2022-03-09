@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>TransitionInherit</title>
+  <script src="d3.min.js"></script>
+</head>
+
+<body>
+  <svg width="1920" height="1080" id="mainsvg" 
+  class="svgs" style='display: block; margin: 0 auto;'>
+      <rect id="my_rect" 
+      x="10" y="200" width="200" height="30" 
+      stroke="black" fill="#69b3a2" stroke-width="1"
+      />
+  </svg>
+  <script>
+        d3.select("#my_rect")
+        .transition().duration(1000).ease(d3.easeQuad).attr("width", "400")
+        .transition().attr("height", '100')
+        .transition().attr("width", '100')
+        .transition().attr("y", '500')
+        .transition().attr("x", '310')
+        .transition().attr("y", '200')
+        .transition().attr("x", '10')
+        .transition().attr("y", 540 + 200 * Math.sin(0)).attr("x", 960 + 200 * Math.cos(0))
+        .transition().attrTween('x', function(d) {
+            return function(t) {
+                return 960 + 200 * Math.cos(t*Math.PI*2)
+            };
+        }).attrTween('y', function(d) {
+            return function(t) {
+                return 540 + 200 * Math.sin(t*Math.PI*2)
+            };
+        })
+        .transition().on('start', function repeat(){
+            d3.active(this).attr('fill', 'gray')
+            .transition().attr('fill', '#69b3a2')
+            .transition().attrTween('x', function(d) {
+                return function(t) {
+                    return 960 + 200 * Math.cos(t*Math.PI*2)
+                };
+            }).attrTween('y', function(d) {
+                return function(t) {
+                    return 540 + 200 * Math.sin(t*Math.PI*2)
+                };
+            })
+            .transition().on('start', repeat)
+        })
+  </script> 
+</body>
+
+</html>

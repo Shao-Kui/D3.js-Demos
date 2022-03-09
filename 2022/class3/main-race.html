@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>BarchartRace</title>
+  <script src="d3.min.js"></script>
+</head>
+
+<body>
+  <svg width="1600" height="800" id="mainsvg" class="svgs"></svg>
+  <script>
+      // The following code is the typical routine of my d3.js code. 
+      const svg = d3.select('svg');
+      const width = svg.attr('width');
+      const height = svg.attr('height');
+      const margin = {top: 60, right: 80, bottom: 60, left: 150};
+      const innerWidth = width - margin.left - margin.right;
+      const innerHeight = height - margin.top - margin.bottom;
+      const mainGroup = svg.append('g')
+      .attr('transform', `translate(${margin.left}, ${margin.top})`)
+      const xValue = d => d.globalsale;
+      const yValue = d => d.platform;
+      const xScale = d3.scaleLinear();
+      const yScale = d3.scaleBand();
+      const colorScale = d3.scaleOrdinal();
+      let xAxis, yAxis;
+      let xAxisGroup, yAxisGroup; 
+      mainGroup.append('text').attr('fill', 'black').attr('font-size', '2em')
+      .attr('x', 1340).attr('y', 650).attr('id', 'yeartext');
+      const formatPercent = d3.format(".2f");
+
+      const render = async function(data){
+          data.sort(d => d.globalsale);
+          // calculating scales: 
+          yScale.domain(data.map(yValue)).range([0, innerHeight]).padding(0.1);
+          xScale.domain([0, d3.max(data, xValue)]).range([0, innerWidth]);   
+          // data-join (enter-selection) for rectangles: 
+          let enter = mainGroup.selectAll('rect').data(data, d=>d.platform).enter().append('rect')
+          .attr('height', yScale.bandwidth()).attr('x', 0)
+          .attr('y', d => yScale(yValue(d)))
+          .attr('fill', d => colorScale(yValue(d)));//.attr('fill', (d, i) => d3.interpolateSpectral(i * 1/(data.length-1)))
+          // data-join (enter-selection) for data-texts:
+          let enterText = mainGroup.selectAll('.datatext').data(data, d=>d.platform).enter().append('text')
+          .attr('class', 'datatext').attr('alignment-baseline', 'central ')
+          .attr('x', 3).attr('y', d => yScale.bandwidth()/2 + yScale(yValue(d))).attr('fill', 'black');
+          // altering year-text: 
+          d3.select('#yeartext').text(data[0].year).raise();
+          // animation: 
+          let transition = d3.transition().duration(1000).ease(d3.easeLinear);
+          mainGroup.selectAll('rect').merge(enter).transition(transition)
+          .attr('width', d => xScale(xValue(d)))
+          .attr('y', d => yScale(yValue(d)))
+          .attr('height', yScale.bandwidth());
+          mainGroup.selectAll('.datatext').merge(enterText).transition(transition)
+          .attr('x', d => 3+xScale(xValue(d))).attr('y', d => yScale.bandwidth()/2 + yScale(yValue(d)))
+          .tween("text", function(d) {
+              var i = d3.interpolate(this.textContent, d.globalsale);
+              return function(t) {
+                  this.textContent = formatPercent(i(t));
+              };
+          });
+          xAxisGroup.transition(transition).call(xAxis);
+          yAxisGroup.transition(transition).call(yAxis);
+          d3.selectAll('.tick text').attr('font-size', '1.5em')
+          await transition.end();
+      }
+
+      /* 
+        Loading data and preprocessing data. 
+        Note that you can also preprocessing data in your own way using your prefered language, e.g., Python. 
+      */
+      d3.csv('pgy.csv').then(async data => {
+          data.forEach(d => {
+              d.globalsale = +(d.globalsale);
+              d.year = +(d.year);
+          })
+          // get all years:
+          const years = Array.from(new Set(data.map(d => d.year)));
+          years.sort();
+          // get platforms:
+          const platforms = Array.from(new Set(data.map(yValue)));
+          // colors:
+          colorScale.domain(platforms);
+          const sp = d3.scalePoint().domain(platforms).range([0, 1]);
+          colorScale.range(platforms.map(d => d3.interpolateSpectral(sp(d))));
+          // calculationg initial scales: 
+          yScale.range([0, innerHeight]).padding(0.1);
+          xScale.range([0, innerWidth]); 
+          // adding axes: 
+          xAxis = d3.axisBottom(xScale);
+          yAxis = d3.axisLeft(yScale);
+          xAxisGroup = mainGroup.append('g').call(xAxis);
+          yAxisGroup = mainGroup.append('g').call(yAxis);
+          xAxisGroup.attr('transform', `translate(${0}, ${innerHeight})`);
+          // titles of axes: 
+          xAxisGroup.append('text').attr('class', 'axisTitle').text('Global Sale')
+          .attr('x', innerWidth/2).attr('y', 60);
+          yAxisGroup.append('text').attr('class', 'axisTitle').text('Platform')
+          .attr('transform', 'rotate(-90)').attr('x', -innerHeight/2).attr('y', -60);
+          d3.selectAll('.axisTitle').attr('text-anchor', "middle").attr('fill', 'black').attr('font-size', '2em');
+          // font-size of texts of axes: 
+          d3.selectAll('.tick text').attr('font-size', '1.5em')
+          data.sort( (a,b) => b.globalsale - a.globalsale );
+          for(let i = 0; i < years.length; i++){
+              await render(data.filter(d => d.year === years[i]));
+          }
+      })
+
+  </script> 
+</body>
+
+</html>

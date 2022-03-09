@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ThemeRiver</title>
+    <link rel="stylesheet" href="css/themeriver.css"> 
+    <script src="d3.min.js"></script>
+    <script src="js/barchart-in-themeriver-custom.js"></script>
+    <script src="js/color-strategies.js"></script>
+  </head>
+  <body style="text-align: center">
+    <svg width="1650" height="920" id="mainsvg" class="svgs" style="background-color: #ffffff;"></svg>
+    <script>
+        // get main SVG and its attributes & setting hyper-parameters; 
+        const svg = d3.select('#mainsvg');
+        const width = +svg.attr('width');
+        const height = +svg.attr('height');
+        const margin = {top: 100, right: 220, bottom: 100, left: 120};
+        const innerWidth = width - margin.left - margin.right;
+        const innerHeight = height - margin.top - margin.bottom;
+        const xValue = (datum) => { return dates.indexOf(datum['日期']); };
+        const yValue = (datum) => {return datum['新增确诊']};
+        //const xValue = d => d['确诊人数'];
+        //const xValue = d => d['感染率'];
+        //const yValue = d => {return Math.log(d['diffuse_smooth'] + 1)};
+        //const yValue = d => {return d['diffuse_smooth']};
+        //const yValue = d => {return Math.log(d['newinfec']+1)};
+        //const rValue = d => {return Math.sqrt(d['确诊人数']) + 6};
+        let low_max = 4000; 
+        let up_max = 1000;
+        let limit_up_max = 3500;
+        let xScale, yScale, nyScale;
+        let maxX, maxY;
+        let dates; 
+        let aduration = 1000;
+        let totalduration = 20000;
+        let metapop;
+        let rawdata; 
+
+        const keyHint = '省份';
+        const alone = '湖北';
+        const data_url = 'province'
+        const color_strategy = province_color;
+        let keysall;
+        let keys, keys_hubei;
+
+        const xAxisLabel = ' ';
+        const yAxisLabel = '新增人数';
+
+        const xBarValue = (datum) => {return datum.value};
+        const yBarValue = (datum) => {return datum.name};
+        const barKeys = ['现有确诊', '治愈人数', '死亡人数'];
+        const barKeys_reverse = ['死亡人数', '治愈人数', '现有确诊'];
+        let yBandScale, nyBandScale, xBarScale;
+
+        let province_name_map = {
+                "北京": "Beijing",
+                "天津": "Tianjin",
+                "河北": "Hebei",
+                "山西": "Shanxi",
+                "内蒙古": "Neimenggu",
+                "辽宁": "Liaoning",
+                "吉林": "Jilin",
+                "黑龙江": "Heilongjiang",
+                "上海": "Shanghai",
+                "江苏": "Jiangsu",
+                "浙江": "Zhejiang",
+                "安徽": "Anhui",
+                "福建": "Fujian",
+                "江西": "Jiangxi",
+                "山东": "Shandong",
+                "河南": "Henan",
+                "湖北": "Hubei",
+                "湖南": "Hunan",
+                "广东": "Guangdong",
+                "广西": "Guangxi",
+                "海南": "Hainan",
+                "重庆": "Chongqing",
+                "四川": "Sichuan",
+                "贵州": "Guizhou",
+                "云南": "Yunnan",
+                "西藏": "Xizang",
+                "陕西": "Shanxi",
+                "甘肃": "Gansu",
+                "青海": "Qinghai",
+                "宁夏": "Ningxia",
+                "新疆": "Xinjiang",
+                "香港": "Hong Kong",
+                "澳门": "Macau",
+                "台湾": "Taiwan"
+            }
+
+        const renderinit = function(data, seq){ 
+            // Linear Scale: Data Space -> Screen Space; 
+            xScale = d3.scaleLinear()
+            .domain([0, dates.length-1])
+            .range([0, innerWidth]);
+
+            // Introducing y-Scale; 
+            yScale = d3.scaleLinear()
+            .domain([up_max, 0, -low_max]) // "extent" is equivalent to [d3.min(data, xValue), d3.max(data, xValue)]; 
+            .range([innerHeight, innerHeight / 2, 0])
+            .nice();
+
+            nyScale = d3.scaleLinear()
+            .domain([-up_max, 0, low_max])
+            .range([innerHeight, innerHeight / 2, 0])
+            .nice();
+
+            yBandScale = d3.scaleBand()
+            .domain(barKeys_reverse)
+            .range([innerHeight - innerHeight / 8, innerHeight])
+            .padding(0.01);
+
+            nyBandScale = d3.scaleBand()
+            .domain(barKeys)
+            .range([20, innerHeight / 8 + 20])
+            .padding(0.01);
+
+            xBarScale = d3.scaleLinear()
+            .domain([0, 60000])
+            .range([0, innerWidth / 3]);    
+
+            // generate maxX and maxY; 
+            maxX = xScale(d3.max(data, xValue));
+            maxY = yScale(d3.max(data, yValue));
+
+            // The reason of using group is that nothing is rendered outside svg, so margin of svg is always blank while margin of group is rendered inside svg; 
+            const g = svg.append('g')
+            .attr('transform', `translate(${margin.left}, ${margin.top})`)
+            .attr('id', 'maingroup');
+
+            svg.append('g')
+            .attr('transform', `translate(${margin.left}, ${margin.top})`)
+            .attr('id', 'hubeigroup');
+
+            // Adding axes; 
+            var formatter = d3.format("0")
+            const yAxis = d3.axisLeft(yScale)
+            .tickSize(-innerWidth)
+            .tickFormat(function (d) { 
+                if (d === 0) return 0; // No label for '0'
+                else if (d < 0) d = -d; // No nagative labels
+                return formatter(d);
+            })
+            //.tickFormat(d3.format('.2s'))
+            .tickPadding(10); // .tickPadding is used to prevend intersection of ticks; 
+            const xAxis = d3.axisBottom(xScale)
+            //.tickFormat(d3.format('.2s'))
+            .tickSize(-innerHeight)
+            .tickPadding(10)
+            .ticks(50);
+
+            let yAxisGroup = g.append('g').call(yAxis).attr('id', 'yaxis')
+            d3.selectAll('#yaxis .tick text').attr('transform', `translate(${0}, ${-3})`);
+            yAxisGroup.append('text')
+            .attr('transform', `rotate(-90)`)
+            .attr('x', -innerHeight / 2)
+            .attr('y', -80)
+            .attr('fill', 'white')
+            .text(yAxisLabel)
+            .attr('text-anchor', 'middle') // Make label at the middle of axis. 
+            yAxisGroup.selectAll('.domain').remove(); // we can select multiple tags using comma to seperate them and we can use space to signify nesting; 
+            
+            let xAxisGroup = g.append('g').call(xAxis).attr('transform', `translate(${0}, ${innerHeight})`).attr('id', 'xaxis');
+            d3.selectAll('#xaxis .tick text').attr('transform', `translate(${0}, ${5})`);
+            xAxisGroup.append('text')
+            .attr('y', 60)
+            .attr('x', innerWidth / 2)
+            .attr('fill', 'white')
+            .text(xAxisLabel);
+            xAxisGroup.selectAll('.domain').remove();
+
+            // myticks = ["1月21日", "22日", "23日", "24日", "25日", "26日", 
+            // "27日", "28日", "29日", "30日", "31日", "2月1日", "2日", 
+            // "3日", "4日", "5日", "6日", "7日", "8日", "9日", "10日", 
+            // "11日", "12日", "13日", "14日", "15日", "16日", "17日", "18日", "19日", "20日"]
+            myticks = ["1/21", "22", "23", "24", "25", "26", 
+            "27", "28", "29", "30", "31", "2/1", "2", 
+            "3", "4", "5", "6", "7", "8", "9", "10", 
+            "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "3/1", "2", 
+            "3", "4", "5", "6", "7", "8", "9", "10"]
+
+            for(let tid = 0; tid < myticks.length; tid++){
+                // document.getElementById('xaxis').getElementsByClassName('tick')[tid].getElementsByTagName('text')[0].textContent = myticks[tid];
+            }
+            
+            // console.log(keys, keys_hubei);
+            // keysall = keys_hubei.concat(keys);
+            //keysall = ["武汉", "黄石", "十堰", "荆州", "宜昌", "襄阳", "鄂州", "荆门",
+            //    "孝感", "黄冈", "咸宁", "恩施州", "随州", "仙桃", "天门", "潜江", "神农架",
+            //]
+
+            keysall = ["湖北", "广东", "河南", "浙江", "湖南", "安徽", "江西", "江苏", "重庆", "山东", "四川", "黑龙江", "北京", "上海", "河北", "福建", "广西", "陕西", "海南", "云南", "贵州", "山西", "天津", "辽宁", "甘肃", "吉林", "宁夏", "新疆", "内蒙古", "香港", "青海", "台湾", "澳门", "西藏"]
+
+            // draw legend
+            var legend = svg.selectAll(".legend")
+                .data(keysall)
+                .enter().append("g")
+                .attr("class", "legend")
+                .attr("transform", function(d, i) { return "translate(" + (innerWidth + 130) + "," + (i * 20 + 140) + ")"; });
+			
+            // draw legend colored rectangles
+            legend.append("rect")
+            .data(keysall) 
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", 30)
+            .attr("height", 15)
+            .style("fill", function (d,i) {
+                return province_color_themeriver[d]});
+			
+            // draw legend text
+            legend.append("text")
+            .data(keysall)
+            .attr("class", "legend_text")
+            .attr("x", 40)
+            .attr("y", 9)
+            .attr("dy", ".2em")
+            .attr("fill", '#333333')
+            .style("text-anchor", "start")
+            .text(d => d);
+        };
+        
+        const render = function(data, keys, area){
+            let g;
+            if(keys.includes(alone)){
+                g = d3.select('#maingroup');
+            }else{
+                g = d3.select('#hubeigroup');
+            }
+
+            let layers = d3.stack()
+            .keys(keys)
+            .offset(d3.stackOffsetNone) 
+            //.order(d3.stackOrderDescending)
+            .order(d3.stackOrderNone)
+            (data);
+            
+            const clipedrect = g.append("clipPath") // Warning: Never append new rect after groups or it shall conflict with barcharts; 
+            .attr("id", "rectClip")
+            .append("rect")
+            .attr('class', 'rect-clip')
+            .attr("width", 0)
+            .attr("height", innerHeight);
+
+            g.selectAll("path")
+            .data(layers)
+            .join("path") // use join to avoid split according to "enter" and "update"; 
+            .attr("opacity",0.9)
+            //.transition().duration(3000)
+            .attr("d", function(d,i) {
+                return area(d);
+            })
+            .attr("clip-path", "url(#rectClip)")
+            // fill attrbute requires designers to assign colors for each province; 
+            .attr("fill", function (d,i) {
+                return province_color_themeriver[d["key"]]; });
+
+            //clipedrect.transition().ease(d3.easeLinear).duration(totalduration).attr("width", innerWidth);    
+        };
+
+        const render_update = function(width){
+            d3.select('.rect-clip').transition().ease(d3.easeLinear).duration(aduration).attr("width", width); 
+        }
+
+        const seqgen = function(data){
+            // re-arrange the data sequentially; 
+            let prestack = []; 
+            dates.forEach(datum => {
+                prestack.push({'日期': datum});
+            });
+            data.forEach(datum => {
+                //sequential[alldates.indexOf(datum['日期'])].push(datum);
+                prestack[dates.indexOf(datum['日期'])][datum[keyHint]] = yValue(datum);
+            });
+            return prestack
+        }
+
+        d3.csv(`js/${data_url}.csv`).then(function(data){
+            data.forEach(datum => {
+                // pre-process the data; 
+                datum['确诊人数'] = +(datum['确诊人数']);
+                datum['治愈人数'] = +(datum['治愈人数']);
+                datum['死亡人数'] = +(datum['死亡人数']);
+                datum['新增确诊'] = +(datum['新增确诊']);
+                datum['现有确诊'] = +(datum['现有确诊']);
+            });
+            
+            // remove duplicated items; 
+            alldates = Array.from(new Set(data.map( datum => datum['日期'])));
+
+            // make sure dates are listed according to real time order; 
+            alldates = alldates.sort(function(a,b){
+                // turn your strings into dates, and then subtract them
+                // to get a value that is either negative, positive, or zero.
+                return new Date(b.date) - new Date(a.date);
+            });
+            dates = alldates;
+
+            // setting up barchart; 
+            setting_up_barchart(data);
+
+            // delete '总计'; 
+            data = data.filter(datum => {return datum[keyHint] !== '总计'});
+            keysall = Array.from(new Set(data.map( datum => datum[keyHint])));
+
+            // generate sequential data; 
+            let sequential = []; 
+            alldates.forEach(datum => {
+                sequential.push([]);
+            });
+            data.forEach(datum => {
+                sequential[alldates.indexOf(datum['日期'])].push(datum);
+            });
+            // smooth new infec; 
+            let t = 0;
+            const originyValue = datum => datum['新增确诊'];
+            for(; t < sequential.length; t++){
+                sequential[t].forEach(datum => {
+                    if(t == 0){
+                        datum.newinfec_s = originyValue(datum);
+                    }else if(t == 1){
+                        datum.newinfec_s = (
+                            originyValue(datum) + 
+                            originyValue(sequential[t-1].find(x => x[keyHint] === datum[keyHint]))
+                        ) / 2.0;
+                    }else{
+                        datum.newinfec_s = (
+                            originyValue(datum) + 
+                            originyValue(sequential[t-1].find(x => x[keyHint] === datum[keyHint])) + 
+                            originyValue(sequential[t-2].find(x => x[keyHint] === datum[keyHint]))
+                        ) / 3.0;
+                    }
+                })
+            }
+
+            // split data from Hu-Bei and not from Hu-Bei; 
+            data_hubei = data.filter(datum => {return datum[keyHint] === alone});
+            data = data.filter(datum => {return datum[keyHint] !== alone});
+
+            // stack data; 
+            let prestack = seqgen(data);
+            let prestack_hubei = seqgen(data_hubei);
+            // let keys = Array.from(new Set(data.map( datum => datum[keyHint])));
+            // sort according to '累计确诊' and prepare keys; 
+            const sortedforkey = sequential[sequential.length-1].sort( (a,b) => b['确诊人数'] - a['确诊人数'] );
+            
+            keys = sortedforkey.map(d => d[keyHint]);
+            keys = keys.filter(d => {return d !== alone});
+            keys_hubei = Array.from(new Set(data_hubei.map( datum => datum[keyHint])));
+            // generate low_max and up_max for Y-scale; 
+            up_max = d3.max(sequential, seq => {
+                result = 0;
+                seq.forEach(s => {
+                    if(s[keyHint] !== alone){
+                        result += yValue(s);
+                    }
+                })
+                return result;
+            })
+            low_max = d3.max(sequential, seq => {
+                if(limit_up_max !== -1){
+                    return limit_up_max;
+                }
+                result = 0;
+                seq.forEach(s => {
+                    if(s[keyHint] === alone){
+                        result += yValue(s);
+                    }
+                })
+                return result;
+            })
+
+            // initialize the chart; 
+            renderinit(data);
+
+            const area = d3.area()
+            .curve(d3.curveCardinal.tension(0.3)) // default is d3.curveLinear, d3.curveBundle.beta(1.0)
+            .x(d => xScale(xValue(d.data)))
+            .y0(d => yScale(d[0]))
+            .y1(d => yScale(d[1]));
+
+            const area_hubei = d3.area()
+            .curve(d3.curveCardinal.tension(0.3))
+            .x((d) => xScale(xValue(d.data)))
+            .y0(d => nyScale(d[0]))
+            .y1(d => nyScale(d[1]));
+            
+            // set the animation interval; 
+            render(prestack, keys, area);
+            render(prestack_hubei, keys_hubei, area_hubei); 
+            console.log(alldates);
+            let c = 0; 
+            let width_step = innerWidth / (alldates.length-1);
+            let intervalId = setInterval(function(){
+                if(c >= alldates.length){
+                    console.log('time to close this animation');
+                    clearInterval(intervalId); 
+                }else{
+                    console.log(c * width_step);
+                    render_update(c * width_step);
+                    c = c + 1;
+                }
+            }, aduration); 
+        });
+    </script>
+  </body>
+</html>

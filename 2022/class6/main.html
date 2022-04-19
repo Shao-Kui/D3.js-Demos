@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Events</title>
+    <script src="d3.min.js"></script>
+</head>
+
+<body>
+    <svg width="1600" height="800" id="mainsvg" class="svgs" style='display: block; margin: 0 auto;'></svg>
+    <script>
+        // The following code is the typical routine of my d3.js code. 
+        const svg = d3.select('svg');
+        const width = svg.attr('width');
+        const height = svg.attr('height');
+        const radius = 100; 
+        const scaleBand = d3.scaleBand().domain([1,2,3,4, 5]).range([0, width]).padding(0.1);
+        const color = d3.interpolateRainbow; 
+        const changeColor = (event) => {
+            d3.select(event.currentTarget).attr('fill', color(Math.random())); // D3.js could also select primitives using pure HTML tags. 
+        }; 
+
+        svg.append('circle').attr('cx', scaleBand(1) + radius).attr('cy', height/2).attr('r', radius).attr('fill', 'gray')
+        .on('click', changeColor);
+        svg.append('circle').attr('cx', scaleBand(2) + radius).attr('cy', height/2).attr('r', radius).attr('fill', 'gray')
+        .on('mouseover', changeColor);
+        svg.append('circle').attr('cx', scaleBand(3) + radius).attr('cy', height/2).attr('r', radius).attr('fill', 'gray')
+        .on('mouseout', changeColor);
+        svg.append('circle').attr('cx', scaleBand(4) + radius).attr('cy', height/2).attr('r', radius).attr('fill', 'gray')
+        .attr('id', 'keyele');
+        // svg.append('circle').attr('cx', scaleBand(5) + radius).attr('cy', height/2).attr('r', radius).attr('fill', 'gray')
+        // .on('contextmenu', changeColor);
+        svg.append('circle').attr('cx', scaleBand(5) + radius).attr('cy', height/2).attr('r', radius).attr('fill', 'gray')
+        .on('contextmenu', (event) => {
+            event.preventDefault();
+            d3.select(event.currentTarget).attr('fill', color(Math.random()));
+        });
+
+        let isTransitioning = false;
+        const step = 60;
+        const duration = 1000;
+        const keyTranslate = (at, s) => {
+            isTransitioning = true;
+            let transition = d3.transition().duration(duration).on('end', () => isTransitioning = false); 
+            d3.select('#keyele').transition(transition).attr(at, function(){
+                return +d3.select(this).attr(at) + s;
+            });
+        }
+        d3.select('body').on('keydown', async function(event){
+            if(isTransitioning){
+                return; 
+            }
+            if(event.keyCode === 87){ // W
+                keyTranslate('cy', -step);
+            }else if(event.keyCode === 83){ // S
+                keyTranslate('cy', step);
+            }else if(event.keyCode === 65){ // A
+                keyTranslate('cx', -step);
+            }else if(event.keyCode === 68){ // D
+                keyTranslate('cx', step);
+            }
+        });
+
+    </script>
+</body>
+
+</html>

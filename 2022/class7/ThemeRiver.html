@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ThemeRiver</title>
+    <script src="d3.min.js"></script>
+    <script src="moment.js"></script>
+</head>
+
+<body>
+    <svg width="1600" height="800" id="mainsvg" class="svgs" style='display: block; margin: 0 auto;'></svg>
+    <script>
+        // The following code is the typical routine of my d3.js code. 
+        const svg = d3.select('svg');
+        const width = svg.attr('width');
+        const height = svg.attr('height');
+        const KEYS = [
+            "Counter-Strike: Global Offensive", "Dota 2", "PLAYERUNKNOWN'S BATTLEGROUNDS", "Apex Legends", 
+            "Tom Clancy's Rainbow Six Siege", "Cyberpunk 2077", "Sekiro: Shadows Die Twice"
+        ]
+        const stack = d3.stack().keys(KEYS);
+        const xScale = d3.scaleTime();
+        const yScale = d3.scaleLinear();
+        const margin = {top: 0, bottom: 60, left: 80, right: 0};
+        const innerWidth = width - margin.left - margin.right;
+        const innerHeight = height - margin.top - margin.bottom;
+        const g = svg.append('g').attr('id', 'maingroup')
+        .attr('transform', `translate(${margin.left}, ${margin.top})`);
+        const color = d3.scaleOrdinal(d3.schemeSet1.concat(d3.schemeSet2).concat(d3.schemeSet3));
+        const area = d3.area().x(d => xScale(d.data.ym)).y1(d => yScale(d[1])).y0(d => yScale(d[0])).curve(d3.curveCardinal.tension(0.5));
+        const stackData = [];
+
+        d3.csv('SteamCharts.csv').then(async data => {
+            // transfer .year and .month to Date Objects in javascript, based on moment.js; 
+            data = data.filter( d => +(d.year) <= 2021 );
+            data.forEach( d => {
+                d.ymstring = moment().year(d.year).month(d.month).format('YYYY-MM')
+                d.ym = new Date(d.ymstring);
+                d.avg = +(d.avg);
+            });
+            const alldates = Array.from(new Set(data.map(d => d.ymstring)));
+            alldates.sort((a,b) => {
+                return new Date(a) - new Date(b);
+            })
+            alldates.forEach(d => {
+                let newItem = {'ym': new Date(d)};
+                KEYS.forEach( k => {
+                    newItem[k] = data.find( datum => datum.ymstring === d && datum.gamename === k );
+                    if(!newItem[k]){
+                        newItem[k] = 0;
+                    }else{
+                        newItem[k] = newItem[k].avg;
+                    }
+                });
+                stackData.push(newItem);
+            });
+            const stackedData = stack(stackData);
+
+            // setting scales; 
+            yScale
+            .domain([0, d3.max(stackedData, item1 => d3.max(item1, item2 => item2[1]))])
+            .range([innerHeight, 0]);
+            xScale.domain(d3.extent(alldates.map(d => new Date(d)))).range([0, innerWidth]);
+            color.domain(KEYS);
+
+            // drawing axes;
+            let yAxis = d3.axisLeft(yScale);
+            let xAxis = d3.axisBottom(xScale);
+            g.append('g').attr('id', 'yaxis').call(yAxis);
+            g.append('g').attr('id', 'xaxis').call(xAxis).attr('transform', `translate(0, ${innerHeight})`);
+
+            // define an area generator;
+            let area = d3.area()
+            .x(d => xScale(d.data.ym))
+            .y1(d => yScale(d[1])).y0(d => yScale(d[0]))
+            .curve(d3.curveCardinal.tension(0.5));
+
+            // data-join;
+            g.selectAll('.riverPath')
+            .data(stackedData, d => d.key).join('path')
+            .attr('class', 'riverPath').attr('d', area).attr('fill', d => color(d.key));
+        });
+
+    </script>
+</body>
+
+</html>

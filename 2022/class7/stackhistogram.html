@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>StackedHistogram</title>
+    <script src="d3.min.js"></script>
+</head>
+
+<body>
+    <svg width="1920" height="1080" id="mainsvg" class="svgs" style='display: block; margin: 0 auto;'></svg>
+    <script>
+        const svg = d3.select('#mainsvg');
+        const width = +svg.attr('width');
+        const height = +svg.attr('height');
+        const margin = { top: 60, right: 210, bottom: 100, left: 120 };
+        const innerWidth = width - margin.left - margin.right;
+        const innerHeight = height - margin.top - margin.bottom;
+        const g = svg.append('g').attr('id', 'maingroup')
+            .attr('transform', `translate(${margin.left}, ${margin.top})`);
+        const yValue = d => d.occur;
+        let xScale, yScale, color;
+        let allsemantics;
+        let selectSemantics;
+        let alloccur = {};
+        const xAxisLabel = 'Occurrence';
+        const yAxisLabel = 'Count (Log)';
+
+        const fullAxes = function () {
+            // Adding axes; 
+            const yAxis = d3.axisLeft(yScale)
+                .tickSize(-innerWidth)
+                //.tickFormat(d3.format('.2s'))
+                .tickPadding(10); // .tickPadding is used to prevend intersection of ticks; 
+            const xAxis = d3.axisBottom(xScale)
+                .tickFormat(d3.format('.2s'))
+                .tickSize(-innerHeight)
+                .tickPadding(10);
+
+            let yAxisGroup = g.append('g').call(yAxis)
+                .attr('id', 'yaxis');
+            yAxisGroup.append('text')
+                .attr('transform', `rotate(-90)`)
+                .attr('x', -innerHeight / 2)
+                .attr('y', -50)
+                .attr('fill', '#333333')
+                .text(yAxisLabel)
+                .attr('text-anchor', 'middle') // Make label at the middle of axis. 
+                .attr('font-size', '3.5em')
+                .attr('font-weight', 'bold')
+            yAxisGroup.selectAll('.domain').remove(); // we can select multiple tags using comma to seperate them and we can use space to signify nesting; 
+
+            let xAxisGroup = g.append('g').call(xAxis)
+                .attr('transform', `translate(${0}, ${innerHeight})`)
+                .attr('id', 'xaxis');
+            xAxisGroup.append('text')
+                .attr('y', 60)
+                .attr('x', innerWidth / 2)
+                .attr('fill', '#333333')
+                .attr('font-size', '3.5em')
+                .attr('text-anchor', 'middle')
+                .attr('font-weight', 'bold')
+                .text(xAxisLabel);
+            xAxisGroup.selectAll('.domain').remove();
+        }
+
+        const renderInit = function (data) {
+
+            yScale = d3.scaleLinear()
+                .domain([0, d3.max(data, d => d3.max(d, subd => subd[1]))])
+                .range([innerHeight, 0])
+                .nice();
+
+            xScale = d3.scaleLinear()
+                .domain([-0, d3.max(data, d => d3.max(d, subd => subd.data.x1))])
+                .range([0, innerWidth])
+                .nice();
+
+            color = d3.scaleOrdinal()
+            .domain(selectSemantics)
+            .range(d3.schemeSet3.concat(d3.schemeCategory10));
+
+            //naiveAxes(g, innerWidth, innerHeight, xScale, yScale);
+            fullAxes();
+            d3.selectAll('.tick text').attr('font-size', '1.8em');
+
+            let cg = svg.append('g').attr('id', 'captionsgroup')
+                .attr('transform', `translate(${width - margin.right + 5}, ${margin.top + 3})`);
+
+            cg.selectAll('.captionrect').data(selectSemantics).join('rect')
+                .attr('class', 'captionsgroup')
+                .attr('y', (d, i) => i * 32)
+                .attr('width', 40)
+                .attr('height', 20)
+                .attr('fill', d => color(d))
+
+            cg.selectAll('.captiontext').data(selectSemantics).join('text')
+                .attr('class', 'captiontext')
+                .attr('y', (d, i) => i * 32 + 15)
+                .attr('x', 42)
+                .attr('width', 40)
+                .attr('height', 20)
+                .attr('font-size', '1.2em')
+                .text(d => d)
+        }
+
+        const render = function (data) {
+            // use d3.interpolateRainbow(t) to set colors; 
+            // start to do data-join; 
+            d3.select('#maingroup').selectAll('.datagroup').data(data).join('g')
+                .attr('class', 'datagroup')
+                .attr('fill', d => color(d.key))
+                .selectAll('.datarect').data(d => d).join('rect')
+                .attr('class', 'datarect')
+                .attr('y', d => yScale(d[1]))
+                .attr('x', d => xScale(d.data.x0))
+                .attr('height', d => yScale(d[0]) - yScale(d[1]))
+                .attr('width', d => xScale(d.data.x1) - xScale(d.data.x0));
+        }
+
+        d3.csv('suncg_occur.csv').then(data => {
+            data = data.filter(d => {
+                return d.semantic !== 'person'
+                    && d.semantic !== 'chandelier'
+                    && d.semantic !== 'curtain'
+                    && d.semantic !== 'wall_lamp'
+                    && d.semantic !== 'partition'
+                    && d.semantic !== 'unknown'
+                    && d.semantic !== 'switch'
+                    && d.semantic !== 'hanging_kitchen_cabinet'
+                    && d.semantic !== 'fence'
+                    && d.semantic !== 'column'
+                    && d.semantic !== 'picture_frame'
+                    && d.semantic !== 'outdoor_lamp';
+            })
+            data.forEach(d => {
+                d.occur = +(d.occur);
+            });
+
+            allsemantics = data.map(d => d.semantic);
+            allsemantics = Array.from(new Set(allsemantics));
+
+            allsemantics.forEach(s => {
+                alloccur[s] = 0;
+            });
+            data.forEach(d => {
+                alloccur[d.semantic] += d.occur;
+            });
+
+            alloccurlist = []
+            allsemantics.forEach(s => {
+                alloccurlist.push({ 'semantic': s, 'occur': alloccur[s] })
+            });
+            alloccurlist = alloccurlist.sort((b, a) => {
+                return a.occur - b.occur;
+            });
+            console.log('alloccurlist', alloccurlist)
+            selectSemantics = alloccurlist.slice(0, 20).map(d => d.semantic);
+            console.log(selectSemantics);
+
+            let histogram = d3.histogram()
+                .value(yValue)
+                .domain([0, d3.max(data, yValue)])
+
+            // re-arrange the "historgramed" data
+
+            var stack = d3.stack()
+                .keys(selectSemantics)
+                .order(d3.stackOrderNone)
+                .offset(d3.stackOffsetNone)
+
+            let bins = histogram(data)
+
+            // start to prepare the stack-histogram data; 
+            hist = []
+            bins.forEach(b => {
+                let h = {}
+                allsemantics.forEach(s => {
+                    h[s] = 0;
+                })
+                hist.push(h)
+            });
+            bins.forEach((b, i) => {
+                b.forEach(item => {
+                    hist[i][item.semantic] += 1;
+                });
+                hist[i].x0 = b.x0;
+                hist[i].x1 = b.x1;
+            });
+
+            // change occurrence to log; 
+            hist.forEach(h => {
+                allsemantics.forEach(s => {
+                    h[s] = Math.log(h[s] + 1);
+                })
+            })
+
+            stackedHist = stack(hist);
+            console.log('bins: ', bins)
+            console.log('hist: ', hist)
+            console.log('stackedHist: ', stackedHist);
+
+            renderInit(stackedHist);
+            render(stackedHist);
+        })
+
+    </script>
+</body>
+
+</html>

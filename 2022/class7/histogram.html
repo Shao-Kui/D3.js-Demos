@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Histogram</title>
+    <script src="d3.min.js"></script>
+</head>
+
+<body>
+    <svg width="1920" height="1080" id="mainsvg" class="svgs" class="svgs" style='display: block; margin: 0 auto;'></svg>
+    <script>
+        const svg = d3.select('#mainsvg');
+        const width = +svg.attr('width');
+        const height = +svg.attr('height');
+        const margin = { top: 60, right: 210, bottom: 100, left: 120 };
+        const innerWidth = width - margin.left - margin.right;
+        const innerHeight = height - margin.top - margin.bottom;
+        const g = svg.append('g').attr('id', 'maingroup')
+            .attr('transform', `translate(${margin.left}, ${margin.top})`);
+        const yValue = d => Math.log(d.occur);
+        let xScale, yScale, color;
+
+        const fullAxes = function () {
+            // Adding axes; 
+            const yAxis = d3.axisLeft(yScale)
+            .tickSize(-innerWidth)
+            .tickPadding(10); // .tickPadding is used to prevend intersection of ticks; 
+            const xAxis = d3.axisBottom(xScale)
+            .tickFormat(d3.format('.2s'))
+            .tickSize(-innerHeight)
+            .tickPadding(10);
+
+            let yAxisGroup = g.append('g').call(yAxis)
+            .attr('id', 'yaxis');
+            yAxisGroup.append('text')
+            .attr('transform', `rotate(-90)`)
+            .attr('x', -innerHeight / 2)
+            .attr('y', -50)
+            .attr('fill', '#333333')
+            .text('Count (Log)')
+            .attr('text-anchor', 'middle') // Make label at the middle of axis. 
+            .attr('font-size', '3.5em')
+            .attr('font-weight', 'bold')
+            yAxisGroup.selectAll('.domain').remove(); // we can select multiple tags using comma to seperate them and we can use space to signify nesting; 
+
+            let xAxisGroup = g.append('g').call(xAxis)
+            .attr('transform', `translate(${0}, ${innerHeight})`)
+            .attr('id', 'xaxis');
+            xAxisGroup.append('text')
+            .attr('y', 60)
+            .attr('x', innerWidth / 2)
+            .attr('fill', '#333333')
+            .attr('font-size', '3.5em')
+            .attr('text-anchor', 'middle')
+            .attr('font-weight', 'bold')
+            .text('Occurrence');
+            xAxisGroup.selectAll('.domain').remove();
+        }
+
+        d3.csv('suncg_occur.csv').then(data => {
+
+            data.forEach(d => {
+                d.occur = +(d.occur) + 1;
+            });
+
+            xScale = d3.scaleLinear()
+            .domain(d3.extent(data, yValue))
+            .range([0, innerWidth])
+            .nice();
+
+            let histogram = d3.bin()
+            .value(yValue)
+            .domain(xScale.domain())
+            .thresholds(xScale.ticks(20))
+
+            let binData = histogram(data);
+            console.log(data);
+            console.log(binData);
+            console.log(xScale.ticks(20));
+
+            yScale = d3.scaleLinear()
+            .domain([0, d3.max(binData, d => d.length)])
+            .range([innerHeight, 0])
+            .nice();
+
+            color = d3.scaleOrdinal()
+            .range(d3.schemePaired.concat(d3.schemeCategory10));
+                     
+            d3.select('#maingroup').selectAll('.hisRec').data(binData).join('rect')
+            .attr('class', 'hisRec')
+            .attr('x', d => xScale(d.x0)).attr('y', d => yScale(d.length))
+            .attr('width', d => xScale(d.x1) - xScale(d.x0)).attr('height', d => yScale(0) - yScale(d.length))
+            .attr('fill', (d, i) => color(i))
+
+            fullAxes();
+        })
+
+    </script>
+</body>
+
+</html>

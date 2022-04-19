@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Assignment2</title>
+  <script src="d3.min.js"></script>
+</head>
+
+<body>
+  <svg width="1600" height="800" id="mainsvg" class="svgs"></svg>
+  <script>
+      // The following code is the typical routine of my d3.js code. 
+      const svg = d3.select('svg');
+      const width = svg.attr('width');
+      const height = svg.attr('height');
+      const margin = {top: 100, right: 100, bottom: 100, left: 150};
+      const innerWidth = width - margin.left - margin.right;
+      const innerHeight = height - margin.top - margin.bottom;
+      const mainGroup = svg.append('g')
+      .attr('transform', `translate(${margin.left}, ${margin.top})`)
+      const crossLineX = svg.append('line').attr('class', 'crossLine'), crossLineY = svg.append('line').attr('class', 'crossLine'); 
+      d3.selectAll('.crossLine').attr('stroke', 'black');
+      const xValue = d => d.year;
+      const yValue = d => d.globalsale;
+      const xScale = d3.scaleLinear();
+      const yScale = d3.scaleLinear();
+      const colorScale = d3.scaleOrdinal(); 
+      let yearsData; 
+      let pgyData; 
+
+      const arcGenerator = d3.arc()
+      .innerRadius(0).outerRadius(105);
+      const outerArcGenerator = d3.arc()
+      .innerRadius(40).outerRadius(185);
+      const pie = d3.pie().value(yValue);
+
+      const midAngle = function(d){
+          return d.startAngle + (d.endAngle - d.startAngle)/2;
+      };
+
+      const isGoodAngle = function(d){
+          return (d.endAngle - d.startAngle) >= 0.3;
+      };
+
+      const arcTween =  function(d) {
+          var init_startAngle = 0;
+          var init_endAngle = 0;
+          var interpolate_start = d3.interpolate(init_startAngle, d.startAngle);
+          var interpolate_end = d3.interpolate(init_endAngle, d.endAngle);
+          return function(t) {
+              d.startAngle = interpolate_start(t);
+              d.endAngle = interpolate_end(t);
+              return arcGenerator(d)
+          }
+      };
+
+      // code is from https://d19jftygre6gh0.cloudfront.net/pjsier/28d1d410b64dcd74d9dab348514ed256
+      const tweenDash = function(){
+          let l = this.getTotalLength(),
+              i = d3.interpolateString("0," + l, l + "," + l);
+          return function (t) { return i(t); };
+      }
+
+      const renderPie = function(datum, x, y){
+          d3.select('#arcGroup').remove();
+          const data = pgyData.filter(d => datum.year === d.year && yValue(d) !== 0);
+
+          let arcGroup = mainGroup.append('g').attr('id', 'arcGroup')
+          .attr('transform', `translate(${x}, ${y})`);
+
+          arcGroup.selectAll('path').data(pie(data)).join('path')
+          .attr('fill', d => colorScale(d.data.platform))
+          .on('click', () => {d3.select('#arcGroup').remove();})
+          .transition().duration(1000).attrTween('d', arcTween); 
+
+          arcGroup.selectAll('polyline').data(pie(data)).join('polyline')
+          .attr('opacity', d => isGoodAngle(d)? 1:0)
+          .attr('stroke', 'black').attr('stroke-width', '2px').attr('fill', 'none')
+          .attr('points', d => {
+              let pos = outerArcGenerator.centroid(d);
+              pos[0] = 130 * (midAngle(d) < Math.PI ? 1 : -1);
+              return [arcGenerator.centroid(d), outerArcGenerator.centroid(d), pos]
+          }).transition().duration(1000).attrTween("stroke-dasharray", tweenDash);
+
+          arcGroup.selectAll('text').data(pie(data)).join('text')
+          .text(d => d.data.platform)
+          .attr('font-size', '1em').attr('transform', d => {
+              let pos = outerArcGenerator.centroid(d);
+              pos[0] = 130 * (midAngle(d) < Math.PI ? 1 : -1);
+              return `translate(${pos[0]}, ${pos[1]})`
+          }).attr('text-anchor', d => midAngle(d) < Math.PI ? "start":"end")
+          .transition().duration(1000).attr('opacity', d => isGoodAngle(d)? 1:0);
+      }
+
+      /* 
+        Loading data and preprocessing data. 
+        Note that you can also preprocessing data in your own way using your prefered language, e.g., Python. 
+      */
+      d3.csv('years.csv').then(data => { yearsData = data; d3.csv('pgyline.csv').then(data => {
+          // cleaning data; 
+          yearsData.sort((a, b) => {
+              return b.year - a.year;
+          });
+          yearsData.forEach(d => {
+              d.year = +(d.year);
+              d.globalsale = +(d.globalsale);
+          });
+          pgyData = data; 
+          pgyData.forEach(d => {
+              d.year = +(d.year);
+              d.globalsale = +(d.globalsale);
+          });
+
+          // scales and axes; 
+          xScale.domain(d3.extent(yearsData, xValue)).range([0, innerWidth]);
+          yScale.domain(d3.extent(yearsData, yValue)).range([innerHeight, 0]);
+          const xAxis = d3.axisBottom(xScale).ticks(35).tickFormat(d => d);
+          const yAxis = d3.axisLeft(yScale);
+          const xAxisGroup = mainGroup.append('g').attr('id', 'xAxisGroup').call(xAxis)
+          .attr('transform', `translate(0, ${innerHeight})`);
+          const yAxisGroup = mainGroup.append('g').attr('id', 'yAxisGroup').call(yAxis);
+          xAxisGroup.attr('transform', `translate(${0}, ${innerHeight})`);
+          // font-size of texts of axes: 
+          d3.selectAll('.tick text').attr('font-size', '1.2em')
+          // titles of axes: 
+          xAxisGroup.append('text').attr('class', 'axisTitle').text('Year')
+          .attr('x', innerWidth/2).attr('y', 60);
+          yAxisGroup.append('text').attr('class', 'axisTitle').text('Global Sale')
+          .attr('transform', 'rotate(-90)').attr('x', -innerHeight/2).attr('y', -60);
+          d3.selectAll('.axisTitle').attr('text-anchor', "middle").attr('fill', 'black').attr('font-size', '2em');
+
+          // colors:
+          const platforms = Array.from(new Set(data.map(d => d.platform)));
+          colorScale.domain(platforms);
+          const sp = d3.scalePoint().domain(platforms).range([0, 1]);
+          colorScale.range(platforms.map(d => d3.interpolateSpectral(sp(d))));
+
+          // callback for the 'd' value of the line; 
+          const line = d3.line()
+          .x(d => {return xScale(xValue(d))})
+          .y(d => {return yScale(yValue(d))})
+          //.curve(d3.curveBasis)
+          .curve(d3.curveCardinal.tension(0.99))
+
+          // adding line; 
+          mainGroup.append('path').attr('id', 'mainPath').datum(yearsData)
+          .attr('d', line).attr('fill', 'none').attr('stroke', 'black');
+          
+          // adding circles; 
+          mainGroup.selectAll('dataCircles').data(yearsData).join('circle')
+          .attr('cx', d => xScale(xValue(d))).attr('cy', d => yScale(yValue(d))).attr('r', 10)
+          .attr('stroke-width', 2).attr('stroke', '#364747').attr('fill', '#364747').attr('opacity', 0.6)
+          .on('mouseover', function(event, d){
+              d3.select(this).attr('stroke', '#38eff2');
+          })
+          .on('mouseout', function(event, d){
+              d3.select(this).attr('stroke', '#364747');
+          })
+          .on('click', function(event, d){
+              let c = d3.select(this);
+              renderPie(d, c.attr('cx'), c.attr('cy')); 
+              event.stopPropagation(); // prevent event bubbling. 
+          }); 
+
+          document.addEventListener('mousemove', function(event){
+              let x = event.clientX, y = event.clientY; 
+              if(x <= margin.left || x >= width - margin.right || y <= margin.top || y >= height-margin.bottom){return;}
+              crossLineX.attr('x1', x).attr('y1', y).attr('x2', margin.left).attr('y2', y); 
+              crossLineY.attr('x1', x).attr('y1', y).attr('x2', x).attr('y2', height-margin.bottom);
+          }, true);
+
+          document.addEventListener('click', function(event){
+              if(document.getElementById("arcGroup")){
+                  d3.select('#arcGroup').remove();
+              }
+          }, {capture: false});
+
+      })})
+
+  </script> 
+</body>
+
+</html>

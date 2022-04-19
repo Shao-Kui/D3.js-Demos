@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Data Visualization!</title>
+  </head>
+  <body>
+    <svg width="100px" height="100px">
+        <path d="M0 0 H 90 V 90 H 10 L 10 10" /> 
+        <!-- Points -->
+        <circle cx="10" cy="10" r="2" fill="red"/>
+        <circle cx="90" cy="90" r="2" fill="red"/>
+        <circle cx="90" cy="10" r="2" fill="red"/>
+        <circle cx="10" cy="90" r="2" fill="red"/>
+    </svg>
+    <svg width="100px" height="100px" fill="green">
+        <path d="M10 10 H 90 V 90 H 10 Z" fill="green" stroke="black"/>
+         <!-- Points -->
+         <circle cx="10" cy="10" r="2" fill="red"/>
+         <circle cx="90" cy="90" r="2" fill="red"/>
+         <circle cx="90" cy="10" r="2" fill="red"/>
+         <circle cx="10" cy="90" r="2" fill="red"/>
+    </svg>
+    <svg width="100px" height="100px">
+        <path d="M10 10 h 80 v 80 h -80 Z" fill="pink" stroke="black" stroke-width="3"/>
+        <!-- Points -->
+        <circle cx="10" cy="10" r="2" fill="red"/>
+        <circle cx="90" cy="90" r="2" fill="red"/>
+        <circle cx="90" cy="10" r="2" fill="red"/>
+        <circle cx="10" cy="90" r="2" fill="red"/>
+    </svg>
+    <svg height="210" width="400">
+      <path d="M150 0 L75 200 L225 200 Z" transform="translate(150,100)"/>
+      <path d="M150 0 L75 200 L225 200 Z" />
+    </svg> 
+    <br>
+    <!--三次贝塞尔曲线-->
+    <svg width="190px" height="160px">
+        <path d="M130 110 C 120 140, 180 140, 170 110" stroke="black" fill="transparent"/>
+        <circle cx="130" cy="110" r="2" fill="red"/>
+        <circle cx="120" cy="140" r="2" fill="red"/>
+        <line x1="130" y1="110" x2="120" y2="140" style="stroke:rgb(255,0,0);stroke-width:2"/>
+        <circle cx="180" cy="140" r="2" fill="red"/>
+        <circle cx="170" cy="110" r="2" fill="red"/>
+        <line x1="180" y1="140" x2="170" y2="110" style="stroke:rgb(255,0,0);stroke-width:2"/>
+    </svg>
+    <!--三次贝塞尔曲线简写-->
+    <svg width="190px" height="160px">
+        <path d="M10 80 C 40 10, 65 10, 95 80 S 150 150, 180 80" stroke="black" fill="transparent"/>
+        <circle cx="10" cy="80" r="2" fill="red"/>
+        <circle cx="40" cy="10" r="2" fill="red"/>
+        <line x1="10" y1="80" x2="40" y2="10" style="stroke:rgb(255,0,0);stroke-width:1"/>
+
+        <circle cx="65" cy="10" r="2" fill="red"/>
+        <circle cx="95" cy="80" r="2" fill="red"/>
+        <line x1="65" y1="10" x2="95" y2="80" style="stroke:rgb(255,0,0);stroke-width:1"/>
+
+        <circle cx="125" cy="150" r="2" fill="blue"/>
+        <circle cx="180" cy="80" r="2" fill="red"/>
+        <circle cx="150" cy="150" r="2" fill="red"/>
+        <line x1="95" y1="80" x2="125" y2="150" style="stroke:blue;stroke-width:1"/>
+        <line x1="180" y1="80" x2="150" y2="150" style="stroke:rgb(255,0,0);stroke-width:1"/>
+    </svg>
+    <!--二次贝塞尔曲线-->
+    <svg width="190px" height="160px">
+        <path d="M10 80 Q 95 10 180 80" stroke="black" fill="transparent"/>
+        <!--Points-->
+        <circle cx="10" cy="80" r="2" fill="red"/>
+        <circle cx="95" cy="10" r="2" fill="red"/>
+        <circle cx="180" cy="80" r="2" fill="red"/>
+        <line x1="10" y1="80" x2="95" y2="10" style="stroke:rgb(255,0,0);stroke-width:1"/>
+        <line x1="95" y1="10" x2="180" y2="80" style="stroke:rgb(255,0,0);stroke-width:1"/>
+    </svg>  
+    <!--二次贝塞尔曲线简写-->
+    <svg width="190px" height="160px">
+        <path d="M10 80 Q 52.5 10, 95 80 T  180 80" stroke="black" fill="transparent"/>
+
+        <circle cx="10" cy="80" r="2" fill="red"/>
+        <circle cx="52.5" cy="10" r="2" fill="red"/>
+        <line x1="10" y1="80" x2="52.5" y2="10" style="stroke:rgb(255,0,0);stroke-width:1"/>
+
+        <circle cx="95" cy="80" r="2" fill="red"/>
+        <line x1="95" y1="80" x2="52.5" y2="10" style="stroke:rgb(255,0,0);stroke-width:1"/>
+
+        <circle cx="180" cy="80" r="2" fill="blue"/>
+        <circle cx="137.5" cy="150" r="2" fill="blue"/>
+        <line x1="95" y1="80" x2="137.5" y2="150" style="stroke:rgb(0,0,255);stroke-width:1"/>
+        <line x1="137.5" y1="150" x2="180" y2="80" style="stroke:rgb(0,0,255);stroke-width:1"/>
+    </svg>
+    <svg width="320px" height="320px">
+        <path d="M10 315
+                L 110 215
+                A 30 50 0 0 1 162.55 162.45
+                L 172.55 152.45
+                A 30 50 -45 0 1 215.1 109.9
+                L 315 10" stroke="black" fill="green" stroke-width="2" fill-opacity="0.5"/>
+    </svg>
+    <svg height="400" width="450">
+      <path id="lineAB" d="M 100 350 l 150 -300" stroke="red" stroke-width="3" fill="none" />
+      <path id="lineBC" d="M 250 50 l 150 300" stroke="red" stroke-width="3" fill="none" />
+      <path d="M 175 200 l 150 0" stroke="green" stroke-width="3" fill="none" />
+      <path d="M 100 350 q 150 -300 300 0" stroke="blue" stroke-width="5" fill="none" />
+      <!-- Mark relevant points -->
+      <g stroke="black" stroke-width="3" fill="black">
+        <circle id="pointA" cx="100" cy="350" r="3" />
+        <circle id="pointB" cx="250" cy="50" r="3" />
+        <circle id="pointC" cx="400" cy="350" r="3" />
+      </g>
+      <!-- Label the points -->
+      <g font-size="30" font="sans-serif" fill="black" stroke="none" text-anchor="middle">
+        <text x="100" y="350" dx="-30">A</text>
+        <text x="250" y="50" dy="-10">B</text>
+        <text x="400" y="350" dx="30">C</text>
+      </g>
+    </svg>
+  </body>
+</html>

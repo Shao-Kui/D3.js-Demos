@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Pie Chart</title>
+    <script src="d3.min.js"></script>
+</head>
+
+<body>
+    <svg width="1600" height="800" id="mainsvg" class="svgs" style='display: block; margin: 0 auto;'></svg>
+    <script>
+        const svg = d3.select('svg');
+        const width = svg.attr('width');
+        const height = svg.attr('height');
+
+        d3.csv('liaoning.csv').then(data => {
+            const pie = d3.pie().value(d => d.population);
+            const arcData = pie(data);
+            console.log(arcData);
+            const path = d3.arc().innerRadius(60).outerRadius(260);
+            const color = d3.scaleOrdinal()
+            .domain(data.map(d => d.city))
+            .range(d3.schemeSet2.concat(d3.schemeSet3));
+            
+            svg.selectAll('path').data(arcData).join('path')
+            .attr('d', path)
+            .attr('transform', `translate(${width / 2}, ${height / 2})`)
+            .attr('fill', d => color(d.data.city));
+
+            const arcOuter = d3.arc().innerRadius(280).outerRadius(280);
+            svg.append('g').attr('transform', `translate(${width / 2}, ${height / 2})`)
+            .selectAll('text').data(arcData).join('text')
+            .attr('transform', d => `translate(${arcOuter.centroid(d)})`)
+            .attr('text-anchor', 'middle')
+            .text(d => d.data.city);
+        });
+
+    </script>
+</body>
+
+</html>

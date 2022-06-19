@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Tree</title>
+    <script src="d3.min.js"></script>
+</head>
+
+<body>
+    <svg width="2200" height="1200" id="mainsvg" class="svgs" style="display: block; margin: auto;"></svg>
+    <script>
+        const svg = d3.select('#mainsvg');
+        const width = +svg.attr('width');
+        const height = +svg.attr('height');
+        const margin = { top: 100, right: 0, bottom: 350, left: 0 };
+        const innerWidth = width - margin.left - margin.right;
+        const innerHeight = height - margin.top - margin.bottom;
+        const g = svg.append('g')
+            .attr('transform', `translate(${margin.left}, ${margin.top})`);
+        let root;
+        let color;
+
+        const fill = d => {
+            if (d.depth === 0)
+                return color(d.data.name)
+            while (d.depth > 1)
+                d = d.parent;
+            return color(d.data.name);
+        }
+
+        const render = function (data) {
+            color = d3.scaleOrdinal()
+                .domain(root.descendants().filter(d => d.depth <= 1).map(d => d.data.name))
+                .range(d3.schemeCategory10);
+
+            g.selectAll("path")
+            .data(root.links())
+            .join("path")
+            .attr("fill", "none")
+            .attr("stroke", "black")
+            .attr("stroke-width", 1.5)
+            .attr("d", d3.linkVertical().x(d => d.x).y(d => d.y));
+
+            // alternatively, we can use the following code to do a single data-join; 
+            // then, use .append() to add circles and texts; 
+            /*const node = g.append("g")
+            .selectAll("g")
+            .data(root.descendants())
+            .join("g")
+            .attr("transform", d => `translate(${d.y},${d.x})`);*/
+
+            g.selectAll('circle').data(root.descendants()).join('circle')
+            // optionally, we can use stroke-linejoin to beautify the path connection; 
+            //.attr("stroke-linejoin", "round")
+            .attr("stroke-width", 3)
+            .attr("fill", fill)
+            .attr('cx', d => d.x)
+            .attr('cy', d => d.y)
+            .attr("r", 6);
+
+            g.selectAll('text').data(root.descendants()).join('text')
+            .attr("text-anchor", d => d.children ? "end" : "start")
+            // note that if d is a child, d.children is undefined which is actually false! 
+            .attr('x', d => d.x)
+            .attr('y', d => d.y + (d.children ? -10 : 10))
+            .text(d => d.data.name)
+            .attr('writing-mode', 'vertical-rl')
+            .attr('text-orientation', 'upright')
+        }
+
+        d3.json('xinjiang.json').then(data => {
+            root = d3.hierarchy(data);
+            // alternatively, we can set size of each node; 
+            // root = d3.tree().nodeSize([30, width / (root.height + 1)])(root);
+            root = d3.tree().size([innerWidth, innerHeight])(root);
+            render(root);
+        });
+
+    </script>
+</body>
+
+</html>

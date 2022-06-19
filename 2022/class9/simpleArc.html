@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Arc</title>
+    <script src="d3.min.js"></script>
+</head>
+
+<body>
+    <svg width="1600" height="800" id="mainsvg" class="svgs" style='display: block; margin: 0 auto;'></svg>
+    <script>
+        // The following code is the typical routine of my d3.js code. 
+        const svg = d3.select('svg');
+        const width = svg.attr('width');
+        const height = svg.attr('height');
+
+        const angle = 30;
+        const endPoint = '400 300'
+        const radii = '300 200'
+        
+        const path1 = svg.append('path')
+        .attr('d', `M 100 100 A ${radii} ${angle} 0 0 ${endPoint}`)
+        .attr('stroke', d3.schemeSet3[0])
+
+        const path2 = svg.append('path')
+        .attr('d', `M 100 100 A ${radii} ${angle} 0 1 ${endPoint}`)
+        .attr('stroke', d3.schemeSet3[1])
+
+        const path3 = svg.append('path')
+        .attr('d', `M 100 100 A ${radii} ${angle} 1 0 ${endPoint}`)
+        .attr('stroke', d3.schemeSet3[2])
+
+        const path4 = svg.append('path')
+        .attr('d', `M 100 100 A ${radii} ${angle} 1 1 ${endPoint}`)
+        .attr('stroke', d3.schemeSet3[3])
+        
+        d3.selectAll('path')
+        .attr('fill', 'none').attr('stroke-width', '0.6em')
+        .attr('transform', `translate(${500}, ${200})`);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Force</title>
+    <script src="d3.min.js"></script>
+  </head>
+  <body>
+    <svg width="1800" height="920" id="mainsvg" class="svgs" style="display: block; margin: auto;"></svg>
+    <script>
+    let svg = d3.select('#mainsvg');
+    var width = svg.attr('width'), height = svg.attr('height');
+    let nodes, links;
+    let circles, lines;
+    let color;
+    let simulation;
+
+    const render_init = function(){
+        lines = svg.selectAll('line').data(links).join('line')
+        .attr('stroke', 'black')
+        .attr('opacity', 0.8)
+        .attr('stroke-width', .5);
+        circles = svg.selectAll('circle').data(nodes).join('circle')
+        .attr('r', 5)
+        .attr('fill', d => color(d.index))
+    }
+
+    function ticked() {
+        lines
+        .attr('x1', d => d.source.x)
+        .attr('y1', d => d.source.y)
+        .attr('x2', d => d.target.x)
+        .attr('y2', d => d.target.y);
+        circles
+        .attr('cx', d => d.x)
+        .attr('cy', d => d.y)
+    }
+
+    function tdistance(link) {
+        console.log(link);
+        return Math.random() * 100 + 50
+    }
+
+    // the data is from http://networkrepository.com/socfb-Caltech36.php; 
+    d3.json('socfb-Caltech36.json').then(data => {
+        links = data.links;
+        nodes = []
+        for(let i = 0; i <= data['#nodes']; i++ ){
+            nodes.push({"index":i});
+        }
+
+        color = d3.scaleSequential(d3.interpolateRainbow)
+        .domain([0, nodes.length-1])
+
+        render_init();
+
+        simulation = d3.forceSimulation(nodes)
+        .force('manyBody', d3.forceManyBody().strength(-30))
+        .force('center', d3.forceCenter(width / 2, height / 2))
+        .force("link", d3.forceLink(links).strength(0.1).distance(tdistance))
+        .on('tick', ticked);
+    })
+
+    </script>
+  </body>
+</html>

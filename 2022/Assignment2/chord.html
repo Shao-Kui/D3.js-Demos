@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Chord</title>
+    <script src="d3.min.js"></script>
+    <script src="d3-v6-tip.js"></script>
+    <link rel="stylesheet" href="d3-tip.css">
+</head>
+
+<body>
+    <svg width="1920" height="1080" id="mainsvg" class="svgs" style='display: block; margin: 0 auto;'></svg>
+    <script>
+        const svg = d3.select('svg');
+        const width = svg.attr('width');
+        const height = svg.attr('height');
+        const g = svg.append('g').attr('transform', `translate(${1920 / 2}, ${1080 / 2})`);
+        const RADIUS = 400;
+
+        // loading data & initializing the vis. 
+        d3.csv('hs_nodes.csv').then(nodes => {
+        d3.json('hs_matrix.json').then(matrix => {
+            // adding ribbons between nodes. 
+            let chord = d3.chord().padAngle(0.2);
+            let ribbons = chord(matrix);
+            let drawRibbon = d3.ribbon().radius(RADIUS);
+
+            g.selectAll('.myRibbon').data(ribbons).join('path').attr('class', 'myRibbon')
+            .attr('d', drawRibbon).attr('fill', d => d.source.value > d.target.value ? nodes[d.source.index].color : nodes[d.target.index].color)
+            .attr('opacity', 0.5);
+
+            // adding arcs representing nodes. 
+            let arc = d3.arc().innerRadius(RADIUS).outerRadius(RADIUS+50);
+            g.selectAll('.myArc').data(ribbons.groups).join('path').attr('class', 'myArc')
+            .attr('d', arc).attr('fill', d => nodes[d.index].color);
+
+            // adding texts representing nodes. 
+            g.selectAll('.myText').data(ribbons.groups).join('text').attr('class', 'myText')
+            .attr('transform', d => `
+            rotate(${d.startAngle * 180 / Math.PI - 90 + 2}) 
+            translate(${RADIUS + 50}, 0)
+            rotate(${d.startAngle * 180 / Math.PI < 180 ? 0 : 180})`)
+            .attr('text-anchor', d => d.startAngle * 180 / Math.PI < 180 ? 'start' : 'end')
+            .attr('dx', d => d.startAngle * 180 / Math.PI < 180 ? 5 : -5)
+            .text(d => nodes[d.index].name);
+        });
+        });
+
+    </script>
+</body>
+
+</html>

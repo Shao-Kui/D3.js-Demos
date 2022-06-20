@@ -3,7 +3,11 @@
 
 D3.js课上用幻灯片（讲义）：[slides文件夹][theslides]；
 
-D3.js课上录屏（2020年线上）: [哔哩哔哩-BiliBili][recordvideo]；**2021年课程恢复线下，暂无录屏，但课件已经更新**。
+D3.js课上录屏（2020年线上）: [[哔哩哔哩-BiliBili]][recordvideo]；
+
+2021年课程恢复线下，暂无录屏，但课件已经更新；
+
+**D3.js课上录屏（2022年线上线下结合）**: [[清华云盘]][tsinghuacloud2022] [[哔哩哔哩-BiliBili]][recordvideo2022]；
 
 数据可视化[课程主页][coursevis]。
 
@@ -17,7 +21,7 @@ D3.js课上录屏（2020年线上）: [哔哩哔哩-BiliBili][recordvideo]；**2
 
 ## Animation
 
-第三部分会介绍D3的“Transition”机制，即如何使用D3.js实现动画。包括D3-Transition的基础语法、动画的同步、动画的自定义、插值等。实例为一个动态的散点图，来加强对于D3.js基础语法与动画的熟悉程度。
+第三部分会介绍D3的“Transition”机制，即如何使用D3.js实现动画。包括D3-Transition的基础语法、动画的过渡、同步、继承、插值和循环等。实例为一个动态的散点图与一个追踪的柱状图，来加强对于D3.js基础语法与动画的熟悉程度。
 
 ## Path
 
@@ -31,9 +35,9 @@ D3.js课上录屏（2020年线上）: [哔哩哔哩-BiliBili][recordvideo]；**2
 
 第六部分介绍D3.js的交互机制，本质上也是Web前端的交互机制在D3.js与SVG中的实例。我们会先引入各种交互的类型与样例，然后将上一部分的地图数据可视化拓展为交互式地图。一些进阶的交互接口与原理也会简单引入（但对于本讲解不做要求）。
 
-## Stack
+## Stack & Histogram
 
-这一部分主要围绕D3.js的堆叠机制，主要介绍d3.stack接口，包括其调用方式与返回数据的结构。其中，理解D3堆叠数据后的结构最为重要，因为之后的操作就是基于堆叠数据的‘Data-Join’。进而，样例会实现一个堆叠的柱状图与主题河流。
+这一部分主要围绕D3.js的堆叠机制，主要介绍d3.stack接口，包括其调用方式与返回数据的结构。其中，理解D3堆叠数据后的结构最为重要，因为之后的操作就是基于堆叠数据的‘Data-Join’。进而，样例会实现一个堆叠的柱状图与主题河流。2022年，我们还加入了分布直方图的讲解。
 
 ## Hierarchy
 
@@ -92,6 +96,7 @@ python main.py
 
 希望大家对课程内容多提意见、多批评、多指正！感谢张松海教授的指导、感谢梁缘学长、周文洋同学的支持！
 
+[tsinghuacloud2022]:https://cloud.tsinghua.edu.cn/d/9e17fcb867f549709a7a/
 [control]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/d3-tutorial/manipulation.html
 [htmlpath]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/html-tutorial/hello-path.html
 [pythonweb]:https://www.python.org/
@@ -106,6 +111,7 @@ python main.py
 [force-following]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/force-following.html
 [stackbarchart]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/stackbarchart.html
 [recordvideo]:https://www.bilibili.com/video/BV1HK411L72d
+[recordvideo2022]:https://www.bilibili.com/video/BV1qg411X7bB
 [d3web]:https://d3js.org/
 [coursevis]:https://cg.cs.tsinghua.edu.cn/course/vis/
 [the2021]:https://github.com/Shao-Kui/D3.js-Demos/tree/master/2021

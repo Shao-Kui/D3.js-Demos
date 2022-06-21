@@ -1,5 +1,5 @@
 # 欢迎大家选修并加入数据可视化！
-本代码库对应清华大学-计算机系春季学期课程《数据可视化》，由张松海老师任课。代码库内容主要围绕2020年、2021年开始新加入的[D3.js][d3web]编程讲解，其中的框架可作为大作业与其他可视化编程的基础，同时所有样例可供大家参考。任何同学有任何问题，欢迎在Github上issue或给我发邮件（zhangsk18@mails.tsinghua.edu.cn）。2021年开始，每节讲解的代码按照课程章节分别保存，框架也不再基于Flask，而是[VSCode Live Server][vscodeliveserver]、SimpleHTTPServer等。请注意：2021年的D3.js课件进行了完全翻新、大量补充，和2020年有较大区别。目前2021的课件、源代码已经大量上传至这个代码库，请参考根目录下的‘[2021][the2021]’文件夹，本文档待完善。
+本代码库对应清华大学-计算机系春季学期课程《数据可视化》，由张松海老师任课。代码库内容主要围绕2020年、2021年开始新加入的[D3.js][d3web]编程讲解，其中的框架可作为大作业与其他可视化编程的基础，同时所有样例可供大家参考。任何同学有任何问题，欢迎在Github上issue或给我发邮件（zhangsk18@mails.tsinghua.edu.cn）。2021年开始，每节讲解的代码按照课程章节分别保存，框架也不再基于Flask，而是[VSCode Live Server][vscodeliveserver]、SimpleHTTPServer等。请注意：2021年与2022年的D3.js课件进行了完全翻新、大量补充，和2020年有较大区别。目前2022的课件、源代码已经大量上传至这个代码库，请参考根目录下的‘[2022][the2022]’文件夹。
 
 D3.js课上用幻灯片（讲义）：[slides文件夹][theslides]；
 
@@ -115,4 +115,5 @@ python main.py
 [d3web]:https://d3js.org/
 [coursevis]:https://cg.cs.tsinghua.edu.cn/course/vis/
 [the2021]:https://github.com/Shao-Kui/D3.js-Demos/tree/master/2021
+[the2022]:https://github.com/Shao-Kui/D3.js-Demos/tree/master/2022
 [vscodeliveserver]:https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer

@@ -7,7 +7,9 @@ D3.js课上录屏（2020年线上）: [[哔哩哔哩-BiliBili]][recordvideo]；
 
 2021年课程恢复线下，暂无录屏，但课件已经更新；
 
-**D3.js课上录屏（2022年线上线下结合）**: [[清华云盘]][tsinghuacloud2022] [[哔哩哔哩-BiliBili]][recordvideo2022]；
+D3.js课上录屏（2022年线上线下结合）: [[清华云盘]][tsinghuacloud2022] [[哔哩哔哩-BiliBili]][recordvideo2022]；
+
+D3.js课上录屏（2023年线下）: [[哔哩哔哩-BiliBili]][recordvideo2023]；
 
 数据可视化[课程主页][coursevis]。
 
@@ -112,6 +114,7 @@ python main.py
 [stackbarchart]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/stackbarchart.html
 [recordvideo]:https://www.bilibili.com/video/BV1HK411L72d
 [recordvideo2022]:https://www.bilibili.com/video/BV1qg411X7bB
+[recordvideo2023]:https://www.bilibili.com/video/BV1LX4y197qZ
 [d3web]:https://d3js.org/
 [coursevis]:https://cg.cs.tsinghua.edu.cn/course/vis/
 [the2021]:https://github.com/Shao-Kui/D3.js-Demos/tree/master/2021

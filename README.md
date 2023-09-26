@@ -96,7 +96,7 @@ python main.py
 
 # Acknowledgement
 
-希望大家对课程内容多提意见、多批评、多指正！感谢张松海教授的指导、感谢梁缘学长、周文洋、徐天行同学的支持！
+希望大家对课程内容多提意见、多批评、多指正！感谢张松海教授的指导、感谢梁缘学长、谈皓、周文洋、徐天行同学的支持！
 
 [tsinghuacloud2022]:https://cloud.tsinghua.edu.cn/d/9e17fcb867f549709a7a/
 [control]:https://github.com/Shao-Kui/D3.js-Demos/blob/master/static/d3-tutorial/manipulation.html

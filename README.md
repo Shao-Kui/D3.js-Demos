@@ -1,17 +1,19 @@
 # 欢迎大家选修并加入数据可视化！
 本代码库对应清华大学-计算机系春季学期课程《数据可视化》，由张松海老师任课。代码库内容主要围绕2020年、2021年开始新加入的[D3.js][d3web]编程讲解，其中的框架可作为大作业与其他可视化编程的基础，同时所有样例可供大家参考。任何同学有任何问题，欢迎在Github上issue或给我发邮件（shaokui@tsinghua.edu.cn）。2021年开始，每节讲解的代码按照课程章节分别保存，框架也不再基于Flask，而是[VSCode Live Server][vscodeliveserver]、SimpleHTTPServer等。请注意：2021年与2022年的D3.js课件进行了完全翻新、大量补充，和2020年有较大区别。目前2022的课件、源代码已经大量上传至这个代码库，请参考根目录下的‘[2022][the2022]’文件夹。
 
-D3.js课上用幻灯片（讲义）：[slides文件夹][theslides]；
+This is the repository of the Data Visualization Course at Tsinghua University. Please issue us or send me an email (shaokui@tsinghua.edu.cn) if you have questions. From 2021, the code of each lecture is organized separately, and we are using VSCode Live Server for the in-class teaching. Please note that the slides are revised majorly after 2022. We suggest you refer to [2022][the2022] folder. 
 
-D3.js课上录屏（2020年线上）: [[哔哩哔哩-BiliBili]][recordvideo]；
+D3.js课上用幻灯片（讲义）：[slides文件夹][theslides] (The Slides)；
+
+D3.js课上录屏（2020年线上）: [[哔哩哔哩-BiliBili]][recordvideo] (Recorded Lectures 2020)；
 
 2021年课程恢复线下，暂无录屏，但课件已经更新；
 
-D3.js课上录屏（2022年线上线下结合）: [[清华云盘]][tsinghuacloud2022] [[哔哩哔哩-BiliBili]][recordvideo2022]；
+D3.js课上录屏（2022年线上线下结合）: [[清华云盘]][tsinghuacloud2022] [[哔哩哔哩-BiliBili]][recordvideo2022] (Recorded Lectures 2022)；
 
-D3.js课上录屏（2023年线下）: [[哔哩哔哩-BiliBili]][recordvideo2023]；
+D3.js课上录屏（2023年线下）: [[哔哩哔哩-BiliBili]][recordvideo2023] (Recorded Lectures 2023)；
 
-数据可视化[课程主页][coursevis]。
+数据可视化[课程主页][coursevis] (The Home Page)。
 
 # 先修条件（Prerequisites）
 课程希望各位同学可以有编程基础，这里编程基础不限制哪门具体的语言（虽然更希望是JavaScript与Python）。关于可视化编程需要用到的编程语言（JavaScript），在D3.js介绍的时候，会一并为大家介绍。如果没有编程基础，也完全可以参与课程学习，但需要无编程基础的同学课下用额外的时间补习JavaScript的基础知识。

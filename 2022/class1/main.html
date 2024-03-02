@@ -18,7 +18,7 @@
       const innerHeight = height - margin.top - margin.bottom;
       const mainGroup = svg.append('g')
       .attr('transform', `translate(${margin.left}, ${margin.top})`)
-      const xValue = d => d.globalsale;
+      const xValue = d => parseInt(d.globalsale);
       const yValue = d => d.platform;
       const xScale = d3.scaleLinear();
       const yScale = d3.scaleBand();
